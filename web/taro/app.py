@@ -3,4 +3,4 @@ APP = Flask(__name__)
 
 @APP.route('/')
 def root():
-    return 'Hello, Worlds!'
+    return 'Hello, Worldy!'

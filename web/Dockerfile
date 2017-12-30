@@ -12,4 +12,4 @@ COPY ./web /opt/repo/web
 
 RUN pip3 install -e /opt/repo/web
 
-CMD ["/usr/bin/python3", "/opt/repo/web/start.py"]
+CMD ["/usr/bin/python3", "-u", "/opt/repo/web/start.py"]
