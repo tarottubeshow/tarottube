@@ -7,7 +7,7 @@ services:
     volumes:
     - .:/opt/repo
     ports:
-    - 80
+    - 80:80
     environment:
       TARO_ENV: dev
   # postgres:
