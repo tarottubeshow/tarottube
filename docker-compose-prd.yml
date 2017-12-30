@@ -1,0 +1,14 @@
+version: '3'
+services:
+  web:
+    build:
+      context: .
+      dockerfile: ./web/Dockerfile
+    volumes:
+    - .:/opt/repo
+    ports:
+    - 80
+    environment:
+      TARO_ENV: dev
+  # postgres:
+  #   image: "postgres"

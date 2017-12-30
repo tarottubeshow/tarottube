@@ -8,6 +8,8 @@ RUN apt-get -y update &&\
 
 RUN pip3 install uwsgi
 
+EXPOSE 80
+
 COPY ./web /opt/repo/web
 
 RUN pip3 install -e /opt/repo/web
