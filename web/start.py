@@ -1,3 +1,4 @@
+import os
 import subprocess
 from jinja2 import Template
 
@@ -61,5 +62,4 @@ def startUwsgi():
     subprocess.check_call(uwsgiArgs)
 
 if __name__ == '__main__':
-    print("hmmmmm")
     startAll()

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Live Streaming</title>
+</head>
+<body>
+
+<!-- <video id="player" class="video-js vjs-default-skin" height="360" width="640" controls preload="none">
+    <source src="http://localhost:9090/frags/hls/test3.m3u8" type="application/x-mpegURL" />
+</video> -->
+
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+<video id="video" controls></video>
+<script>
+  var video = document.getElementById('video');
+  if (video.canPlayType('application/vnd.apple.mpegurl')) {
+    video.src = 'http://localhost:9090/frags/hls/test3.m3u8';
+    video.addEventListener('canplay',function() {
+      video.play();
+    });
+  }
+  else if(Hls.isSupported()) {
+    var hls = new Hls();
+    hls.loadSource('http://localhost:9090/frags/hls/test3.m3u8');
+    hls.attachMedia(video);
+    hls.on(Hls.Events.MANIFEST_PARSED,function() {
+      video.play();
+  });
+ }
+</script>
+
+</body>
+</html>

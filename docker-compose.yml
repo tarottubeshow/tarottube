@@ -6,8 +6,10 @@ services:
       dockerfile: ./web/Dockerfile
     volumes:
     - .:/opt/repo
+    - ./mount/frags:/opt/mount/frags
     ports:
     - 9090:80
+    - 1935:1935
     environment:
       TARO_ENV: dev
   # postgres:
