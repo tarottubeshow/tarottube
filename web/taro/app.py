@@ -9,4 +9,7 @@ APP.jinja_env.loader = jinja2.FileSystemLoader([
 
 @APP.route('/')
 def root():
-    return flask.render_template('player.jinja2')
+    return flask.render_template(
+        'player.jinja2',
+        url=CONFIG['url'],
+    )
