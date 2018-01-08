@@ -3,28 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <title>Live Streaming</title>
+
+    <link rel="stylesheet" href="/resource/mediaelement/mediaelementplayer.min.css" />
+
 </head>
 <body>
 
-<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-<video id="video" controls></video>
-<script>
-  var video = document.getElementById('video');
-  var url = '{{url.protocol}}://{{url.domain}}/frags/hls/main.m3u8'
-  if (video.canPlayType('application/vnd.apple.mpegurl')) {
-    video.src = url;
-    video.addEventListener('canplay',function() {
-      video.play();
+<script src="/resource/mediaelement/mediaelement-and-player.min.js"></script>
+
+<video id="video"
+    autoplay
+    controls
+
+    width="960"
+    height="540">
+    <source type="application/x-mpegURL" src="/frags/hls/main2_low.m3u8" />
+</video>
+
+<script type="text/javascript">
+    var player = new MediaElementPlayer('video', {
+        autoplay: true,
     });
-  }
-  else if(Hls.isSupported()) {
-    var hls = new Hls();
-    hls.loadSource(url);
-    hls.attachMedia(video);
-    hls.on(Hls.Events.MANIFEST_PARSED,function() {
-      video.play();
-  });
- }
 </script>
 
 </body>

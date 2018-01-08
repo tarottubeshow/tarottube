@@ -32,13 +32,14 @@ RUN apt-get -y update; \
 
 RUN apt-get -y update &&\
     apt-get install -y\
-        build-essential
+        build-essential\
+        ffmpeg
 
 RUN pip3 install uwsgi
 
 EXPOSE 80
 
-COPY ./web /opt/repo/web
+COPY ./ /opt/repo
 
 RUN pip3 install -e /opt/repo/web
 

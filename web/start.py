@@ -48,6 +48,7 @@ def startNginx():
 
     conf = template.render(
         conf=NGINX_CONF,
+        resourceDir='/opt/repo/web/resource',
     )
     print(conf)
 
