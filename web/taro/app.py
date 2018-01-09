@@ -21,5 +21,5 @@ def root():
     return flask.render_template(
         'player.jinja2',
         url=CONFIG['url'],
-        name=flask.values.get('name'),
+        name=flask.request.values.get('name'),
     )
