@@ -14,5 +14,9 @@ services:
     - 1935:1935
     environment:
       TARO_ENV: prd
-  # postgres:
-  #   image: "postgres"
+    links:
+    - postgres:taro-db
+    depends_on:
+    - 'postgres'
+  postgres:
+    image: "postgres"
