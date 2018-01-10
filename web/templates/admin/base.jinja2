@@ -5,12 +5,13 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
         <!-- Vendor styles -->
-        <link rel="stylesheet" href="{{ resource('/smartadmin/vendors/bower_components/material-design-iconic-font/dist/css/material-design-iconic-font.min.css') }}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/material-design-iconic-font/2.2.0/css/material-design-iconic-font.min.css">
         <link rel="stylesheet" href="{{ resource('/smartadmin/vendors/bower_components/animate.css/animate.min.css') }}">
         <link rel="stylesheet" href="{{ resource('/smartadmin/vendors/bower_components/jquery.scrollbar/jquery.scrollbar.css') }}">
 
         <!-- App styles -->
         <link rel="stylesheet" href="{{ resource('/smartadmin/css/app.min.css') }}">
+        <link rel="stylesheet" href="{{ resource('/admin.css') }}">
 
         <title>{{ title or "Tarot Tube Admin" }}</title>
 
@@ -40,8 +41,9 @@
 
                     <ul class="navigation">
                         <li><a href="/admin/"><i class="zmdi zmdi-home"></i>Home</a></li>
+                        <li><a href="/admin/schedules"><i class="zmdi zmdi-home"></i>Schedules</a></li>
 
-                        <li class="navigation__sub">
+                        <!--<li class="navigation__sub">
                             <a href=""><i class="zmdi zmdi-view-week"></i> Variants</a>
 
                             <ul>
@@ -49,7 +51,7 @@
                                 <li><a href="boxed-layout.html">Boxed Layout</a></li>
                                 <li><a href="hidden-sidebar-boxed-layout.html">Boxed Layout with Hidden Sidebar</a></li>
                             </ul>
-                        </li>
+                        </li>-->
 
                     </ul>
                 </div>
@@ -72,9 +74,8 @@
 
             <section class="content">
                 <div class="content__inner">
-                    <header class="content__title">
-                        <h1>Colors</h1>
-                    </header>
+                    {% block content %}
+                    {% endblock %}
                 </div>
 
             </section>

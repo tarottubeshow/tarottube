@@ -1,0 +1,24 @@
+{% import 'admin/form.jinja2' as form %}
+
+{% extends 'admin/base.jinja2' %}
+
+{% block content %}
+
+<form method="POST">
+  <div class="card">
+    <div class="actions">
+      <button class="btn btn-link btn-clear">
+        <i class="actions__item zmdi zmdi-floppy"></i>
+      </button>
+    </div>
+
+    <div class="card-body">
+      <h4 class="card-title">Schedule Details</h4>
+
+      {{ form.text('name', schedule.name, "Schedule Name") }}
+
+    </div>
+  </div>
+</form>
+
+{% endblock %}

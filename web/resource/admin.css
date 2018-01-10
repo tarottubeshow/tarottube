@@ -1,0 +1,10 @@
+.btn-clear {
+  padding: 0;
+}
+
+.form-group label {
+  position: absolute;
+  bottom: -23px;
+  font-size: 10px;
+  font-weight: bold;
+}

@@ -1,0 +1,38 @@
+{% extends 'admin/base.jinja2' %}
+
+{% block content %}
+
+<div class="card">
+  <div class="actions">
+    <a href="/admin/schedules/new/" class="actions__item zmdi zmdi-plus"></a>
+  </div>
+
+  <div class="card-body">
+    <h4 class="card-title">Schedules</h4>
+
+    <table class="table mb-0">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Deprecated</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for schedule in schedules %}
+          <tr>
+            <td>
+              <a href="{{ schedule.urlAdmin() }}">
+                {{ schedule.name }}
+              </a>
+            </td>
+            <td>
+              {{ schedule.deprecated }}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% endblock %}
