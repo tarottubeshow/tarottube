@@ -23,3 +23,5 @@ def root():
         url=CONFIG['url'],
         name=flask.request.values.get('name'),
     )
+
+import taro.admin

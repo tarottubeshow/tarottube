@@ -4,6 +4,7 @@ import { Provider as ReduxProvider } from 'react-redux'
 import { connect as reduxConnect } from 'react-redux'
 import { View } from 'react-native'
 
+import Router from 'taro/components/Router'
 import Promised from 'taro/components/Promised'
 import { buildStore } from 'taro/store/Store'
 import { applyHocs } from 'taro/util/metautil'
@@ -46,20 +47,6 @@ const buildMain = ({
 
     renderReady = () => {
       return <ReadyAppContainer />
-    }
-
-  }
-
-  // The ReadyAppContainer is invoked after readiness is ensured, and
-  // will either show a login screen, or direct to the router
-
-  class ReadyAppContainer extends Component {
-
-    static propTypes = {
-    }
-
-    render = () => {
-      return <View />
     }
 
   }
@@ -116,7 +103,7 @@ const buildMain = ({
     render = () => {
       return (
         <ReduxProvider store={ store }>
-          <AppStarter />
+          <Router />
         </ReduxProvider>
       )
     }
