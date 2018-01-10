@@ -28,5 +28,7 @@ setup(
         'SQLAlchemy',
         'psycopg2',
         'alembic',
+        'tzlocal',
+        'pytz',
     ],
 )

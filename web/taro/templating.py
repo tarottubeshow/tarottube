@@ -1,5 +1,17 @@
+import datetime
+
 from taro.config import CONFIG
 from taro.util import metautil
+from taro.util import textutil
+from taro.util import timeutil
+
+def computerDateTime(value):
+    if value is None:
+        return None
+
+    if isinstance(value, datetime.datetime):
+        value = timeutil.tzConv(value)
+    return value.strftime("%Y-%m-%dT%H:%M")
 
 def resource(path, external=False):
     if external:
@@ -21,4 +33,6 @@ def versioned(file):
 GLOBALS = {
     'resource': resource,
     'versioned': versioned,
+    'computerDateTime': computerDateTime,
+    'humanDateTime': textutil.humanDateTime,
 }

@@ -69,6 +69,16 @@ def startUwsgi():
     print(uwsgiArgs)
     subprocess.check_call(uwsgiArgs)
 
+def waitForPsql():
+    subprocess.check_call([
+        '/opt/repo/web/wait-for-it.sh',
+        'taro-db:5432',
+        '--',
+        'echo',
+        'DONE',
+    ])
+
 if __name__ == '__main__':
+    waitForPsql()
     runMigrations()
     startAll()

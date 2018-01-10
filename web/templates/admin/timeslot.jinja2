@@ -3,6 +3,7 @@
 {% extends 'admin/base.jinja2' %}
 
 {% block content %}
+
 <form method="POST">
     <div class="card">
         <div class="actions">
@@ -12,9 +13,12 @@
         </div>
 
         <div class="card-body">
-            <h4 class="card-title">Schedule Details</h4>
+            <h4 class="card-title">Timeslot Details</h4>
 
-            {{ form.text('name', schedule.name, "Schedule Name") }}
+            {{ form.text('name', timeslot.name, "Timeslot Name") }}
+            {{ form.text('time', computerDateTime(timeslot.time), "Time",
+                type="datetime-local") }}
+            {{ form.text('stream_key', timeslot.stream_key, "Stream Key") }}
 
         </div>
     </div>

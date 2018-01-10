@@ -1,0 +1,26 @@
+{% macro render(schedules) %}
+
+<table class="table mb-0">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Deprecated</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for schedule in schedules %}
+            <tr>
+                <td>
+                    <a href="{{ schedule.urlAdmin() }}">
+                        {{ schedule.name }}
+                    </a>
+                </td>
+                <td>
+                    {{ schedule.deprecated }}
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endmacro %}

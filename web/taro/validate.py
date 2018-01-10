@@ -9,6 +9,8 @@ import re
 import six
 import yaml
 
+from taro.util import timeutil
+
 class Validator(object):
     """
         Validate and/or manipulate a single value.
@@ -172,10 +174,18 @@ class ParseBool(Validator):
         else:
             return value not in ("FALSE", "NO", "0", False, None)
 
-class ParseDatetimeSmart(Validator):
+class ParseDateTime(Validator):
 
-    def transform(self, value):
-        return dateutil.parser.parse(value)
+    def transform(self, value, convert=True):
+        dt = dateutil.parser.parse(value)
+        if convert:
+            dt = timeutil.tzConv(
+                dt,
+                fromZone=timeutil.DEFAULT_LOCAL_ZONE,
+                toZone=timeutil.DEFAULT_NAIVE_ZONE,
+                naive=True
+            )
+        return dt
 
 class ParseFloat(Validator):
     """

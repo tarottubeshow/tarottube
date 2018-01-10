@@ -42,6 +42,7 @@
                     <ul class="navigation">
                         <li><a href="/admin/"><i class="zmdi zmdi-home"></i>Home</a></li>
                         <li><a href="/admin/schedules"><i class="zmdi zmdi-home"></i>Schedules</a></li>
+                        <li><a href="/admin/past-timeslots/"><i class="zmdi zmdi-home"></i>Past Timeslots</a></li>
 
                         <!--<li class="navigation__sub">
                             <a href=""><i class="zmdi zmdi-view-week"></i> Variants</a>
@@ -73,10 +74,23 @@
             </div>
 
             <section class="content">
-                <div class="content__inner">
-                    {% block content %}
-                    {% endblock %}
-                </div>
+
+                {% if breadcrumbs %}
+                    <nav aria-label="breadcrumb" role="navigation">
+                        <ol class="breadcrumb">
+                            {% for (url, label) in breadcrumbs %}
+                                <li class="breadcrumb-item">
+                                    <a href="{{ url }}">
+                                        {{ label }}
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ol>
+                    </nav>
+                {% endif %}
+
+                {% block content %}
+                {% endblock %}
 
             </section>
         </main>

@@ -1,0 +1,25 @@
+{% macro render(timeslots) %}
+
+<table class="table mb-0">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Time</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for timeslot in timeslots %}
+            <tr>
+
+                <td>
+                    <a href="{{ timeslot.urlAdmin() }}">
+                        {{ timeslot.name }}
+                    </a>
+                </td>
+                <td>{{ humanDateTime(timeslot.time) }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endmacro %}
