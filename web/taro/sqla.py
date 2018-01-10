@@ -15,6 +15,7 @@ from taro.config import CONFIG
 from taro.util import iterutil
 from taro.util import metautil
 
+CONNECT_STRING = "postgresql://postgres@taro-db/postgres"
 SESSION_MAKER_LOCK = threading.RLock()
 
 class BaseModel(object):
@@ -167,7 +168,7 @@ class BaseModel(object):
 
     @classmethod
     def _getDefaultConnectArgs(cls):
-        sqlConnect = iterutil.safe(CONFIG, 'sqlalchemy', 'connect')
+        sqlConnect = CONNECT_STRING
         if sqlConnect.startswith('postgresql'):
             kwargs = {
                 'pool_size': 0,

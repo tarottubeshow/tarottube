@@ -38,7 +38,7 @@ def getUwsgiArgs():
 def runMigrations():
     print("HEY IM RUNNING MIGRATIONS NOW, COOL?")
     subprocess.check_call(
-        ['alembic', 'upgrade', 'head'],
+        ['/usr/local/bin/alembic', 'upgrade', 'head'],
         cwd='/opt/repo/web',
     )
 
