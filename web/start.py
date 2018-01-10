@@ -35,6 +35,13 @@ def getUwsgiArgs():
 
     return args
 
+def runMigrations():
+    print("HEY IM RUNNING MIGRATIONS NOW, COOL?")
+    subprocess.check_call(
+        ['alembic', 'upgrade', 'head'],
+        cwd='/opt/repo/web',
+    )
+
 def startAll():
     print(UWSGI_CONF['mode'])
     if UWSGI_CONF['mode'] == 'nginx':
@@ -63,4 +70,5 @@ def startUwsgi():
     subprocess.check_call(uwsgiArgs)
 
 if __name__ == '__main__':
+    runMigrations()
     startAll()

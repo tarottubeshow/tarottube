@@ -25,3 +25,6 @@ def root():
     )
 
 import taro.admin
+
+import taro.sqla
+taro.sqla.augmentApp(APP)

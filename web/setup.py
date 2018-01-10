@@ -25,5 +25,8 @@ setup(
     install_requires=[
         'flask',
         'pyyaml',
+        'SQLAlchemy',
+        'psycopg2',
+        'alembic',
     ],
 )
