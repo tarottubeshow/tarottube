@@ -6,6 +6,7 @@ services:
       dockerfile: ./web/Dockerfile
     volumes:
     - ./config.yaml:/opt/repo/config.yaml
+    - ./.htpasswd:/opt/repo/.htpasswd
     - ./ffmpeg.log:/opt/repo/ffmpeg.log
     - ./mount/frags:/opt/mount/frags
     ports:
