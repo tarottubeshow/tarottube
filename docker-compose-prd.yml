@@ -7,18 +7,26 @@ services:
     volumes:
     - ./config.yaml:/opt/repo/config.yaml
     - ./.htpasswd:/opt/repo/.htpasswd
-    - ./ffmpeg.log:/opt/repo/ffmpeg.log
     - ./mount/frags:/opt/mount/frags
     ports:
     - 80:80
     - 443:443
-    - 1935:1935
     environment:
       TARO_ENV: prd
     links:
     - postgres:taro-db
     depends_on:
     - 'postgres'
+    restart: always
+  rtmp:
+    build:
+      context: .
+      dockerfile: ./web/rtmp.Dockerfile
+    volumes:
+    - ./ffmpeg.log:/opt/repo/ffmpeg.log
+    - ./mount/frags:/opt/mount/frags
+    ports:
+    - 1935:1935
     restart: always
   postgres:
     image: "postgres"

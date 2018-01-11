@@ -6,6 +6,8 @@ from taro.config import CONFIG
 
 NGINX_CONF = CONFIG['nginx']
 UWSGI_CONF = CONFIG['uwsgi']
+RESOURCE_DIR = '/opt/repo/web/resource'
+FRAGS_DIR = '/opt/mount/frags'
 
 def getUwsgiArgs():
     args = [
@@ -27,6 +29,9 @@ def getUwsgiArgs():
     if UWSGI_CONF['mode'] == 'local':
         args += [
             '--http', ':80',
+            '--static-map', ('/resource=%s' % RESOURCE_DIR),
+            '--static-map', ('/frags=%s' % FRAGS_DIR),
+            '--static-safe', '/opt/repo',
         ]
     elif UWSGI_CONF['mode'] == 'nginx':
         args += [
@@ -55,7 +60,7 @@ def startNginx():
 
     conf = template.render(
         conf=NGINX_CONF,
-        resourceDir='/opt/repo/web/resource',
+        resourceDir=RESOURCE_DIR,
     )
     print(conf)
 
