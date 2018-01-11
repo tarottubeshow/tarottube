@@ -1,6 +1,5 @@
 import datetime
 import flask
-import uuid
 
 import taro.validate as val
 import taro.requestValidate as rval
@@ -46,7 +45,12 @@ def getSchedule(id):
 def saveSchedule(id):
     schedule = _getSchedule(id)
     schedule.name = rval.get('name', val.Required())
+    schedule.spec = rval.get('spec', val.Required())
     schedule.put(True)
+
+    if rval.get('regenerate', val.ParseBool()) or (id == 'new'):
+        schedule.generateTimeslots(force=True)
+
     return flask.redirect(schedule.urlAdmin())
 
 def _getSchedule(id):
@@ -93,9 +97,6 @@ def pastTimeslots():
 
 def _getTimeslot(id):
     if id == 'new':
-        return Timeslot(
-            time=datetime.datetime.now() + datetime.timedelta(hours=1),
-            stream_key=str(uuid.uuid4()),
-        )
+        return Timeslot.new()
     else:
         return Timeslot.forId(int(id))

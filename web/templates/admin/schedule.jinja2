@@ -3,12 +3,16 @@
 {% extends 'admin/base.jinja2' %}
 
 {% block content %}
-<form method="POST">
+<form method="POST" class="schedule-editor">
     <div class="card">
         <div class="actions">
-            <button class="btn btn-link btn-clear">
-                <i class="actions__item zmdi zmdi-floppy"></i>
+            <button class="btn btn-link btn-clear" type="submit" name="regenerate" value="true">
+                <i class="actions__item zmdi zmdi-sun"></i>
             </button>
+
+            <button class="btn btn-link btn-clear" type="submit">
+                <i class="actions__item zmdi zmdi-floppy"></i>
+            </button>            
         </div>
 
         <div class="card-body">
@@ -16,6 +20,8 @@
 
             {{ form.text('name', schedule.name, "Schedule Name") }}
 
+            <h5>Schedule Spec:</h5>
+            <textarea name="spec" class="schedule-src">{{ schedule.spec or "" }}</textarea>
         </div>
     </div>
 </form>

@@ -13,11 +13,16 @@
         <link rel="stylesheet" href="{{ resource('/smartadmin/css/app.min.css') }}">
         <link rel="stylesheet" href="{{ resource('/admin.css') }}">
 
+        <link rel="stylesheet" href="{{ resource('/codemirror-5.33.0/lib/codemirror.css') }}">
+        <link rel="stylesheet" href="{{ resource('/codemirror-5.33.0/theme/blackboard.css') }}">
+        <script src="{{ resource('codemirror-5.33.0/lib/codemirror.js') }}"></script>
+        <script src="{{ resource('codemirror-5.33.0/mode/yaml/yaml.js') }}"></script>
+
         <title>{{ title or "Tarot Tube Admin" }}</title>
 
     </head>
 
-    <body data-sa-theme="1">
+    <body data-sa-theme="3">
         <main class="main">
             <header class="header">
                 <div class="navigation-trigger hidden-xl-up" data-sa-action="aside-open" data-sa-target=".sidebar">
@@ -58,21 +63,6 @@
                 </div>
             </aside>
 
-            <div class="themes">
-                <div class="scrollbar-inner">
-                    <a href="" class="themes__item active" data-sa-value="1"><img src="{{ resource('/smartadmin/img/bg/1.jpg') }}" alt=""></a>
-                    <a href="" class="themes__item" data-sa-value="2"><img src="{{ resource('/smartadmin/img/bg/2.jpg') }}" alt=""></a>
-                    <a href="" class="themes__item" data-sa-value="3"><img src="{{ resource('/smartadmin/img/bg/3.jpg') }}" alt=""></a>
-                    <a href="" class="themes__item" data-sa-value="4"><img src="{{ resource('/smartadmin/img/bg/4.jpg') }}" alt=""></a>
-                    <a href="" class="themes__item" data-sa-value="5"><img src="{{ resource('/smartadmin/img/bg/5.jpg') }}" alt=""></a>
-                    <a href="" class="themes__item" data-sa-value="6"><img src="{{ resource('/smartadmin/img/bg/6.jpg') }}" alt=""></a>
-                    <a href="" class="themes__item" data-sa-value="7"><img src="{{ resource('/smartadmin/img/bg/7.jpg') }}" alt=""></a>
-                    <a href="" class="themes__item" data-sa-value="8"><img src="{{ resource('/smartadmin/img/bg/8.jpg') }}" alt=""></a>
-                    <a href="" class="themes__item" data-sa-value="9"><img src="{{ resource('/smartadmin/img/bg/9.jpg') }}" alt=""></a>
-                    <a href="" class="themes__item" data-sa-value="10"><img src="{{ resource('/smartadmin/img/bg/10.jpg') }}" alt=""></a>
-                </div>
-            </div>
-
             <section class="content">
 
                 {% if breadcrumbs %}
@@ -97,12 +87,13 @@
 
         <!-- Javascript -->
         <!-- Vendors -->
-        <script src="{{ resource('/smartadmin/vendors/bower_components/jquery/dist/jquery.min.js') }}"></script>
+        <script src="{{ resource('/jquery.3.2.1.min.js') }}"></script>
         <script src="{{ resource('/smartadmin/vendors/bower_components/popper.js/dist/umd/popper.min.js') }}"></script>
         <script src="{{ resource('/smartadmin/vendors/bower_components/bootstrap/dist/js/bootstrap.min.js') }}"></script>
         <script src="{{ resource('/smartadmin/vendors/bower_components/jquery.scrollbar/jquery.scrollbar.min.js') }}"></script>
         <script src="{{ resource('/smartadmin/vendors/bower_components/jquery-scrollLock/jquery-scrollLock.min.js') }}"></script>
 
         <script src="{{ resource('/smartadmin/js/app.min.js') }}"></script>
+        <script src="{{ resource('/main.js') }}"></script>
     </body>
 </html>
