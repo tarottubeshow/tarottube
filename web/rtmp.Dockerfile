@@ -32,5 +32,6 @@ RUN apt-get -y update &&\
 EXPOSE 1935
 
 COPY ./web/nginx/rtmp.conf /etc/nginx/nginx.conf
+COPY ./encode.sh /opt/repo/encode.sh
 
 CMD ["nginx", "-g", "daemon off;"]
