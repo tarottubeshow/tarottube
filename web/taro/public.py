@@ -6,6 +6,7 @@ import taro.requestValidate as rval
 from taro import firebase
 from taro.app import APP
 from taro.models import *
+from taro.config import CONFIG
 
 @APP.route('/')
 def root():
@@ -18,6 +19,5 @@ def root():
 @APP.route('/test/')
 def test():
     fbdb = firebase.get()
-    result = fbdb.child('test').get()
-    print(result.val())
+    result = fbdb.child('test').push('ok')
     return "OK"
