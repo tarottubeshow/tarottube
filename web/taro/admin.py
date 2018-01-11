@@ -62,11 +62,13 @@ def _getSchedule(id):
 @APP.route('/admin/timeslots/<id>/')
 def getTimeslot(id):
     timeslot = _getTimeslot(id)
+    events = TimeslotEvent.forTimeslot(timeslot)
     return flask.render_template(
         'admin/timeslot.jinja2',
         title="Edit Timeslot",
         timeslot=timeslot,
         breadcrumbs=timeslot.breadcrumbs(),
+        events=events,
     )
 
 @APP.route('/admin/timeslots/<id>/', methods=['POST'])
@@ -79,6 +81,7 @@ def saveTimeslot(id):
         val.Required(),
     )
     timeslot.stream_key = rval.get('stream_key')
+    timeslot.secret_key = rval.get('secret_key')
     timeslot.put(True)
     return flask.redirect(timeslot.urlAdmin())
 

@@ -96,6 +96,7 @@ class Timeslot(sqla.BaseModel):
     name = sa.Column('name', sa.String)
     time = sa.Column('time', sa.DateTime)
     unique_key = sa.Column('unique_key', sa.String)
+    secret_key = sa.Column('secret_key', sa.String)
     stream_key = sa.Column('stream_key', sa.String)
 
     schedule_id = sa.Column('schedule_id', sa.Integer,
@@ -103,9 +104,16 @@ class Timeslot(sqla.BaseModel):
     schedule = sao.relationship('Schedule')
 
     @classmethod
+    def forStreamKey(self, key):
+        return Timeslot.query()\
+            .filter(Timeslot.stream_key == key)\
+            .first()
+
+    @classmethod
     def new(self):
         return Timeslot(
             time=datetime.datetime.now() + datetime.timedelta(hours=1),
+            secret_key=str(uuid.uuid4()),
             stream_key=str(uuid.uuid4()),
         )
 
@@ -128,3 +136,24 @@ class Timeslot(sqla.BaseModel):
 
     def urlAdmin(self):
         return '/admin/timeslots/%s/' % (self.id or 'new')
+
+class TimeslotEvent(sqla.BaseModel):
+
+    __tablename__ = 'timeslot_event'
+
+    id = sa.Column('id', sa.Integer, primary_key=True)
+    payload = sa.Column('payload', sa.PickleType())
+    time = sa.Column('time', sa.DateTime)
+    type = sa.Column('type', sa.String)
+    quality = sa.Column('quality', sa.String)
+
+    timeslot_id = sa.Column('timeslot_id', sa.Integer,
+        sa.ForeignKey('timeslot.id'))
+    timeslot = sao.relationship('Timeslot')
+
+    @classmethod
+    def forTimeslot(self, timeslot):
+        return TimeslotEvent.query()\
+            .filter(TimeslotEvent.timeslot == timeslot)\
+            .order_by(TimeslotEvent.time.desc())\
+            .all()

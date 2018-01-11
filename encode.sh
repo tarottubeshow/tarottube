@@ -1,5 +1,5 @@
 #!/bin/bash
-ffmpeg -re -i rtmp://localhost:1935/src/$1\
+exec ffmpeg -i rtmp://localhost:1935/src/$1\
     -c:a copy -c:v libx264\
     -tune:v zerolatency -preset:v ultrafast\
     -b:v 128k\

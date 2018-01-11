@@ -1,0 +1,22 @@
+{% macro render(events) %}
+
+<table class="table mb-0">
+    <thead>
+        <tr>
+            <th>Time</th>
+            <th>Quality</th>
+            <th>Event</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for event in events %}
+            <tr>
+                <td>{{ event.time }}</td>
+                <td>{{ event.quality }}</td>
+                <td>{{ event.type }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endmacro %}

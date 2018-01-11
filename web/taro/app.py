@@ -19,6 +19,7 @@ def init():
     APP.jinja_env.globals.update(taro.templating.GLOBALS)
 
     import taro.admin
+    import taro.hook
     import taro.public
 
     import taro.sqla

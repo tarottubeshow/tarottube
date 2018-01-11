@@ -1,4 +1,5 @@
 {% import 'admin/form.jinja2' as form %}
+{% import 'admin/timeslotEventTable.jinja2' as timeslotEventTable %}
 
 {% extends 'admin/base.jinja2' %}
 
@@ -18,10 +19,21 @@
             {{ form.text('name', timeslot.name, "Timeslot Name") }}
             {{ form.text('time', computerDateTime(timeslot.time), "Time",
                 type="datetime-local") }}
-            {{ form.text('stream_key', timeslot.stream_key, "Stream Key") }}
-
+            {{ form.text('secret_key', timeslot.secret_key,
+                "Secret Key", readonly=True) }}
+            {{ form.text('stream_key', timeslot.stream_key,
+                "Stream Key", readonly=True) }}
         </div>
     </div>
 </form>
+
+{% if timeslot.id %}
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">Timeslot Events</h4>
+            {{ timeslotEventTable.render(events) }}
+        </div>
+    </div>
+{% endif %}
 
 {% endblock %}

@@ -27,6 +27,8 @@ services:
     ports:
     - 1935:1935
     restart: always
+    links:
+    - web:web
   postgres:
     image: "postgres"
     volumes:

@@ -1,4 +1,10 @@
-{% macro text(name, value, label, type="text") %}
+{% macro text(
+    name,
+    value,
+    label,
+    type="text",
+    readonly=False
+) %}
     <div class="form-group">
         <label for="{{ name }}">{{ label }}</label>
         <input
@@ -8,6 +14,7 @@
             name="{{ name }}"
             id="{{ name }}"
             value="{{ value or '' }}"
+            {% if readonly %}readonly{% endif %}
         />
         <i class="form-group__bar"></i>
     </div>
