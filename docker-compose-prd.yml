@@ -30,3 +30,5 @@ services:
     restart: always
   postgres:
     image: "postgres"
+    volumes:
+    - ./mount/db:/var/lib/postgresql/data

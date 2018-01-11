@@ -24,6 +24,7 @@ def getUwsgiArgs():
     if UWSGI_CONF['watchFiles']:
         args += [
             '--py-autoreload', '1',
+            '--worker-reload-mercy', '0',
         ]
 
     if UWSGI_CONF['mode'] == 'local':

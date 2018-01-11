@@ -30,5 +30,7 @@ setup(
         'alembic',
         'tzlocal',
         'pytz',
+        'pyrebase',
+        'requests',
     ],
 )

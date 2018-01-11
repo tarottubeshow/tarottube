@@ -18,15 +18,8 @@ def init():
     )
     APP.jinja_env.globals.update(taro.templating.GLOBALS)
 
-    @APP.route('/')
-    def root():
-        return flask.render_template(
-            'player.jinja2',
-            url=CONFIG['url'],
-            name=flask.request.values.get('name'),
-        )
-
     import taro.admin
+    import taro.public
 
     import taro.sqla
     taro.sqla.augmentApp(APP)

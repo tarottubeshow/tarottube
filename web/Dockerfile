@@ -2,14 +2,22 @@ FROM ubuntu
 
 RUN apt-get -y update &&\
     apt-get install -y\
+        build-essential\
+        locales
+
+RUN apt-get -y update &&\
+    apt-get install -y\
         python3\
         python3-pip\
-        nginx\
-        build-essential
+        nginx
+
+ENV LANG C.UTF-8
+
+RUN pip3 install --upgrade pip
 
 RUN pip3 install uwsgi
 
-EXPOSE 80
+EXPOSE 80 443
 
 COPY ./ /opt/repo
 
