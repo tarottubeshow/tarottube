@@ -19,6 +19,8 @@
             {{ form.text('name', timeslot.name, "Timeslot Name") }}
             {{ form.text('time', computerDateTime(timeslot.time), "Time",
                 type="datetime-local") }}
+            {{ form.text('duration', timeslot.duration, "Duration",
+                type='number', step=1) }}
             {{ form.text('secret_key', timeslot.secret_key,
                 "Secret Key", readonly=True) }}
             {{ form.text('stream_key', timeslot.stream_key,

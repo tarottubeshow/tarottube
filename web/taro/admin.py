@@ -10,7 +10,7 @@ from taro.models import *
 @APP.route('/admin/')
 def adminRoot():
     timeslots = Timeslot.query()\
-        .filter(Timeslot.time > datetime.datetime.now())\
+        .filter(Timeslot.end_time > datetime.datetime.now())\
         .order_by(Timeslot.time)\
         .limit(20)\
         .all()
@@ -45,6 +45,7 @@ def getSchedule(id):
 def saveSchedule(id):
     schedule = _getSchedule(id)
     schedule.name = rval.get('name', val.Required())
+    schedule.duration = rval.get('duration', val.ParseInt(), val.Required())
     schedule.spec = rval.get('spec', val.Required())
     schedule.put(True)
 
@@ -55,7 +56,10 @@ def saveSchedule(id):
 
 def _getSchedule(id):
     if id == 'new':
-        return Schedule()
+        return Schedule(
+            duration=30,
+            spec=DEFAULT_SCHEDULE_SPEC,
+        )
     else:
         return Schedule.forId(int(id))
 
@@ -80,6 +84,11 @@ def saveTimeslot(id):
         val.ParseDateTime(),
         val.Required(),
     )
+    timeslot.duration = rval.get(
+        'duration',
+        val.ParseInt(),
+        val.Required(),
+    )
     timeslot.stream_key = rval.get('stream_key')
     timeslot.secret_key = rval.get('secret_key')
     timeslot.put(True)
@@ -88,7 +97,7 @@ def saveTimeslot(id):
 @APP.route('/admin/past-timeslots/')
 def pastTimeslots():
     query = Timeslot.query()\
-        .filter(Timeslot.time < datetime.datetime.now())\
+        .filter(Timeslot.end_time < datetime.datetime.now())\
         .order_by(Timeslot.time.desc())
     page = sqla.paginate(query)
     return flask.render_template(
@@ -103,3 +112,8 @@ def _getTimeslot(id):
         return Timeslot.new()
     else:
         return Timeslot.forId(int(id))
+
+DEFAULT_SCHEDULE_SPEC = """
+type: daily
+time: "09:00"
+""".strip()

@@ -12,13 +12,15 @@
 
             <button class="btn btn-link btn-clear" type="submit">
                 <i class="actions__item zmdi zmdi-floppy"></i>
-            </button>            
+            </button>
         </div>
 
         <div class="card-body">
             <h4 class="card-title">Schedule Details</h4>
 
             {{ form.text('name', schedule.name, "Schedule Name") }}
+            {{ form.text('duration', schedule.duration, "Duration",
+                type='number', step=1) }}
 
             <h5>Schedule Spec:</h5>
             <textarea name="spec" class="schedule-src">{{ schedule.spec or "" }}</textarea>

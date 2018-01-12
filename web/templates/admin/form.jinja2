@@ -3,7 +3,8 @@
     value,
     label,
     type="text",
-    readonly=False
+    readonly=False,
+    step=None
 ) %}
     <div class="form-group">
         <label for="{{ name }}">{{ label }}</label>
@@ -15,6 +16,7 @@
             id="{{ name }}"
             value="{{ value or '' }}"
             {% if readonly %}readonly{% endif %}
+            step="{{ step }}"
         />
         <i class="form-group__bar"></i>
     </div>

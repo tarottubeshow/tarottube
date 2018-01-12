@@ -5,6 +5,7 @@ import yaml
 import sqlalchemy as sa
 import sqlalchemy.orm as sao
 
+from taro import firebase
 from taro import sqla
 from taro.util import timeutil
 
@@ -26,6 +27,7 @@ class Schedule(sqla.BaseModel):
     __tablename__ = 'schedule'
 
     id = sa.Column('id', sa.Integer, primary_key=True)
+    duration = sa.Column('duration', sa.Integer)
     name = sa.Column('name', sa.String)
     spec = sa.Column('spec', sa.Text)
     deprecated = sa.Column('deprecated', sa.Boolean)
@@ -54,9 +56,18 @@ class Schedule(sqla.BaseModel):
 
             timeslot.time = time['time']
             timeslot.name = time['name']
+            timeslot.duration = self.duration
             timeslot.unique_key = time['key']
             timeslot.schedule = self
             timeslot.put()
+
+    def getJson(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'duration': self.duration,
+            'spec': self.spec,
+        }
 
     def urlAdmin(self):
         return '/admin/schedules/%s/' % (self.id or 'new')
@@ -93,6 +104,8 @@ class Timeslot(sqla.BaseModel):
     __tablename__ = 'timeslot'
 
     id = sa.Column('id', sa.Integer, primary_key=True)
+    duration = sa.Column('duration', sa.Integer)
+    end_time = sa.Column('end_time', sa.DateTime)
     name = sa.Column('name', sa.String)
     playlists = sa.Column('playlists', sa.PickleType)
     secret_key = sa.Column('secret_key', sa.String)
@@ -114,6 +127,7 @@ class Timeslot(sqla.BaseModel):
     def new(self):
         return Timeslot(
             time=datetime.datetime.now() + datetime.timedelta(hours=1),
+            duration=30,
             secret_key=str(uuid.uuid4()),
             stream_key=str(uuid.uuid4()),
         )
@@ -135,6 +149,24 @@ class Timeslot(sqla.BaseModel):
         )]
         return bc
 
+    def getJson(self):
+        return {
+            'id': self.id,
+            'duration': self.duration,
+            'time': timeutil.epochify(self.time),
+            'end_time': timeutil.epochify(self.end_time),
+            'name': self.name,
+            'playlists': self.playlists,
+            'stream_key': self.stream_key,
+            'unique_key': self.unique_key,
+            'schedule': self.schedule.getJson() if self.schedule else None,
+        }
+
+    def onSync(self):
+        self.end_time = self.time + datetime.timedelta(minutes=self.duration)
+        fbdb = firebase.get()
+        fbdb.child("timeslots").child(self.stream_key).set(self.getJson())
+
     def putPlaylist(self, type, quality, value):
         playlists = dict(self.playlists or {})
         playlists[(type, quality)] = value
@@ -142,6 +174,11 @@ class Timeslot(sqla.BaseModel):
 
     def urlAdmin(self):
         return '/admin/timeslots/%s/' % (self.id or 'new')
+
+@sa.event.listens_for(Timeslot, 'before_insert')
+@sa.event.listens_for(Timeslot, 'before_update')
+def onTimeslotSync(mapper, connection, target):
+    target.onSync()
 
 class TimeslotEvent(sqla.BaseModel):
 

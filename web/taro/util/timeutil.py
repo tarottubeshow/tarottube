@@ -2,6 +2,7 @@ import datetime
 import tzlocal
 import math
 import dateutil
+import time
 from dateutil import relativedelta
 
 from pytz import timezone
@@ -160,3 +161,10 @@ def sameTimeLastMonth(
         toZone=toZone,
         naive=naive,
     )
+
+def deepochify(sec):
+    return datetime.datetime.fromtimestamp(sec)
+
+def epochify(dt):
+    if dt is not None:
+        return int(time.mktime(dt.timetuple()))
