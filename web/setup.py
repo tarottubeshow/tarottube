@@ -32,5 +32,6 @@ setup(
         'pytz',
         'pyrebase',
         'requests',
+        'watchdog',
     ],
 )

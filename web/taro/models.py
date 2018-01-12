@@ -94,10 +94,11 @@ class Timeslot(sqla.BaseModel):
 
     id = sa.Column('id', sa.Integer, primary_key=True)
     name = sa.Column('name', sa.String)
-    time = sa.Column('time', sa.DateTime)
-    unique_key = sa.Column('unique_key', sa.String)
+    playlists = sa.Column('playlists', sa.PickleType)
     secret_key = sa.Column('secret_key', sa.String)
     stream_key = sa.Column('stream_key', sa.String)
+    time = sa.Column('time', sa.DateTime)
+    unique_key = sa.Column('unique_key', sa.String)
 
     schedule_id = sa.Column('schedule_id', sa.Integer,
         sa.ForeignKey('schedule.id'))
@@ -133,6 +134,11 @@ class Timeslot(sqla.BaseModel):
             self.name or "New Timeslot",
         )]
         return bc
+
+    def putPlaylist(self, type, quality, value):
+        playlists = dict(self.playlists or {})
+        playlists[(type, quality)] = value
+        self.playlists = playlists
 
     def urlAdmin(self):
         return '/admin/timeslots/%s/' % (self.id or 'new')
