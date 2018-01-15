@@ -1,8 +1,13 @@
+import Schedule from 'taro/models/Schedule'
+import Timeslot from 'taro/models/Timeslot'
+
 const MODEL_SPECS = [
-  // {
-  //   cls: Lead,
-  //   api: LEAD_API.get,
-  // },
+  {
+    cls: Schedule,
+  },
+  {
+    cls: Timeslot,
+  },
 ]
 
 const makeModelSpecMap = (specs) => {

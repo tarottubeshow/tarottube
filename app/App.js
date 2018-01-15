@@ -5,6 +5,8 @@ import reducers from 'taro/reducers'
 
 import buildMain from 'taro/components/Main'
 
+require('./config.js')
+
 const Main = buildMain({
   reducers,
   middlewares,

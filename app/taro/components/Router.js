@@ -1,33 +1,33 @@
 import React, { Component } from 'react'
+import PropTypes from 'prop-types'
+import { connect as reduxConnect } from 'react-redux'
 
-import { View } from 'react-native'
+import ActiveTimeslotSelector from 'taro/components/ActiveTimeslotSelector'
 
-import { Video } from 'expo'
+import { applyHocs } from 'taro/util/metautil'
 
-class Router extends Component {
+class RouterView extends Component {
 
   static propTypes = {
-  }
-
-  onPlaybackStatusUpdate = (v) => {
-    console.log(v)
+    route: PropTypes.object,
   }
 
   render = () => {
-    return <Video
-      source={{uri: "http://tarottube.com/frags/hls/live09.m3u8"}}
-      rate={1.0}
-      volume={1.0}
-      shouldPlay
-      resizeMode={Video.RESIZE_MODE_COVER}
-      onPlaybackStatusUpdate={this.onPlaybackStatusUpdate}
-      style={{
-        width: "100%",
-        height: "100%",
-      }}
-    />
+    // TODO: other routes
+    return <ActiveTimeslotSelector />
   }
 
 }
+
+const Router = applyHocs(
+  RouterView,
+  reduxConnect(
+    (state, props) => ({
+      route: state.Router,
+    }),
+    (dispatch, props) => ({
+    }),
+  ),
+)
 
 export default Router

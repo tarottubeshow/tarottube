@@ -67,6 +67,16 @@ export function errorAsPromiseState(reason) {
   }
 }
 
+export function hasValueAsPromiseState(value) {
+  const isReady = (value != null)
+  return {
+    settled: isReady,
+    rejected: false,
+    fulfilled: isReady,
+    value: isReady,
+  }
+}
+
 export function readyBoolAsPromiseState(isReady) {
   return {
     settled: isReady,

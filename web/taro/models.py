@@ -153,8 +153,8 @@ class Timeslot(sqla.BaseModel):
         return {
             'id': self.id,
             'duration': self.duration,
-            'time': timeutil.epochify(self.time),
-            'end_time': timeutil.epochify(self.end_time),
+            'time': str(self.time),
+            'end_time': str(self.end_time),
             'name': self.name,
             'playlists': self.playlists,
             'stream_key': self.stream_key,

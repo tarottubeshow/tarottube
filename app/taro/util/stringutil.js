@@ -6,3 +6,8 @@ export function forceString(obj) {
   }
   return JSON.stringify(obj)
 }
+
+export function zfill(number, width) {
+  var pad = new Array(1 + width).join('0');
+  return (pad + number).slice(-pad.length);
+}
