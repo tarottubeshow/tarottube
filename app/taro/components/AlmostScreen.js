@@ -1,25 +1,17 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import moment from 'moment'
-import { connect as reduxConnect } from 'react-redux'
 
-import { Image, StyleSheet, Text, View } from 'react-native'
+import { Image, StyleSheet, Text, View  } from 'react-native'
 
 import COLORS from 'taro/colors'
-import Timer from 'taro/components/Timer'
-import { applyHocs } from 'taro/util/metautil'
 
-class WaitingScreen extends Component {
+class AlmostScreen extends Component {
 
   static propTypes = {
-    timeslot: PropTypes.object,
+
   }
 
   render = () => {
-    const {
-      timeslot,
-    } = this.props
-
     return (
       <View style={ styles.parent }>
         <Image
@@ -27,15 +19,10 @@ class WaitingScreen extends Component {
           source={require('img/logo_long_blue_red.png')}
         />
         <Text style={ styles.heading }>
-          Next Reading
-        </Text>
-        <Timer time={ timeslot.getStartTime() } />
-        <Text style={ styles.timerDetail }>
-          ({ timeslot.getStartTime().calendar() })
+          The Read Will Begin Shortly
         </Text>
       </View>
     )
-
   }
 
 }
@@ -54,11 +41,6 @@ const styles = StyleSheet.create({
     fontSize: 24,
     marginBottom: 10,
   },
-  timerDetail: {
-    color: COLORS.orange,
-    fontSize: 18,
-    marginTop: 10,
-  },
   logo: {
     width: 260,
     height: 43,
@@ -66,4 +48,4 @@ const styles = StyleSheet.create({
   },
 })
 
-export default WaitingScreen
+export default AlmostScreen

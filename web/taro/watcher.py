@@ -1,3 +1,4 @@
+import re
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
@@ -41,7 +42,10 @@ class M3u8Handler(FileSystemEventHandler):
                         (key, quality) = parts
 
                     timeslot = Timeslot.forStreamKey(key)
-                    timeslot.putPlaylist('m3u8', quality, m3u8Contents)
+                    timeslot.putPlaylist('m3u8', quality, {
+                        'src': m3u8Contents,
+                        'duration': self.computeM3u8Duration(m3u8Contents),
+                    })
 
                     TimeslotEvent(
                         timeslot=timeslot,
@@ -52,6 +56,14 @@ class M3u8Handler(FileSystemEventHandler):
                             'contents': m3u8Contents,
                         },
                     ).put()
+
+    def computeM3u8Duration(self, m3u8Contents):
+        total = 0.0
+        for line in m3u8Contents.split('\n'):
+            match = re.match(r'#EXTINF:([0-9.]+)', line)
+            if match:
+                total += float(match.group(1))
+        return total
 
 
 def startWatchers():

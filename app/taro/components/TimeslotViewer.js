@@ -5,6 +5,8 @@ import { connect as reduxConnect } from 'react-redux'
 import { Text } from 'react-native'
 
 import { applyHocs } from 'taro/util/metautil'
+import AlmostScreen from 'taro/components/AlmostScreen'
+import LiveVideoPlayer from 'taro/components/LiveVideoPlayer'
 import WaitingScreen from 'taro/components/WaitingScreen'
 
 const QUALITY = 'high' // TODO: how to choose appropriate quality
@@ -17,26 +19,44 @@ class TimeslotViewerView extends Component {
     timeslotKey: PropTypes.string,
   }
 
+  state = {
+    complete: false,
+  }
+
+  onFinish = () => {
+    this.setState({
+      complete: true,
+    })
+  }
+
   render = () => {
     const {
       time,
       timeslot,
     } = this.props
+    const {
+      complete,
+    } = this.state
 
     if(timeslot.getStartTime() > time) {
       return (
         <WaitingScreen
-          timeslotKey={ timeslot.stream_key }
+          timeslot={ timeslot }
         />
       )
     } else if(!timeslot.isReady(QUALITY)) {
       return (
-        <Text>ALMOST</Text>
+        <AlmostScreen />
+      )
+    } else if(!complete) {
+      return (
+        <LiveVideoPlayer
+          timeslot={ timeslot }
+          onFinish={ this.onFinish }
+        />
       )
     } else {
-      return (
-        <Text>READY</Text>
-      )
+      return <Text>COMPLETE</Text>
     }
 
 

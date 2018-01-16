@@ -25,6 +25,9 @@
                 "Secret Key", readonly=True) }}
             {{ form.text('stream_key', timeslot.stream_key,
                 "Stream Key", readonly=True) }}
+            {{ form.text('connect_string',
+                '%s?secret_key=%s' % (timeslot.stream_key, timeslot.secret_key),
+                "Connect String", readonly=True) }}
         </div>
     </div>
 </form>

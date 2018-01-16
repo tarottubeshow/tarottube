@@ -169,7 +169,7 @@ class Timeslot(sqla.BaseModel):
 
     def putPlaylist(self, type, quality, value):
         playlists = dict(self.playlists or {})
-        playlists[(type, quality)] = value
+        playlists["%s:%s" % (type, quality)] = value
         self.playlists = playlists
 
     def urlAdmin(self):

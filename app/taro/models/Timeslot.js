@@ -1,5 +1,6 @@
 import BaseModel from 'taro/models/BaseModel'
 import Schedule from 'taro/models/Schedule'
+import { reach } from 'taro/util/metautil'
 
 class Timeslot extends BaseModel {
 
@@ -42,10 +43,27 @@ class Timeslot extends BaseModel {
     return this._parseTime(this.end_time)
   }
 
-  isReady = (quality) => {
-    if(this.playlists == null) {
-      return false
+  getDuration = (quality) => {
+    return reach(this.playlists, [`m3u8:${ quality }`, 'duration'])
+  }
+
+  getUri = (quality) => {
+    let qualitySuffix
+    if(quality !== 'high') {
+      qualitySuffix = `_${ quality }`
+    } else {
+      qualitySuffix = ''
     }
+    return `${ global.CONFIG.URL.HLS }/${ this.stream_key }${ qualitySuffix }.m3u8`
+  }
+
+  isReady = (quality) => {
+    const playlist = reach(this.playlists, [`m3u8:${ quality }`])
+    return playlist != null
+  }
+
+  isStreaming = (quality) => {
+    return reach(this.playlists, [`rtmp:${ quality }`, 'streaming'])
   }
 
 }

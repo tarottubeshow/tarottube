@@ -45,14 +45,16 @@ def onRtmpEvent():
 
 def handleStart(timeslot, quality):
     if quality == 'high':
-        url = rval.get('swfurl')
-        parsed = urlparse(url)
-        data = parse_qs(parsed.query)
-        if data['key'][0] != timeslot.secret_key:
+        secretKey = rval.get('secret_key')
+        if secretKey != timeslot.secret_key:
             flask.abort(401)
     else:
         if rval.get('addr') != '127.0.0.1':
             flask.abort(401)
+
+    timeslot.putPlaylist('rtmp', quality, {
+        'streaming': True,
+    })
 
     return 'start', None
 
@@ -63,6 +65,10 @@ def handleUpdate(timeslot, quality):
     }
 
 def handleDone(timeslot, quality):
+    timeslot.putPlaylist('rtmp', quality, {
+        'streaming': False,
+    })
+
     return 'done', None
 
 HANDLERS = {
