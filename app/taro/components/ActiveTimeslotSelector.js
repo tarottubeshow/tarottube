@@ -38,7 +38,9 @@ class ActiveTimeslotSelectorView extends Component {
     const currentTimeslot = this.getCurrentTimeslot()
     return (
       <TimeslotViewer
-        timeslotKey={ currentTimeslot.stream_key }
+        key={ `timeslot=${ currentTimeslot.stream_key }` }
+        time={ time }
+        timeslot={ currentTimeslot }
       />
     )
   }

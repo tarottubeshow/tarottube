@@ -107,7 +107,6 @@ class Timeslot(sqla.BaseModel):
     duration = sa.Column('duration', sa.Integer)
     end_time = sa.Column('end_time', sa.DateTime)
     name = sa.Column('name', sa.String)
-    playlists = sa.Column('playlists', sa.PickleType)
     secret_key = sa.Column('secret_key', sa.String)
     stream_key = sa.Column('stream_key', sa.String)
     time = sa.Column('time', sa.DateTime)
@@ -156,7 +155,6 @@ class Timeslot(sqla.BaseModel):
             'time': str(self.time),
             'end_time': str(self.end_time),
             'name': self.name,
-            'playlists': self.playlists,
             'stream_key': self.stream_key,
             'unique_key': self.unique_key,
             'schedule': self.schedule.getJson() if self.schedule else None,
@@ -164,13 +162,12 @@ class Timeslot(sqla.BaseModel):
 
     def onSync(self):
         self.end_time = self.time + datetime.timedelta(minutes=self.duration)
-        fbdb = firebase.get()
+        fbdb = firebase.getShard()
         fbdb.child("timeslots").child(self.stream_key).set(self.getJson())
 
     def putPlaylist(self, type, quality, value):
-        playlists = dict(self.playlists or {})
-        playlists["%s:%s" % (type, quality)] = value
-        self.playlists = playlists
+        playlist = TimeslotPlaylist.get(self, quality, type)
+        playlist.payload = value
 
     def urlAdmin(self):
         return '/admin/timeslots/%s/' % (self.id or 'new')
@@ -200,3 +197,58 @@ class TimeslotEvent(sqla.BaseModel):
             .filter(TimeslotEvent.timeslot == timeslot)\
             .order_by(TimeslotEvent.time.desc())\
             .all()
+
+class TimeslotPlaylist(sqla.BaseModel):
+
+    __tablename__ = 'timeslot_playlist'
+
+    id = sa.Column('id', sa.Integer, primary_key=True)
+    quality = sa.Column('quality', sa.String)
+    type = sa.Column('type', sa.String)
+    payload = sa.Column('payload', sa.PickleType)
+
+    timeslot_id = sa.Column('timeslot_id', sa.Integer,
+        sa.ForeignKey('timeslot.id'))
+    timeslot = sao.relationship('Timeslot')
+
+    @classmethod
+    def get(cls, timeslot, quality, type):
+        existing = TimeslotPlaylist.query()\
+            .filter(TimeslotPlaylist.timeslot == timeslot)\
+            .filter(TimeslotPlaylist.quality == quality)\
+            .filter(TimeslotPlaylist.type == type)\
+            .first()
+        if existing:
+            return existing
+
+        playlist = TimeslotPlaylist(
+            timeslot=timeslot,
+            quality=quality,
+            type=type,
+        )
+        playlist.put()
+        return playlist
+
+    def onSync(self):
+        fbdb = firebase.getShard()
+        key = '%s:%s:%s' % (
+            self.timeslot.stream_key,
+            self.type,
+            self.quality,
+        )
+        fbdb.child("playlists")\
+            .child(key)\
+            .set(self.getJson())
+
+    def getJson(self):
+        return {
+            'stream': self.timeslot.stream_key,
+            'type': self.type,
+            'quality': self.quality,
+            'payload': self.payload,
+        }
+
+@sa.event.listens_for(TimeslotPlaylist, 'before_insert')
+@sa.event.listens_for(TimeslotPlaylist, 'before_update')
+def onTimeslotPlaylistSync(mapper, connection, target):
+    target.onSync()

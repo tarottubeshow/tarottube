@@ -1,9 +1,11 @@
 import datetime
 import os
 import subprocess
+import time
 from jinja2 import Template
 
 import taro.watcher
+from taro import sqla
 from taro.config import CONFIG
 
 NGINX_CONF = CONFIG['nginx']
@@ -78,13 +80,16 @@ def startUwsgi():
     subprocess.check_call(uwsgiArgs)
 
 def waitForPsql():
-    subprocess.check_call([
-        '/opt/repo/web/wait-for-it.sh',
-        'taro-db:5432',
-        '--',
-        'echo',
-        'DONE',
-    ])
+    while True:
+        print("ATTEMPTING A SQL QUERY")
+        with sqla.BaseModel.sessionContext():
+            try:
+                result = sqla.BaseModel.execute("""SELECT 1""")
+                print(list(result))
+                return
+            except:
+                print("Exception encountered querying... sleeping")
+                time.sleep(1)
 
 if __name__ == '__main__':
     waitForPsql()

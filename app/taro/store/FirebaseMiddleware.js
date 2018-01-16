@@ -6,6 +6,7 @@ import { APP_START } from 'taro/actions/AppLifecycle'
 import { gotFirebaseValue } from 'taro/actions/FirebaseActions'
 import { wrapClass } from 'taro/util/metautil'
 import Timeslot from 'taro/models/Timeslot'
+import TimeslotPlaylist from 'taro/models/TimeslotPlaylist'
 
 const STANDARD_WATCH_SPECS = [
   {
@@ -13,11 +14,17 @@ const STANDARD_WATCH_SPECS = [
     cls: Timeslot,
     keyed: true,
   },
+  {
+    firebaseKey: 'playlists',
+    cls: TimeslotPlaylist,
+    keyed: true,
+  },
 ]
 
 const observe = (store, watchSpec) => {
+  const shardKey = global.CONFIG.FIREBASE.shard
   const firebaseKey = watchSpec.firebaseKey
-  const ref = firebase.database().ref(firebaseKey)
+  const ref = firebase.database().ref(`${ shardKey }/${ firebaseKey }`)
   ref.on('value', (entry) => {
     var firebaseValue = entry.val()
 

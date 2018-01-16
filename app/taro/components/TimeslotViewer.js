@@ -5,6 +5,7 @@ import { connect as reduxConnect } from 'react-redux'
 import { Text } from 'react-native'
 
 import { applyHocs } from 'taro/util/metautil'
+import { getPlaylist } from 'taro/reducers/FirebaseReducer'
 import AlmostScreen from 'taro/components/AlmostScreen'
 import LiveVideoPlayer from 'taro/components/LiveVideoPlayer'
 import WaitingScreen from 'taro/components/WaitingScreen'
@@ -16,7 +17,7 @@ class TimeslotViewerView extends Component {
   static propTypes = {
     time: PropTypes.instanceOf(Date),
     timeslot: PropTypes.object,
-    timeslotKey: PropTypes.string,
+    hlsStream: PropTypes.object,
   }
 
   state = {
@@ -33,6 +34,7 @@ class TimeslotViewerView extends Component {
     const {
       time,
       timeslot,
+      hlsStream,
     } = this.props
     const {
       complete,
@@ -44,7 +46,7 @@ class TimeslotViewerView extends Component {
           timeslot={ timeslot }
         />
       )
-    } else if(!timeslot.isReady(QUALITY)) {
+    } else if(hlsStream == null) {
       return (
         <AlmostScreen />
       )
@@ -53,12 +55,12 @@ class TimeslotViewerView extends Component {
         <LiveVideoPlayer
           timeslot={ timeslot }
           onFinish={ this.onFinish }
+          quality={ QUALITY }
         />
       )
     } else {
       return <Text>COMPLETE</Text>
     }
-
 
   }
 
@@ -67,10 +69,11 @@ class TimeslotViewerView extends Component {
 const TimeslotViewer = applyHocs(
   TimeslotViewerView,
   reduxConnect(
-    (state, props) => ({
-      time: state.Time,
-      timeslot: state.Firebase.timeslots[props.timeslotKey],
-    }),
+    (state, props) => {
+      return {
+        hlsStream: getPlaylist(state, props.timeslot, 'm3u8', QUALITY),
+      }
+    },
     (dispatch, props) => ({
     }),
   ),

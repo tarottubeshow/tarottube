@@ -18,3 +18,6 @@ def get():
     if not hasattr(get, '_conn'):
         get._conn = connect()
     return get._conn
+
+def getShard():
+    return get().child(CONFIG['firebase']['shard'])

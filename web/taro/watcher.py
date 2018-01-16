@@ -42,9 +42,11 @@ class M3u8Handler(FileSystemEventHandler):
                         (key, quality) = parts
 
                     timeslot = Timeslot.forStreamKey(key)
+                    details = self.computeM3u8Details(m3u8Contents)
                     timeslot.putPlaylist('m3u8', quality, {
                         'src': m3u8Contents,
-                        'duration': self.computeM3u8Duration(m3u8Contents),
+                        'duration': details['duration'],
+                        'mapping': details['mapping'],
                     })
 
                     TimeslotEvent(
@@ -57,13 +59,25 @@ class M3u8Handler(FileSystemEventHandler):
                         },
                     ).put()
 
-    def computeM3u8Duration(self, m3u8Contents):
-        total = 0.0
+    def computeM3u8Details(self, m3u8Contents):
+        tsDuration = 0
+        duration = 0
+        mapping = []
         for line in m3u8Contents.split('\n'):
             match = re.match(r'#EXTINF:([0-9.]+)', line)
             if match:
-                total += float(match.group(1))
-        return total
+                tsDuration = int(1000 * float(match.group(1)))
+                duration += tsDuration
+
+            match = re.search(r'-([0-9]+)\.ts$', line)
+            if match:
+                timestamp = int(match.group(1))
+                start = (duration - tsDuration)
+                mapping.append([timestamp, start, tsDuration])
+        return {
+            'duration': duration,
+            'mapping': mapping,
+        }
 
 
 def startWatchers():
