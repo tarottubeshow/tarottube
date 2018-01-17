@@ -16,13 +16,25 @@ services:
     depends_on:
     - 'postgres'
     restart: always
-  rtmp:
+  # rtmp:
+  #   build:
+  #     context: .
+  #     dockerfile: ./web/rtmp.Dockerfile
+  #   volumes:
+  #   - .:/opt/repo
+  #   - ./web/nginx/rtmp.conf:/etc/nginx/nginx.conf
+  #   - ./mount/frags:/opt/mount/frags
+  #   ports:
+  #   - 1935:1935
+  #   restart: always
+  #   links:
+  #   - web:web
+  srs:
     build:
       context: .
-      dockerfile: ./web/rtmp.Dockerfile
+      dockerfile: ./srs/Dockerfile
     volumes:
     - .:/opt/repo
-    - ./web/nginx/rtmp.conf:/etc/nginx/nginx.conf
     - ./mount/frags:/opt/mount/frags
     ports:
     - 1935:1935

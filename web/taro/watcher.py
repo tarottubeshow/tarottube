@@ -33,16 +33,13 @@ class M3u8Handler(FileSystemEventHandler):
                     m3u8Contents = f.read()
 
                 with sqla.BaseModel.sessionContext():
-                    path = path.split('/')[-1].replace('.m3u8', '')
-                    parts = path.split('_')
-                    if len(parts) == 1:
-                        quality = 'high'
-                        key = parts[0]
-                    else:
-                        (key, quality) = parts
+                    path = path.replace('.m3u8', '').split('/')
+                    key = path[-1]
+                    quality = path[-2]
 
                     timeslot = Timeslot.forStreamKey(key)
                     details = self.computeM3u8Details(m3u8Contents)
+                    print(details)
                     timeslot.putPlaylist('m3u8', quality, {
                         'src': m3u8Contents,
                         'duration': details['duration'],
@@ -74,6 +71,7 @@ class M3u8Handler(FileSystemEventHandler):
                 timestamp = int(match.group(1))
                 start = (duration - tsDuration)
                 mapping.append([timestamp, start, tsDuration])
+
         return {
             'duration': duration,
             'mapping': mapping,
@@ -85,7 +83,7 @@ def startWatchers():
     observer.schedule(
         M3u8Handler(),
         '/opt/mount/frags/hls',
-        recursive=False,
+        recursive=True,
     )
     observer.start()
 

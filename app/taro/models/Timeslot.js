@@ -42,13 +42,7 @@ class Timeslot extends BaseModel {
   }
 
   getUri = (quality) => {
-    let qualitySuffix
-    if(quality !== 'high') {
-      qualitySuffix = `_${ quality }`
-    } else {
-      qualitySuffix = ''
-    }
-    return `${ global.CONFIG.URL.HLS }/${ this.stream_key }${ qualitySuffix }.m3u8`
+    return `${ global.CONFIG.URL.HLS }/${ quality }/${ this.stream_key }.m3u8`
   }
 
 }

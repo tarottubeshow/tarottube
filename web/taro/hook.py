@@ -14,25 +14,22 @@ from taro.config import CONFIG
 
 @APP.route('/rtmp-hook/', methods=['POST'])
 def onRtmpEvent():
+    body = flask.request.get_json()
     now = datetime.datetime.now()
 
-    name = rval.get('name', val.Required())
-    if name.endswith('_low'):
-        name = name[:-4]
-        quality = 'low'
-    else:
-        quality = 'high'
+    quality = body['app']
+    streamKey = body['stream']
 
-    timeslot = Timeslot.forStreamKey(name)
+    timeslot = Timeslot.forStreamKey(streamKey)
     if timeslot is None:
         flask.abort(404)
 
-    call = rval.get('call', val.Required())
-    if call not in ['publish', 'update_publish', 'publish_done']:
-        return "OK"
+    call = body['action']
+    if call not in ['on_publish', 'on_unpublish']:
+        return "0"
 
     handler = HANDLERS[call]
-    type, payload = handler(timeslot, quality)
+    type, payload = handler(timeslot, body, quality)
 
     TimeslotEvent(
         timeslot=timeslot,
@@ -41,15 +38,19 @@ def onRtmpEvent():
         type=type,
         payload=payload,
     ).put()
-    return "OK"
+    return "0"
 
-def handleStart(timeslot, quality):
-    if quality == 'high':
-        secretKey = rval.get('secret_key')
+def handleStart(timeslot, body, quality):
+    if body['vhost'] == '__defaultVhost__':
+        url = body['tcUrl']
+        parsed = urlparse(url)
+        params = parse_qs(parsed.query)
+        secretKey = params['key'][0]
         if secretKey != timeslot.secret_key:
             flask.abort(401)
     else:
-        if rval.get('addr') != '127.0.0.1':
+        ip = body['ip']
+        if ip != '127.0.0.1':
             flask.abort(401)
 
     timeslot.putPlaylist('rtmp', quality, {
@@ -58,13 +59,7 @@ def handleStart(timeslot, quality):
 
     return 'start', None
 
-def handleUpdate(timeslot, quality):
-    return 'update', {
-        'time': rval.get('time', val.ParseFloat()),
-        'timestamp': rval.get('timestamp', val.ParseFloat()),
-    }
-
-def handleDone(timeslot, quality):
+def handleDone(timeslot, body, quality):
     timeslot.putPlaylist('rtmp', quality, {
         'streaming': False,
     })
@@ -72,7 +67,6 @@ def handleDone(timeslot, quality):
     return 'done', None
 
 HANDLERS = {
-    'publish': handleStart,
-    'update_publish': handleUpdate,
-    'publish_done': handleDone,
+    'on_publish': handleStart,
+    'on_unpublish': handleDone,
 }
