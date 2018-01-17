@@ -19,16 +19,17 @@ services:
     depends_on:
     - 'postgres'
     restart: always
-  rtmp:
+  srs:
     build:
       context: .
-      dockerfile: ./web/rtmp.Dockerfile
+      dockerfile: ./srs/Dockerfile
     volumes:
-    - ./ffmpeg.log:/opt/repo/ffmpeg.log
     - ./mount/frags:/opt/mount/frags
     ports:
     - 1935:1935
     restart: always
+    links:
+    - web:web
   postgres:
     image: "postgres"
     volumes:
