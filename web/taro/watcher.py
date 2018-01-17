@@ -86,10 +86,11 @@ class M3u8Handler(FileSystemEventHandler):
         }
 
 def startWatchers():
-    observer = Observer()
+    handler = M3u8Handler()
     for dir in WATCH_DIRS:
+        observer = Observer()
         observer.schedule(
-            M3u8Handler(),
+            handler,
             dir,
             recursive=False,
         )
