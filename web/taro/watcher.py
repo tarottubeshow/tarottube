@@ -5,7 +5,7 @@ from watchdog.events import FileSystemEventHandler
 from taro import sqla
 from taro.models import *
 
-DEBOUNCE_CUTOFF = datetime.timedelta(seconds=3)
+DEBOUNCE_CUTOFF = datetime.timedelta(seconds=1)
 
 class M3u8Handler(FileSystemEventHandler):
 
@@ -22,6 +22,7 @@ class M3u8Handler(FileSystemEventHandler):
         self.debounceEvent(event.src_path)
 
     def debounceEvent(self, path):
+        print("!!!!" + path)
         now = datetime.datetime.now()
         if(path.endswith('.m3u8')):
             last = self.debounce.get(path)
@@ -77,7 +78,6 @@ class M3u8Handler(FileSystemEventHandler):
             'mapping': mapping,
         }
 
-
 def startWatchers():
     observer = Observer()
     observer.schedule(
@@ -87,4 +87,4 @@ def startWatchers():
     )
     observer.start()
 
-    print("OBSERVER STARTED")
+    print("OBSERVER STARTED - recursive")
