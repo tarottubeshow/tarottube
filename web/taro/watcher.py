@@ -1,4 +1,5 @@
 import re
+import traceback
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
@@ -6,6 +7,7 @@ from taro import sqla
 from taro.models import *
 
 DEBOUNCE_CUTOFF = datetime.timedelta(seconds=1)
+WATCH_DIRS = ['/opt/mount/frags/hls/high', '/opt/mount/frags/hls/low']
 
 class M3u8Handler(FileSystemEventHandler):
 
@@ -22,7 +24,12 @@ class M3u8Handler(FileSystemEventHandler):
         self.debounceEvent(event.src_path)
 
     def debounceEvent(self, path):
-        print("!!!!" + path)
+        try:
+            self._debounceEvent(path)
+        except:
+            print(traceback.format_exc())
+
+    def _debounceEvent(self, path):
         now = datetime.datetime.now()
         if(path.endswith('.m3u8')):
             last = self.debounce.get(path)
@@ -80,11 +87,12 @@ class M3u8Handler(FileSystemEventHandler):
 
 def startWatchers():
     observer = Observer()
-    observer.schedule(
-        M3u8Handler(),
-        '/opt/mount/frags/hls',
-        recursive=True,
-    )
-    observer.start()
+    for dir in WATCH_DIRS:
+        observer.schedule(
+            M3u8Handler(),
+            dir,
+            recursive=False,
+        )
+        observer.start()
 
-    print("OBSERVER STARTED - recursive")
+    print("OBSERVER STARTED - flat")
