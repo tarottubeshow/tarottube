@@ -10,7 +10,5 @@ from taro.config import CONFIG
 @APP.route('/')
 def root():
     return flask.render_template(
-        'player.jinja2',
-        url=CONFIG['url'],
-        name=flask.request.values.get('name'),
+        'root.jinja2',
     )
