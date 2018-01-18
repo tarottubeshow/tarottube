@@ -7,12 +7,21 @@ from taro import sqla
 from taro.models import *
 
 DEBOUNCE_CUTOFF = datetime.timedelta(seconds=1)
-WATCH_DIRS = ['/opt/mount/frags/hls/high', '/opt/mount/frags/hls/low']
+WATCH_DIRS = [
+    '/opt/mount/frags/hls/high',
+    '/opt/mount/frags/hls/low',
+    '/opt/mount/frags/flv/high',
+    '/opt/mount/frags/flv/low',
+]
 
-class M3u8Handler(FileSystemEventHandler):
+class FileHandler(FileSystemEventHandler):
 
     def __init__(self):
         self.debounce = {}
+        self.handlers = {
+            'm3u8': self._handleM3u8,
+            'flv': self._handleFlv,
+        }
 
     def on_created(self, event):
         self.debounceEvent(event.src_path)
@@ -31,38 +40,78 @@ class M3u8Handler(FileSystemEventHandler):
 
     def _debounceEvent(self, path):
         now = datetime.datetime.now()
-        if(path.endswith('.m3u8')):
-            last = self.debounce.get(path)
-            if (last is None) or (now - last > DEBOUNCE_CUTOFF):
-                self.debounce[path] = now
+        handler = self._getHandler(path)
+        if handler is None:
+            return
 
-                print("DETECTED M3U8 CHANGE - %s" % path)
-                with open(path) as f:
-                    m3u8Contents = f.read()
+        last = self.debounce.get(path)
+        if (last is None) or (now - last > DEBOUNCE_CUTOFF):
+            handler(now, path)
+            self.debounce[path] = now
 
-                with sqla.BaseModel.sessionContext():
-                    path = path.replace('.m3u8', '').split('/')
-                    key = path[-1]
-                    quality = path[-2]
+    def _getHandler(self, path):
+        for ext, handler in self.handlers.items():
+            if path.endswith('.%s' % ext):
+                return handler
 
-                    timeslot = Timeslot.forStreamKey(key)
-                    details = self.computeM3u8Details(m3u8Contents)
-                    print(details)
-                    timeslot.putPlaylist('m3u8', quality, {
-                        'src': m3u8Contents,
-                        'duration': details['duration'],
-                        'mapping': details['mapping'],
-                    })
+    def _handleFlv(self, now, path):
+        print("DETECTED FLV CHANGE - %s" % path)
 
-                    TimeslotEvent(
-                        timeslot=timeslot,
-                        time=now,
-                        quality=quality,
-                        type='m3u8',
-                        payload={
-                            'contents': m3u8Contents,
-                        },
-                    ).put()
+        with sqla.BaseModel.sessionContext():
+            parts = path.replace('.flv', '').split('/')
+            fname = parts[-1]
+            quality = parts[-2]
+            [key, timestamp] = fname.split('.')
+
+            timeslot = Timeslot.forStreamKey(key)
+            relPath = "%s/%s.%s.flv" % (quality, key, timestamp)
+
+            timeslot.putPlaylist('flv', quality, {
+                'timestamp': timestamp,
+                'path': relPath,
+            })
+
+            TimeslotEvent(
+                timeslot=timeslot,
+                time=now,
+                quality=quality,
+                type='flv',
+                payload={
+                    'timestamp': timestamp,
+                    'path': relPath,
+                },
+            ).put()
+
+            # TODO: write to google cloud storage?
+
+    def _handleM3u8(self, now, path):
+        print("DETECTED M3U8 CHANGE - %s" % path)
+        with open(path) as f:
+            m3u8Contents = f.read()
+
+        with sqla.BaseModel.sessionContext():
+            parts = path.replace('.m3u8', '').split('/')
+            key = parts[-1]
+            quality = parts[-2]
+
+            timeslot = Timeslot.forStreamKey(key)
+            details = self.computeM3u8Details(m3u8Contents)
+
+            timeslot.putPlaylist('m3u8', quality, {
+                'src': m3u8Contents,
+                'duration': details['duration'],
+                'mapping': details['mapping'],
+            })
+
+            TimeslotEvent(
+                timeslot=timeslot,
+                time=now,
+                quality=quality,
+                type='m3u8',
+                payload={
+                    'contents': m3u8Contents,
+                },
+            ).put()
 
     def computeM3u8Details(self, m3u8Contents):
         tsDuration = 0
@@ -86,7 +135,7 @@ class M3u8Handler(FileSystemEventHandler):
         }
 
 def startWatchers():
-    handler = M3u8Handler()
+    handler = FileHandler()
     for dir in WATCH_DIRS:
         observer = Observer()
         observer.schedule(

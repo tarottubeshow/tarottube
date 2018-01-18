@@ -23,6 +23,9 @@ services:
     volumes:
     - .:/opt/repo
     - ./mount/frags:/opt/mount/frags
+    - ./mount/.getssl-web/.well-known/:/opt/www/.well-known/
+    - ./mount/.getssl-cert/fullchain.crt:/etc/ssl/cert
+    - ./mount/.getssl-cert/key:/etc/ssl/key
     ports:
     - 1935:1935
     restart: always

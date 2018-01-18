@@ -6,11 +6,50 @@ import { connect as reduxConnect } from 'react-redux'
 import { Image, StyleSheet, Text, View } from 'react-native'
 
 import COLORS from 'taro/colors'
+import GradientBackground from 'taro/components/GradientBackground'
+import * as proputil from 'taro/util/proputil'
+import * as scheduleutil from 'taro/util/scheduleutil'
+
+class TimerDigit extends Component {
+
+  static propTypes = {
+    children: proputil.CHILDREN_TYPE,
+  }
+
+  render = () => {
+    const {
+      children,
+    } = this.props
+    return (
+      <View style={ styles.shadow }>
+        <GradientBackground
+          style={ [styles.digitHolder] }
+          stops={ [ COLORS.yellowLight, COLORS.yellow ] }>
+          <Text style={ styles.digit }>
+            { children }
+          </Text>
+        </GradientBackground>
+      </View>
+    )
+  }
+
+}
+
+class TimerSeperator extends Component {
+
+  render = () => {
+    return (
+      <Text style={ styles.seperator }>:</Text>
+    )
+  }
+
+}
 
 class Timer extends Component {
 
   static propTypes = {
     time: PropTypes.object,
+    style: proputil.STYLE_TYPE,
   }
 
   state = {
@@ -18,20 +57,28 @@ class Timer extends Component {
   }
 
   componentDidMount = () => {
-    this.timer = global.setInterval(this.computeState, 100)
+    this._ticker = new scheduleutil.Ticker(100, this.tick)
   }
 
   componentWillUnmount = () => {
-    global.clearInterval(this.timer)
+    this._ticker.stop()
   }
 
-  computeState = () => {
+  tick = () => {
     this.setState({now: new Date()})
   }
 
   render = () => {
-    const delta = (this.props.time - this.state.now)
+    const {
+      time,
+      style,
+    } = this.props
+    const {
+      now,
+    } = this.state
+    const delta = (time - now)
     const duration = moment.duration(delta)
+    const d = duration.days()
     const h = duration.hours()
     const m = duration.minutes()
     const s = duration.seconds()
@@ -42,44 +89,15 @@ class Timer extends Component {
     const s1 = Math.floor(s / 10)
     const s2 = s % 10
     return (
-      <View style={ styles.parent }>
-        <View style={ styles.digitHolder }>
-          <Text style={ styles.digit }>
-            { h1 }
-          </Text>
-        </View>
-        <View style={ styles.digitHolder }>
-          <Text style={ styles.digit }>
-            { h2 }
-          </Text>
-        </View>
-
-        <Text style={ styles.seperator }>:</Text>
-
-        <View style={ styles.digitHolder }>
-          <Text style={ styles.digit }>
-            { m1 }
-          </Text>
-        </View>
-        <View style={ styles.digitHolder }>
-          <Text style={ styles.digit }>
-            { m2 }
-          </Text>
-        </View>
-
-        <Text style={ styles.seperator }>:</Text>
-
-        <View style={ styles.digitHolder }>
-          <Text style={ styles.digit }>
-            { s1 }
-          </Text>
-        </View>
-
-        <View style={ styles.digitHolder }>
-          <Text style={ styles.digit }>
-            { s2 }
-          </Text>
-        </View>
+      <View style={ [styles.parent, style] }>
+        <TimerDigit>{ h1 }</TimerDigit>
+        <TimerDigit>{ h2 }</TimerDigit>
+        <TimerSeperator />
+        <TimerDigit>{ m1 }</TimerDigit>
+        <TimerDigit>{ m2 }</TimerDigit>
+        <TimerSeperator />
+        <TimerDigit>{ s1 }</TimerDigit>
+        <TimerDigit>{ s2 }</TimerDigit>
       </View>
     )
   }
@@ -93,25 +111,37 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   seperator: {
-    color: COLORS.blue,
+    color: COLORS.yellow,
     fontSize: 48,
     fontWeight: 'bold',
+    backgroundColor: 'transparent',
+  },
+  shadow: {
+    shadowColor: '#000',
+    shadowOffset: {width: 2, height: 2},
+    shadowOpacity: 0.2,
+    shadowRadius: 1,
+    elevation: 1,
+    backgroundColor: 'transparent',
   },
   digitHolder: {
-    backgroundColor: COLORS.blue,
     borderRadius: 5,
     margin: 2,
     width: 32,
+    height: 54,
     overflow: 'hidden',
-
   },
   digit: {
-    color: COLORS.white,
+    color: COLORS.black,
     padding: 5,
     fontSize: 36,
     fontWeight: 'bold',
     width: 32,
     textAlign: 'center',
+    backgroundColor: 'transparent',
+    textShadowColor: 'rgba(0, 0, 0, 0.1)',
+    textShadowOffset: {width: 1, height: 1},
+    textShadowRadius: 1,
   },
 })
 

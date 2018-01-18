@@ -1,11 +1,20 @@
 const COLORS = {
-  brown: "#E06923",
-  orange: "#FCA822",
-  blue: "#245D6E",
-  teal: "#31F7C6",
-  red: "#E02E18",
-  black: "#000000",
-  white: "#FFFFFF",
+  orange: '#FF7B02',
+  orangeLight: '#FFCB52',
+  purple: '#5C27FE',
+  purpleLight: '#C165DD',
+  // green: '#08C792',
+  // greenLight: '2AFEB7',
+  green: '#04F5ED',
+  greenLight: '#00F7A7',
+  blue: '#1153FC',
+  blueLight: '#5581F1',
+  yellow: '#FFB533',
+  yellowLight: '#FFE324',
+  peach: '#FC76B3',
+  peachLight: '#FACD68',
+  white: '#FFFFFF',
+  black: '#000000',
 }
 
 export default COLORS

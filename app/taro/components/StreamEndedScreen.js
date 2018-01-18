@@ -8,33 +8,50 @@ import COLORS from 'taro/colors'
 import AmbientGradientBackground from 'taro/components/AmbientGradientBackground'
 import Button from 'taro/components/Button'
 import Timer from 'taro/components/Timer'
-import { applyHocs } from 'taro/util/metautil'
+import * as metautil from 'taro/util/metautil'
+import * as proputil from 'taro/util/proputil'
 import { LOGO_LONG_WHITE } from 'taro/Images'
 
-class WaitingScreen extends Component {
+class VideoEndedScreen extends Component {
 
   static propTypes = {
-    timeslot: PropTypes.object,
-    isFuture: PropTypes.bool,
+    missed: PropTypes.bool,
+    style: proputil.STYLE_TYPE,
   }
 
-  onReplayLatest = () => {
-    console.log('replay latest')
+  getNote = () => {
+    const {
+      missed,
+    } = this.props
+    if(missed) {
+      return "You missed the stream!"
+    } else {
+      return "Thanks for tuning in!"
+    }
+  }
+
+  onReplay = () => {
+    console.log('replay')
   }
 
   render = () => {
+    const {
+      style,
+    } = this.props
     return (
-      <AmbientGradientBackground style={ styles.parent }>
+      <AmbientGradientBackground style={ [style, styles.parent] }>
         <View style={ styles.top }/>
         <Image
           style={ styles.logo }
           source={ LOGO_LONG_WHITE }
         />
-        { this.renderTimer() }
+        <Text style={ styles.note }>
+          { this.getNote() }
+        </Text>
         <View style={ styles.bottom }>
           <Button
-            text="Replay Latest"
-            onPress={ this.onReplayLatest }
+            text="Replay"
+            onPress={ this.onReplay }
             style={ styles.bottomButton }
             color="yellow"
           />
@@ -42,28 +59,6 @@ class WaitingScreen extends Component {
       </AmbientGradientBackground>
     )
   }
-
-  renderTimer = () => {
-    const {
-      isFuture,
-      timeslot,
-    } = this.props
-    if(isFuture) {
-      return (
-        <Timer
-          style={ styles.timer }
-          time={ timeslot.getStartTime() }
-        />
-      )
-    } else {
-      return (
-        <Text style={ styles.soon }>
-          will begin shortly!
-        </Text>
-      )
-    }
-  }
-
 }
 
 const styles = StyleSheet.create({
@@ -77,11 +72,11 @@ const styles = StyleSheet.create({
     width: 260,
     height: 43,
   },
-  soon: {
+  note: {
     backgroundColor: 'transparent',
     color: COLORS.white,
-    fontSize: 32,
-    marginTop: 0,
+    fontSize: 24,
+    marginTop: 20,
     backgroundColor: 'transparent',
     textShadowColor: 'rgba(0, 0, 0, 0.2)',
     textShadowOffset: {width: 1, height: 1},
@@ -105,4 +100,4 @@ const styles = StyleSheet.create({
   },
 })
 
-export default WaitingScreen
+export default VideoEndedScreen

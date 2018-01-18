@@ -19,6 +19,7 @@
     "preset": "jest-expo"
   },
   "dependencies": {
+    "color-interpolate": "^1.0.2",
     "expo": "^23.0.4",
     "firebase": "^4.8.2",
     "lodash": "^4.17.4",

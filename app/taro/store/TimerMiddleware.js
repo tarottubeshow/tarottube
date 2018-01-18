@@ -1,11 +1,12 @@
 import { APP_START } from 'taro/actions/AppLifecycle'
 import { TICK_EVENT, tickEvent } from 'taro/reducers/TimeReducer'
+import * as scheduleutil from 'taro/util/scheduleutil'
 
 const startTimer = (store) => {
-  const updateTime = () => {
+  const tick = () => {
     store.dispatch(tickEvent(new Date()))
   }
-  global.setInterval(updateTime, 1000)
+  new scheduleutil.Ticker(1000, tick)
 }
 
 const timerMiddleware = (store) => {

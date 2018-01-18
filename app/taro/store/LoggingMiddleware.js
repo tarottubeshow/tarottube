@@ -9,10 +9,10 @@ const loggingMiddleware = (store) => (next) => {
       }
 
       console.log(`======== ACTION: ${ action.type } ========`)
-      console.log(action)
-      console.log('--------------- NEXT STATE ---------------')
-      console.log(store.getState())
-      console.log('\n\n')
+      // console.log(action)
+      // console.log('--------------- NEXT STATE ---------------')
+      // console.log(store.getState())
+      // console.log('\n\n')
       return result
     } catch (e) {
       console.log(`======== ACTION: ${ action.type } ========`)
