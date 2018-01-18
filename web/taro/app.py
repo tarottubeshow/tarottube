@@ -25,13 +25,12 @@ def init():
     import taro.sqla
     taro.sqla.augmentApp(APP)
 
+    from taro.util import metautil
     if not metautil.isDev():
         forceSsl(APP)
 
 
 def forceSsl(app):
-    from taro.util import metautil
-
     @app.before_request
     def redirectNonSSl():
         isGet = (flask.request.method == 'GET')
