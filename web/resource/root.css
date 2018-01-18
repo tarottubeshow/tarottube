@@ -88,6 +88,13 @@ h1 {
         right: 50px;
     }
 
+    #screenshot {
+        position: absolute;
+        left: 50px;
+        bottom: 0;
+        height: 70%;
+    }
+
 }
 
 @media screen and (max-width: 749px) {
@@ -132,6 +139,10 @@ h1 {
 
     #stores {
         margin: 60px auto;
+    }
+
+    #screenshot {
+        display: none;
     }
 
 }
