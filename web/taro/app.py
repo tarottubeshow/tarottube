@@ -25,6 +25,32 @@ def init():
     import taro.sqla
     taro.sqla.augmentApp(APP)
 
+    if not metautil.isDev():
+        forceSsl(APP)
+
+
+def forceSsl(app):
+    from taro.util import metautil
+
+    @app.before_request
+    def redirectNonSSl():
+        isGet = (flask.request.method == 'GET')
+        isSecure = flask.request.is_secure
+        if (isGet) and (not isSecure):
+            redirect = flask.request.url.replace("http://", "https://")
+            return flask.redirect(
+                redirect,
+                code=301,
+            )
+
+    @app.after_request
+    def setHstsPolicy(response):
+        isSecure = flask.request.is_secure
+        if flask.request.is_secure:
+            if isinstance(response, flask.Response):
+                response.headers['Strict-Transport-Security'] = "max-age=31536000"
+        return response
+
 try:
     init()
 except:
