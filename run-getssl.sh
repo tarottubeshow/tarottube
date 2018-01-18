@@ -1,3 +1,3 @@
 #!/bin/bash
-cd /app/tarottube
-./getssl -w /app/tarottube/mount/.getssl tarottube.com
+cd "$(dirname "$0")"
+./getssl -w ./mount/.getssl tarottube.com

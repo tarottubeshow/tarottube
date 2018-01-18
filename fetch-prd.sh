@@ -1,5 +1,5 @@
 #!/bin/bash
-cd /app/tarottube
+cd "$(dirname "$0")"
 git fetch
 git merge origin/master
 git submodule update --init
