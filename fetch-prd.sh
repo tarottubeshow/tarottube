@@ -1,4 +1,5 @@
 #!/bin/bash
+cd /app/tarottube
 git fetch
 git merge origin/master
 git submodule update --init
