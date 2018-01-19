@@ -38,7 +38,10 @@ class TimeslotViewerView extends Component {
     const {
       hlsStream,
     } = this.props
-    return (hlsStream != null)
+    return (
+      hlsStream != null
+      && hlsStream.isReady()
+    )
   }
 
   isStreamOver = () => {

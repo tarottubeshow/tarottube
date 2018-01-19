@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect as reduxConnect } from 'react-redux'
+import { View } from 'react-native'
 
 import ActiveTimeslotSelector from 'taro/components/ActiveTimeslotSelector'
 import VideoReplayer from 'taro/components/VideoReplayer'
