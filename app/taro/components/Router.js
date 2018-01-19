@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { connect as reduxConnect } from 'react-redux'
 
 import ActiveTimeslotSelector from 'taro/components/ActiveTimeslotSelector'
+import VideoReplayer from 'taro/components/VideoReplayer'
 
 import { applyHocs } from 'taro/util/metautil'
 
@@ -13,8 +14,14 @@ class RouterView extends Component {
   }
 
   render = () => {
-    // TODO: other routes
-    return <ActiveTimeslotSelector />
+    const {
+      route,
+    } = this.props
+    if(route.context == 'home') {
+      return <ActiveTimeslotSelector />
+    } else {
+      return <VideoReplayer />
+    }
   }
 
 }

@@ -5,9 +5,7 @@ import { connect as reduxConnect } from 'react-redux'
 
 import {
   Animated,
-  Image,
   StyleSheet,
-  Text,
   View,
 } from 'react-native'
 import { Video } from 'expo'
@@ -198,22 +196,20 @@ const styles = StyleSheet.create({
 const LiveVideoPlayer = metautil.applyHocs(
   LiveVideoPlayerView,
   reduxConnect(
-    (state, props) => {
-      return {
-        rtmpStream: FirebaseReducer.getPlaylist(
-          state,
-          props.timeslot,
-          'rtmp',
-          'high',
-        ), // use high, because we care about the original timestamps
-        hlsStream: FirebaseReducer.getPlaylist(
-          state,
-          props.timeslot,
-          'm3u8',
-          'high',
-        ), // use high, because we want to know if it is really streaming
-      }
-    },
+    (state, props) => ({
+      rtmpStream: FirebaseReducer.getPlaylist(
+        state,
+        props.timeslot,
+        'rtmp',
+        'high',
+      ), // use high, because we care about the original timestamps
+      hlsStream: FirebaseReducer.getPlaylist(
+        state,
+        props.timeslot,
+        'm3u8',
+        'high',
+      ), // use high, because we want to know if it is really streaming
+    }),
     (dispatch, props) => ({
     }),
   ),

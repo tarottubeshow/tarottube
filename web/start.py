@@ -4,7 +4,6 @@ import subprocess
 import time
 from jinja2 import Template
 
-import taro.watcher
 from taro import sqla
 from taro.config import CONFIG
 
@@ -37,6 +36,7 @@ def getUwsgiArgs():
             '--static-map', ('/resource=%s' % RESOURCE_DIR),
             '--static-map', ('/frags=%s' % FRAGS_DIR),
             '--static-safe', '/opt/repo',
+            '--disable-sendfile',
         ]
     elif UWSGI_CONF['mode'] == 'nginx':
         args += [
@@ -94,5 +94,4 @@ def waitForPsql():
 if __name__ == '__main__':
     waitForPsql()
     runMigrations()
-    taro.watcher.startWatchers()
     startAll()

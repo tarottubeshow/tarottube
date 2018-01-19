@@ -16,6 +16,18 @@ services:
     depends_on:
     - 'postgres'
     restart: always
+  watcher:
+    build:
+      context: .
+      dockerfile: ./watcher/Dockerfile
+    volumes:
+    - .:/opt/repo
+    - ./mount/frags:/opt/mount/frags
+    links:
+    - postgres:taro-db
+    depends_on:
+    - 'web'
+    restart: always
   srs:
     build:
       context: .

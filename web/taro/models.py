@@ -212,7 +212,7 @@ class TimeslotPlaylist(sqla.BaseModel):
     timeslot = sao.relationship('Timeslot')
 
     @classmethod
-    def get(cls, timeslot, quality, type):
+    def get(cls, timeslot, quality, type, create=True):
         existing = TimeslotPlaylist.query()\
             .filter(TimeslotPlaylist.timeslot == timeslot)\
             .filter(TimeslotPlaylist.quality == quality)\
@@ -221,13 +221,14 @@ class TimeslotPlaylist(sqla.BaseModel):
         if existing:
             return existing
 
-        playlist = TimeslotPlaylist(
-            timeslot=timeslot,
-            quality=quality,
-            type=type,
-        )
-        playlist.put()
-        return playlist
+        if create:
+            playlist = TimeslotPlaylist(
+                timeslot=timeslot,
+                quality=quality,
+                type=type,
+            )
+            playlist.put()
+            return playlist
 
     def onSync(self):
         fbdb = firebase.getShard()

@@ -12,9 +12,10 @@ import * as metautil from 'taro/util/metautil'
 import * as proputil from 'taro/util/proputil'
 import { LOGO_LONG_WHITE } from 'taro/Images'
 
-class VideoEndedScreen extends Component {
+class StreamEndedScreen extends Component {
 
   static propTypes = {
+    onReplay: PropTypes.func,
     missed: PropTypes.bool,
     style: proputil.STYLE_TYPE,
   }
@@ -31,7 +32,7 @@ class VideoEndedScreen extends Component {
   }
 
   onReplay = () => {
-    console.log('replay')
+    this.props.onReplay()
   }
 
   render = () => {
@@ -100,4 +101,4 @@ const styles = StyleSheet.create({
   },
 })
 
-export default VideoEndedScreen
+export default StreamEndedScreen

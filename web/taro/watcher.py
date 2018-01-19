@@ -1,4 +1,6 @@
 import re
+import subprocess
+import time
 import traceback
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
@@ -71,6 +73,13 @@ class FileHandler(FileSystemEventHandler):
                 'path': relPath,
             })
 
+            subprocess.check_call([
+                '/usr/bin/ffmpeg',
+                '-i', path,
+                '-codec', 'copy',
+                path.replace('.flv', '.mp4'),
+            ])
+
             TimeslotEvent(
                 timeslot=timeslot,
                 time=now,
@@ -134,15 +143,18 @@ class FileHandler(FileSystemEventHandler):
             'mapping': mapping,
         }
 
-def startWatchers():
+def startWatchers(join=True):
     handler = FileHandler()
+    observer = Observer()
     for dir in WATCH_DIRS:
-        observer = Observer()
+        print("OBSERVING: %s" % dir)
         observer.schedule(
             handler,
             dir,
             recursive=False,
         )
-        observer.start()
+    observer.start()
 
-    print("OBSERVER STARTED - flat")
+    print("OBSERVER STARTED")
+    if join:
+        observer.join()

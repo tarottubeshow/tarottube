@@ -20,6 +20,7 @@ class Button extends Component {
   static props = {
     color: PropTypes.string,
     children: proputil.CHILDREN_TYPE,
+    onPress: PropTypes.func,
     text: PropTypes.string,
     style: proputil.STYLE_TYPE,
   }

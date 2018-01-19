@@ -4,8 +4,8 @@ import PropTypes from 'prop-types'
 import { View, StyleSheet } from 'react-native'
 import { Svg } from 'expo'
 
-import COLORS from 'taro/colors'
 import * as proputil from 'taro/util/proputil'
+import GradientStops from 'taro/components/GradientStops'
 
 class SvgGradient extends Component {
 
@@ -17,6 +17,7 @@ class SvgGradient extends Component {
   render = () => {
     // TODO: alternate gradient angles
     const {
+      stops,
       style,
     } = this.props
     return (
@@ -25,54 +26,25 @@ class SvgGradient extends Component {
         preserveAspectRatio="none"
         style={ style }
       >
-      <Svg.Defs>
-        <Svg.LinearGradient
-          id="fill"
-          x1="0"
-          y1="0"
-          x2="100"
-          y2="100"
-        >
-          { this.renderStops() }
-        </Svg.LinearGradient>
-      </Svg.Defs>
-      <Svg.Rect
-        x="0"
-        y="0"
-        width="100"
-        height="100"
-        fill="url(#fill)"
-      />
-    </Svg>
+        <Svg.Defs>
+          <GradientStops
+            id="fill"
+            p1={ [0, 0] }
+            p2={ [100, 100] }
+            stops={ stops }
+          />
+        </Svg.Defs>
+        <Svg.Rect
+          x="0"
+          y="0"
+          width="100"
+          height="100"
+          fill="url(#fill)"
+        />
+      </Svg>
     )
   }
 
-  renderStops = () => {
-    var {
-      stops,
-    } = this.props
-
-    if(stops == null || stops.length == 0) {
-      stops = [COLORS.black, COLORS.white]
-    } else if(stops.length == 1) {
-      stops = [stops[0], stops[0]]
-    }
-
-    const stopElements = []
-    for(const i in stops) {
-      const stop = stops[i]
-      let offset = 100 * i / (stops.length - 1)
-      // TODO: alternate offsets
-      stopElements.push(
-        <Svg.Stop
-          offset={ `${ offset }%` }
-          stopColor={ stop }
-          key={ `stop_${ i }` }
-        />
-      )
-    }
-    return stopElements
-  }
 }
 
 const styles = StyleSheet.create({

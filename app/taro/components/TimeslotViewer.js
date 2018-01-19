@@ -4,17 +4,19 @@ import { connect as reduxConnect } from 'react-redux'
 
 import { View, StyleSheet, Text } from 'react-native'
 
-import { applyHocs } from 'taro/util/metautil'
+import * as metautil from 'taro/util/metautil'
 import { getPlaylist } from 'taro/reducers/FirebaseReducer'
 import LiveVideoPlayer from 'taro/components/LiveVideoPlayer'
 import StreamEndedScreen from 'taro/components/StreamEndedScreen'
 import WaitingScreen from 'taro/components/WaitingScreen'
+import * as RouterActions from 'taro/actions/RouterActions'
 
 const QUALITY = 'high' // TODO: how to choose appropriate quality
 
 class TimeslotViewerView extends Component {
 
   static propTypes = {
+    onReplay: PropTypes.func,
     time: PropTypes.instanceOf(Date),
     timeslot: PropTypes.object,
     hlsStream: PropTypes.object,
@@ -75,6 +77,7 @@ class TimeslotViewerView extends Component {
     const {
       time,
       timeslot,
+      onReplay
     } = this.props
 
     const isFuture = timeslot.getStartTime() > time
@@ -87,6 +90,7 @@ class TimeslotViewerView extends Component {
         <StreamEndedScreen
           missed={ !isComplete }
           style={ [styles.stack, styles.lower] }
+          onReplay={ onReplay }
         />
       )
     } else {
@@ -95,6 +99,7 @@ class TimeslotViewerView extends Component {
           timeslot={ timeslot }
           isFuture={ isFuture }
           style={ [styles.stack, styles.lower] }
+          onReplay={ onReplay }
         />
       )
     }
@@ -133,7 +138,7 @@ class TimeslotViewerView extends Component {
 
 }
 
-const TimeslotViewer = applyHocs(
+const TimeslotViewer = metautil.applyHocs(
   TimeslotViewerView,
   reduxConnect(
     (state, props) => {
@@ -143,6 +148,11 @@ const TimeslotViewer = applyHocs(
       }
     },
     (dispatch, props) => ({
+      onReplay: () => {
+        dispatch(RouterActions.requestRouteChange({
+          context: 'replay',
+        }))
+      }
     }),
   ),
 )
