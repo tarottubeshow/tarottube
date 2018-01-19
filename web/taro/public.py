@@ -25,18 +25,3 @@ def replay():
             return flask.redirect('/frags/flv/%s' % path)
 
     flask.abort(404)
-
-@APP.route('/embed/analytics.html')
-def analytics():
-    with open('/opt/repo/web/resource/analytics.js') as f:
-        code = f.read()
-
-    return """
-        <!DOCTYPE html>
-        <html lang="en">
-        <head></head>
-        <body>
-            <script type="text/javascript">%s</script>
-        </body>
-        </html>
-    """ % code

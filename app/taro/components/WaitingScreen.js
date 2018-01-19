@@ -5,6 +5,7 @@ import { connect as reduxConnect } from 'react-redux'
 import { Image, StyleSheet, Text, View } from 'react-native'
 
 import COLORS from 'taro/colors'
+import TRACKER from 'taro/tracking'
 import AmbientGradientBackground from 'taro/components/AmbientGradientBackground'
 import Button from 'taro/components/Button'
 import Timer from 'taro/components/Timer'
@@ -16,6 +17,10 @@ class WaitingScreen extends Component {
     onReplay: PropTypes.func,
     timeslot: PropTypes.object,
     isFuture: PropTypes.bool,
+  }
+
+  componentDidMount = () => {
+    TRACKER.track('Mounted WaitingScreen')
   }
 
   onReplayLatest = () => {

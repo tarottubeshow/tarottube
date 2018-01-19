@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { Provider as ReduxProvider } from 'react-redux'
 import { connect as reduxConnect } from 'react-redux'
-import { AppState, View, WebView, StyleSheet } from 'react-native'
+import { AppState } from 'react-native'
 
 import Router from 'taro/components/Router'
 import Promised from 'taro/components/Promised'
@@ -35,67 +35,20 @@ const buildMain = ({
       timeslots: PropTypes.object,
     }
 
-    state = {
-      analyticsLoaded: false,
-    }
-
-    initAnalytics = (webView) => {
-      this._analytics = webView
-      this.onAnalyticsEvent()
-    }
-
-    onAnalyticsEvent = () => {
-      console.log("posting message")
-      this._analytics.postMessage('fuck you')
-    }
-
-    onAnalyticsLoaded = () => {
-      console.log('analytics loaded')
-      this.setState({
-        analyticsLoaded: true,
-      })
-      this.onAnalyticsEvent()
-    }
-
-    onAnalyticsMessage = (event) => {
-      console.log("got analytics message")
-      console.log(event.nativeEvent.data)
-    }
-
     render = () => {
       const {
         deviceReady,
         routerReady,
         timeslots,
       } = this.props
-      const {
-        analyticsLoaded,
-      } = this.state
       return (
-        <View style={ styles.main }>
-          { this.renderAnalyticsBridge() }
-          <Promised
-            promises={ [
-              readyBoolAsPromiseState(analyticsLoaded),
-              readyBoolAsPromiseState(deviceReady),
-              readyBoolAsPromiseState(routerReady),
-              hasValueAsPromiseState(timeslots),
-            ] }
-            render={ this.renderReady }
-          />
-        </View>
-      )
-    }
-
-    renderAnalyticsBridge = () => {
-      const url = `${ global.CONFIG.URL.API }/embed/analytics.html`
-      return (
-        <WebView
-          ref={ this.initAnalytics }
-          source={{ uri: url }}
-          style={ styles.analytics }
-          onLoad={ this.onAnalyticsLoaded }
-          onMessage={ this.onAnalyticsMessage }
+        <Promised
+          promises={ [
+            readyBoolAsPromiseState(deviceReady),
+            readyBoolAsPromiseState(routerReady),
+            hasValueAsPromiseState(timeslots),
+          ] }
+          render={ this.renderReady }
         />
       )
     }
@@ -211,19 +164,5 @@ const buildMain = ({
 
   return Main
 }
-
-const styles = StyleSheet.create({
-  main: {
-    width: "100%",
-    height: "100%",
-  },
-  analytics: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    width: 100,
-    height: 100,
-  },
-})
 
 export default buildMain

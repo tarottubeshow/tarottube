@@ -11,6 +11,7 @@ import {
 import { Video } from 'expo'
 
 import COLORS from 'taro/colors'
+import TRACKER from 'taro/tracking'
 import GradientBackground from 'taro/components/GradientBackground'
 import * as FirebaseReducer from 'taro/reducers/FirebaseReducer'
 import * as metautil from 'taro/util/metautil'
@@ -36,28 +37,25 @@ const DELTA_HEALTH_BAD = 120000 // 2 minutes
 class HealthStatusIndicator extends Component {
 
   state = {
-    now: new Date(),
+    delta: 0,
+    health: 1,
   }
 
   componentDidMount = () => {
-    this._ticker = new scheduleutil.Ticker(1000, this.tick)
+    this._computeTicker = new scheduleutil.Ticker(1000, this.recomputeHealth)
+    this._postTicker = new scheduleutil.Ticker(60000, this.postHealth, false)
   }
 
   componentWillUnmount = () => {
-    this._ticker.stop()
+    this._computeTicker.stop()
+    this._postTicker.stop()
   }
 
-  tick = () => {
-    this.setState({ now: new Date() })
-  }
-
-  render = () => {
+  recomputeHealth = () => {
     const {
       realTimestamp,
     } = this.props
-    const {
-      now,
-    } = this.state
+    const now = new Date()
 
     let delta
     if(realTimestamp == null) {
@@ -69,6 +67,28 @@ class HealthStatusIndicator extends Component {
     let health = (delta - DELTA_HEALTH_OK) / (DELTA_HEALTH_BAD - DELTA_HEALTH_OK)
     health = Math.max(health, 0)
     health = Math.min(health, 1)
+
+    this.setState({
+      delta,
+      health,
+    })
+  }
+
+  postHealth = () => {
+    const {
+      delta,
+      health,
+    } = this.state
+    TRACKER.track('LiveVideoPlay Health', {
+      delta: delta,
+      health: health,
+    })
+  }
+
+  render = () => {
+    const {
+      health,
+    } = this.state
 
     const topColor = TOP_COLORMAP(health)
     const bottomColor = BOTTOM_COLORMAP(health)
@@ -111,6 +131,8 @@ class LiveVideoPlayerView extends Component {
         duration: 5000,
       },
     ).start()
+
+    TRACKER.track('Mounted LiveVideoPlayer')
 
     onStart()
   }
@@ -173,9 +195,6 @@ class LiveVideoPlayerView extends Component {
         </Animated.View>
       </View>
     )
-
-
-
   }
 }
 

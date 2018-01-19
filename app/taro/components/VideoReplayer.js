@@ -16,6 +16,7 @@ import * as RouterActions from 'taro/actions/RouterActions'
 import * as metautil from 'taro/util/metautil'
 import * as proputil from 'taro/util/proputil'
 import COLORS from 'taro/colors'
+import TRACKER from 'taro/tracking'
 import Button from 'taro/components/Button'
 import GradientBackground from 'taro/components/GradientBackground'
 
@@ -105,6 +106,10 @@ class VideoReplayerView extends Component {
     playable: 0,
   }
 
+  componentDidMount = () => {
+    TRACKER.track('Mounted VideoReplayerView')
+  }
+
   isEnded = () => {
     const {
       position,
@@ -132,6 +137,9 @@ class VideoReplayerView extends Component {
 
   onRestart = () => {
     this._videoRef.setPositionAsync(0)
+    componentDidMount = () => {
+      TRACKER.track('Restarted Video')
+    }
   }
 
   render = () => {

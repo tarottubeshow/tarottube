@@ -1,11 +1,13 @@
 class Ticker {
 
-  constructor(delay, fn) {
+  constructor(delay, fn, initial=true) {
     this.delay = delay
     this.fn = fn
     this.cumulative = 0
     this.start()
-    this.fn(0)
+    if(initial) {
+      this.fn(0)
+    }
   }
 
   tick = () => {

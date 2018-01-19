@@ -19,6 +19,7 @@
     "preset": "jest-expo"
   },
   "dependencies": {
+    "base-64": "^0.1.0",
     "color-interpolate": "^1.0.2",
     "expo": "^23.0.4",
     "firebase": "^4.8.2",
@@ -26,6 +27,7 @@
     "moment": "^2.19.1",
     "react": "^16.0.0",
     "react-native": "0.50.3",
+    "react-native-unique-id": "^1.0.4",
     "react-native-video": "^2.0.0",
     "react-redux": "^5.0.6",
     "redux": "^3.7.2",
