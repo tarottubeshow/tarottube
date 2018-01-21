@@ -1,5 +1,15 @@
 {
   "expo": {
-    "sdkVersion": "23.0.0"
+    "sdkVersion": "23.0.0",
+    "name": "Tarot Tube Live",
+    "icon": "./collateral/icons/1024-square.png",
+    "version": "1.0.0",
+    "slug": "tarot-tube-live",
+    "ios": {
+        "bundleIdentifier": "com.tarottube.live"
+    },
+    "android": {
+        "package": "com.tarottube.live"
+    },
   }
 }
