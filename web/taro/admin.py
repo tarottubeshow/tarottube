@@ -9,9 +9,7 @@ from taro.models import *
 
 @APP.route('/admin/')
 def adminRoot():
-    timeslots = Timeslot.query()\
-        .filter(Timeslot.end_time > datetime.datetime.now())\
-        .order_by(Timeslot.time)\
+    timeslots = Timeslot.queryUpcoming()\
         .limit(20)\
         .all()
     return flask.render_template(
@@ -78,6 +76,11 @@ def getTimeslot(id):
 @APP.route('/admin/timeslots/<id>/', methods=['POST'])
 def saveTimeslot(id):
     timeslot = _getTimeslot(id)
+    timeslot.deprecated = rval.get(
+        'deprecated',
+        val.ParseBool(),
+        val.DefaultValue(False),
+    )
     timeslot.name = rval.get('name', val.Required())
     timeslot.time = rval.get(
         'time',
@@ -94,11 +97,38 @@ def saveTimeslot(id):
     timeslot.put(True)
     return flask.redirect(timeslot.urlAdmin())
 
+@APP.route('/admin/broadcast-notification/<id>/', methods=['POST'])
+def broadcastNotification(id):
+    message = rval.get('message', val.Required())
+    timeslot = Timeslot.forId(id)
+    counts = PushToken.broadcast(message)
+    TimeslotEvent(
+        timeslot=timeslot,
+        time=datetime.datetime.now(),
+        quality=None,
+        type='notify',
+        payload={
+            'counts': counts,
+            'message': message,
+        },
+    ).put()
+    return flask.redirect(timeslot.urlAdmin())
+
+@APP.route('/admin/deprecated-timeslots/')
+def deprecatedTimeslots():
+    query = Timeslot.queryDeprecated()
+    page = sqla.paginate(query)
+    return flask.render_template(
+        'admin/pastTimeslots.jinja2',
+        deprecated=True,
+        title="Deprecated Timeslots",
+        page=page,
+        breadcrumbs=DEPRECATED_TIMESLOTS_BREADCRUMBS,
+    )
+
 @APP.route('/admin/past-timeslots/')
 def pastTimeslots():
-    query = Timeslot.query()\
-        .filter(Timeslot.end_time < datetime.datetime.now())\
-        .order_by(Timeslot.time.desc())
+    query = Timeslot.queryPast()
     page = sqla.paginate(query)
     return flask.render_template(
         'admin/pastTimeslots.jinja2',

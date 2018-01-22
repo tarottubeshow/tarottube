@@ -11,6 +11,7 @@ import { sorted } from 'taro/util/iterutil'
 class ActiveTimeslotSelectorView extends Component {
 
   static propTypes = {
+    route: PropTypes.object,
     time: PropTypes.instanceOf(Date),
     timeslots: PropTypes.object,
   }
@@ -33,12 +34,14 @@ class ActiveTimeslotSelectorView extends Component {
 
   render = () => {
     const {
+      route,
       time,
     } = this.props
     const currentTimeslot = this.getCurrentTimeslot()
     return (
       <TimeslotViewer
         key={ `timeslot=${ currentTimeslot.stream_key }` }
+        assumeSeen={ route.assumeSeen }
         time={ time }
         timeslot={ currentTimeslot }
       />

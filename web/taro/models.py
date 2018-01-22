@@ -1,6 +1,8 @@
 import datetime
+import traceback
 import uuid
 import yaml
+import exponent_server_sdk as expo
 
 import sqlalchemy as sa
 import sqlalchemy.orm as sao
@@ -21,6 +23,86 @@ SCHEDULES_BREADCRUMBS = ADMIN_BREADCRUMBS + [
 PAST_TIMESLOTS_BREADCRUMBS = ADMIN_BREADCRUMBS + [
     ('/admin/past-timeslots/', "Past Timeslots"),
 ]
+
+DEPRECATED_TIMESLOTS_BREADCRUMBS = ADMIN_BREADCRUMBS + [
+    ('/admin/deprecated-timeslots/', "Deprecated Timeslots"),
+]
+
+class PushToken(sqla.BaseModel):
+
+    __tablename__ = 'push_token'
+
+    id = sa.Column('id', sa.Integer, primary_key=True)
+    active = sa.Column('active', sa.Boolean)
+    created = sa.Column('created', sa.DateTime)
+    token = sa.Column('token', sa.String)
+
+    @classmethod
+    def broadcast(cls, message):
+        # TODO: send to a task queue, probably
+        attempts = 0
+        success = 0
+        failure = 0
+        activeTokens = PushToken.query()\
+            .filter(PushToken.active == True)
+        for token in activeTokens:
+            attempts += 1
+            succeeded = token.send(message)
+            if succeeded:
+                success += 1
+            else:
+                failure += 1
+
+        return {
+            'attempts': attempts,
+            'success': success,
+            'failure': failure,
+        }
+
+    @classmethod
+    def subscribe(cls, token):
+        existing = PushToken.query()\
+            .filter(PushToken.token == token)\
+            .first()
+        if existing:
+            existing.active = True
+            return existing
+        else:
+            created = PushToken(
+                active=True,
+                created=datetime.datetime.now(),
+                token=token,
+            )
+            created.put()
+            return created
+
+    def send(self, message):
+        print("Sending '%s' to %s" % (message, self.token))
+
+        client = expo.PushClient()
+        message = expo.PushMessage(
+            to=self.token,
+            body=message,
+        )
+        try:
+            response = client.publish(message)
+        except:
+            print("Exception encountered sending message...")
+            traceback.print_exc()
+            return False
+
+        try:
+            response.validate_response()
+        except expo.DeviceNotRegisteredError:
+            print("Detected an unregistered device.")
+            self.active = False
+            return False
+        except expo.PushResponseError as exc:
+            print("Got some other error...")
+            print(exc.push_response._asdict())
+            return False
+
+        return True
 
 class Schedule(sqla.BaseModel):
 
@@ -104,6 +186,7 @@ class Timeslot(sqla.BaseModel):
     __tablename__ = 'timeslot'
 
     id = sa.Column('id', sa.Integer, primary_key=True)
+    deprecated = sa.Column('deprecated', sa.Boolean)
     duration = sa.Column('duration', sa.Integer)
     end_time = sa.Column('end_time', sa.DateTime)
     name = sa.Column('name', sa.String)
@@ -117,19 +200,53 @@ class Timeslot(sqla.BaseModel):
     schedule = sao.relationship('Schedule')
 
     @classmethod
-    def forStreamKey(self, key):
+    def forStreamKey(cls, key):
         return Timeslot.query()\
             .filter(Timeslot.stream_key == key)\
             .first()
 
     @classmethod
-    def new(self):
+    def latestWithRecording(cls):
+        query = Timeslot.query()\
+            .filter(Timeslot.time < datetime.datetime.now())\
+            .order_by(Timeslot.time.desc())
+        for timeslot in query:
+            playlist = TimeslotPlaylist.get(timeslot, 'high', 'flv', create=False)
+            if playlist:
+                return timeslot, playlist
+
+        return None, None
+
+    @classmethod
+    def new(cls):
         return Timeslot(
             time=datetime.datetime.now() + datetime.timedelta(hours=1),
             duration=30,
             secret_key=str(uuid.uuid4()),
             stream_key=str(uuid.uuid4()),
+            deprecated=False,
         )
+
+    @classmethod
+    def queryDeprecated(cls):
+        return Timeslot.query()\
+            .filter(Timeslot.deprecated == True)\
+            .order_by(Timeslot.end_time.desc())
+
+    @classmethod
+    def queryPast(cls):
+        return Timeslot.query()\
+        .filter(Timeslot.deprecated == False)\
+        .filter(Timeslot.end_time < datetime.datetime.now())\
+        .order_by(Timeslot.end_time.desc())
+
+    @classmethod
+    def queryUpcoming(cls):
+        return Timeslot.query()\
+            .filter(Timeslot.deprecated == False)\
+            .filter(Timeslot.end_time > datetime.datetime.now())\
+            .order_by(Timeslot.end_time)
+
 
     def breadcrumbs(self):
         bc = []
@@ -137,7 +254,12 @@ class Timeslot(sqla.BaseModel):
             bc += self.schedule.breadcrumbs()
         else:
             bc += ADMIN_BREADCRUMBS
-        if self.time and (self.time < datetime.datetime.now()):
+        if self.deprecated:
+            bc += [(
+                '/admin/deprecated-timeslots/',
+                "Deprecated Timeslots",
+            )]
+        elif self.time and (self.time < datetime.datetime.now()):
             bc += [(
                 '/admin/past-timeslots/',
                 "Past Timeslots",

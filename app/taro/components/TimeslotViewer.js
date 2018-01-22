@@ -16,6 +16,7 @@ const QUALITY = 'high' // TODO: how to choose appropriate quality
 class TimeslotViewerView extends Component {
 
   static propTypes = {
+    assumeSeen: PropTypes.bool,
     onReplay: PropTypes.func,
     time: PropTypes.instanceOf(Date),
     timeslot: PropTypes.object,
@@ -40,7 +41,6 @@ class TimeslotViewerView extends Component {
     } = this.props
     return (
       hlsStream != null
-      && hlsStream.isReady()
     )
   }
 
@@ -78,6 +78,7 @@ class TimeslotViewerView extends Component {
 
   renderBase = () => {
     const {
+      assumeSeen,
       time,
       timeslot,
       onReplay
@@ -89,9 +90,14 @@ class TimeslotViewerView extends Component {
     const isComplete = this.isPlayerComplete()
 
     if(isStreamOver || isComplete) {
+      const isMissed = (
+        !isComplete
+        &&
+        !assumeSeen
+      )
       return (
         <StreamEndedScreen
-          missed={ !isComplete }
+          missed={ isMissed }
           style={ [styles.stack, styles.lower] }
           onReplay={ onReplay }
         />

@@ -19,9 +19,13 @@ class RouterView extends Component {
       route,
     } = this.props
     if(route.context == 'home') {
-      return <ActiveTimeslotSelector />
+      return <ActiveTimeslotSelector
+        route={ route }
+      />
     } else {
-      return <VideoReplayer />
+      return <VideoReplayer
+        route={ route }
+      />
     }
   }
 

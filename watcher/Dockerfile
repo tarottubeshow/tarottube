@@ -10,7 +10,7 @@ RUN apt-get -y update &&\
 
 ENV LANG C.UTF-8
 
-RUN pip3 install --upgrade pip
+RUN pip3 install --upgrade pip six
 
 COPY ./ /opt/repo
 

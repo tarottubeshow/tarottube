@@ -4,6 +4,7 @@ import interpolate from 'color-interpolate'
 import { connect as reduxConnect } from 'react-redux'
 
 import {
+  Animated,
   Image,
   StyleSheet,
   TouchableOpacity,
@@ -101,6 +102,8 @@ class VideoReplayerView extends Component {
   }
 
   state = {
+    fade: new Animated.Value(0),
+    started: false,
     position: 0,
     duration: 1,
     playable: 0,
@@ -119,6 +122,9 @@ class VideoReplayerView extends Component {
   }
 
   onPlaybackStatusUpdate = (event) => {
+    const {
+      started,
+    } = this.state
     const position = event.positionMillis
     const duration = event.durationMillis || 1
     let playable = Math.max(
@@ -133,6 +139,22 @@ class VideoReplayerView extends Component {
       duration,
       playable,
     })
+    if(!started && position > 0) {
+      this.onStart()
+    }
+  }
+
+  onStart = () => {
+    Animated.timing(
+      this.state.fade,
+      {
+        toValue: 1,
+        duration: 5000,
+      },
+    ).start()
+    this.setState({
+      started: true,
+    })
   }
 
   onRestart = () => {
@@ -146,14 +168,23 @@ class VideoReplayerView extends Component {
     const {
       style,
     } = this.props
+    const {
+      fade,
+    } = this.state
     return (
       <GradientBackground
         stops={ [COLORS.purpleLight, COLORS.purple] }
       >
         <View style={ style }>
-          { this.renderPlayer() }
+          { this.renderLoading() }
+          <Animated.View style={{
+            opacity: fade,
+            zIndex: 100,
+          }}>
+            { this.renderPlayer() }
+            { this.renderProgressIndicator() }
+          </Animated.View>
           { this.renderStopButton() }
-          { this.renderProgressIndicator() }
           { this.renderEndActions() }
         </View>
       </GradientBackground>
@@ -179,6 +210,18 @@ class VideoReplayerView extends Component {
             text="Replay"
             onPress={ this.onRestart }
             style={ styles.endActionButton }
+          />
+        </View>
+      )
+    }
+  }
+
+  renderLoading = () => {
+    if(!this.isEnded()) {
+      return (
+        <View style={ styles.loading }>
+          <Image
+            source={ Images.LOADING_GIF }
           />
         </View>
       )
@@ -263,12 +306,12 @@ const styles = StyleSheet.create({
   },
   close: {
     position: 'absolute',
-    top: 12,
+    top: 20,
     left: 5,
     width: 32,
     height: 32,
     zIndex: 500,
-    opacity: 0.7,
+    opacity: 0.5,
   },
   endActions: {
     position: 'absolute',
@@ -286,6 +329,18 @@ const styles = StyleSheet.create({
     width: 300,
     margin: 2,
   },
+  loading: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 50,
+  },
 })
 
 const VideoReplayer = metautil.applyHocs(
@@ -297,6 +352,7 @@ const VideoReplayer = metautil.applyHocs(
       onStop: () => {
         dispatch(RouterActions.requestRouteChange({
           context: 'home',
+          assumeSeen: true,
         }))
       }
     }),

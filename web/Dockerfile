@@ -12,7 +12,7 @@ ENV LANG C.UTF-8
 
 RUN pip3 install --upgrade pip
 
-RUN pip3 install uwsgi
+RUN pip3 install uwsgi six
 
 EXPOSE 80 443
 

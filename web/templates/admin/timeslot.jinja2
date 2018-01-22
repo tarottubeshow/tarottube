@@ -8,7 +8,17 @@
 <form method="POST">
     <div class="card">
         <div class="actions">
-            <button class="btn btn-link btn-clear">
+            {% if not timeslot.deprecated %}
+                <button
+                    class="btn btn-link btn-clear"
+                    type="submit"
+                    name="deprecated"
+                    value="true"
+                >
+                    <i class="actions__item zmdi zmdi-delete"></i>
+                </button>
+            {% endif %}
+            <button class="btn btn-link btn-clear" type="submit">
                 <i class="actions__item zmdi zmdi-floppy"></i>
             </button>
         </div>
@@ -33,6 +43,24 @@
 </form>
 
 {% if timeslot.id %}
+    <form method="POST" action="/admin/broadcast-notification/{{ timeslot.id }}/">
+        <div class="card">
+            <div class="actions">
+                <button class="btn btn-link btn-clear" type="submit">
+                    <i class="actions__item zmdi zmdi-mail-send"></i>
+                </button>
+            </div>
+
+            <div class="card-body">
+                <h4 class="card-title">Send Notification</h4>
+
+                {{ form.text('message',
+                    "Tarot Tube is about to go live. Tune in for your daily reading!",
+                    "Message") }}
+            </div>
+        </div>
+    </form>
+
     <div class="card">
         <div class="card-body">
             <h4 class="card-title">Timeslot Events</h4>

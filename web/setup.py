@@ -33,5 +33,6 @@ setup(
         'pyrebase',
         'requests',
         'watchdog',
+        'exponent_server_sdk',
     ],
 )

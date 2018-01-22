@@ -12,9 +12,10 @@ import {
   hasValueAsPromiseState,
   readyBoolAsPromiseState,
 } from 'taro/util/promiseutil'
-import { Audio } from 'expo'
 
-import { appStart } from 'taro/actions/AppLifecycle'
+import * as AppLifecycle from 'taro/actions/AppLifecycle'
+import * as AudioController from 'taro/components/AudioController'
+import * as NotificationsController from 'taro/components/NotificationsController'
 
 const buildMain = ({
   reducers,
@@ -82,7 +83,7 @@ const buildMain = ({
   class AppStateManagerView extends Component {
 
     static propTypes = {
-      onStart: PropTypes.func.isRequired,
+      onStart: PropTypes.func,
     }
 
     state = {
@@ -90,8 +91,7 @@ const buildMain = ({
     }
 
     componentDidMount = () => {
-      this.props.onStart()
-      this.enableAudio()
+      this.onStart()
       AppState.addEventListener('change', this._handleAppStateChange)
     }
 
@@ -99,27 +99,29 @@ const buildMain = ({
       AppState.removeEventListener('change', this._handleAppStateChange)
     }
 
+    onStart = () => {
+      const {
+        onStart,
+      } = this.props
+      if(onStart != null) {
+        onStart()
+      }
+      NotificationsController.maybeRequest()
+      AudioController.enable()
+    }
+
+    onResume = () => {
+      AudioController.enable()
+    }
+
     _handleAppStateChange = (nextAppState) => {
       const {
         appState,
       } = this.state
       if (appState.match(/inactive|background/) && nextAppState === 'active') {
-        this.enableAudio()
+        this.onResume()
       }
       this.setState({ appState: nextAppState })
-    }
-
-    enableAudio = () => {
-      Audio.setAudioModeAsync({
-        playsInSilentModeIOS: true,
-        playsInSilentLockedModeIOS: true,
-        allowsRecordingIOS: false,
-        interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX,
-        shouldDuckAndroid: false,
-        interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DO_NOT_MIX,
-      }).then(() => {
-        return Audio.setIsEnabledAsync(true)
-      })
     }
 
     render = () => {
@@ -141,7 +143,7 @@ const buildMain = ({
       }),
       (dispatch, props) => ({
         onStart: () => {
-          dispatch(appStart())
+          dispatch(AppLifecycle.appStart())
         }
       }),
     ),

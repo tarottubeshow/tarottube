@@ -38,12 +38,6 @@ class TimeslotPlaylist extends BaseModel {
     }
   }
 
-  isReady = () => {
-    // applies only to hls
-    const mappings = this.payload.mapping
-    return mappings.length > 1
-  }
-
   isStreaming = () => {
     // applies only to rtmp
     return this.payload.streaming

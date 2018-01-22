@@ -135,6 +135,11 @@ function makeApi(parentKey, key, requestMaker) {
       type: actionType,
       ...params,
     }),
+    exec: async function(params) {
+      const request = requestMaker(params)
+      const response = await fetchApi(request)
+      return response
+    },
   }
 }
 

@@ -117,24 +117,16 @@ class LiveVideoPlayerView extends Component {
   state = {
     fade: new Animated.Value(0),
     realTimestamp: null,
+    started: false,
   }
 
   componentDidMount() {
-    const {
-      onStart,
-    } = this.props
-
-    Animated.timing(
-      this.state.fade,
-      {
-        toValue: 1,
-        duration: 5000,
-      },
-    ).start()
-
     TRACKER.track('Mounted LiveVideoPlayer')
+  }
 
-    onStart()
+  onError = (event) => {
+    console.log("onError")
+    console.log(event)
   }
 
   onPlaybackStatusUpdate = (event) => {
@@ -143,6 +135,10 @@ class LiveVideoPlayerView extends Component {
       hlsStream,
       rtmpStream,
     } = this.props
+    const {
+      started,
+    } = this.state
+
     const position = event.positionMillis
     const duration = hlsStream.getDuration()
     const realTimestamp = hlsStream.getRealTimestamp(position)
@@ -153,14 +149,36 @@ class LiveVideoPlayerView extends Component {
       realTimestamp: realTimestamp,
       isStreaming: isStreaming,
     })
+    if(!started && position > 0) {
+      this.onStart()
+    }
     if(!isStreaming && ((duration - position) < END_STREAM_DELTA)) {
-      onFinish()
+      this.onFinish()
     }
   }
 
-  onError = (event) => {
-    console.log("onError")
-    console.log(event)
+  onFinish = () => {
+    const {
+      onFinish,
+    } = this.props
+    onFinish()
+  }
+
+  onStart = () => {
+    const {
+      onStart,
+    } = this.props
+    Animated.timing(
+      this.state.fade,
+      {
+        toValue: 1,
+        duration: 5000,
+      },
+    ).start()
+    this.setState({
+      started: true,
+    })
+    onStart()
   }
 
   render = () => {
