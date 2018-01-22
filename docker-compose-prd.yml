@@ -37,6 +37,8 @@ services:
     build:
       context: .
       dockerfile: ./cron/Dockerfile
+    volumes:
+    - ./config.yaml:/opt/repo/config.yaml
     links:
     - postgres:taro-db
     depends_on:
