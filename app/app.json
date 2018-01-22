@@ -6,10 +6,23 @@
     "version": "1.0.0",
     "slug": "tarot-tube-live",
     "ios": {
-        "bundleIdentifier": "com.tarottube.live"
+        "bundleIdentifier": "com.tarottube.live",
+        "isRemoteJSEnabled": true,
+        "supportsTablet": false,
     },
     "android": {
         "package": "com.tarottube.live"
+    },
+    "privacy": "unlisted",
+    "orientation": "portrait",
+    "notification": {
+        "icon": "./collateral/icons/48-square-black.png",
+        "color": "#5C27FE"
+    },
+    "splash": {
+        "backgroundColor": "#C165DD",
+        "resizeMode": "cover",
+        "image": "./collateral/splash/default.png"
     },
   }
 }
