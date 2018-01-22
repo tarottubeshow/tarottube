@@ -259,7 +259,7 @@ class Timeslot(sqla.BaseModel):
                 '/admin/deprecated-timeslots/',
                 "Deprecated Timeslots",
             )]
-        elif self.time and (self.time < datetime.datetime.now()):
+        elif self.end_time and (self.end_time < datetime.datetime.now()):
             bc += [(
                 '/admin/past-timeslots/',
                 "Past Timeslots",
@@ -273,6 +273,7 @@ class Timeslot(sqla.BaseModel):
     def getJson(self):
         return {
             'id': self.id,
+            'deprecated': self.deprecated,
             'duration': self.duration,
             'time': str(self.time),
             'end_time': str(self.end_time),
@@ -282,10 +283,15 @@ class Timeslot(sqla.BaseModel):
             'schedule': self.schedule.getJson() if self.schedule else None,
         }
 
-    def onSync(self):
-        self.end_time = self.time + datetime.timedelta(minutes=self.duration)
+    def syncToFirebase(self):
         fbdb = firebase.getShard()
-        fbdb.child("timeslots").child(self.stream_key).set(self.getJson())
+        target = fbdb.child("timeslots").child(self.stream_key)
+        if self.deprecated or (self.end_time < datetime.datetime.now()):
+            target.remove()
+            return True
+        else:
+            target.set(self.getJson())
+            return False
 
     def putPlaylist(self, type, quality, value):
         playlist = TimeslotPlaylist.get(self, quality, type)
@@ -294,10 +300,14 @@ class Timeslot(sqla.BaseModel):
     def urlAdmin(self):
         return '/admin/timeslots/%s/' % (self.id or 'new')
 
+    def _onSync(self):
+        self.end_time = self.time + datetime.timedelta(minutes=self.duration)
+        return self.syncToFirebase()
+
 @sa.event.listens_for(Timeslot, 'before_insert')
 @sa.event.listens_for(Timeslot, 'before_update')
 def onTimeslotSync(mapper, connection, target):
-    target.onSync()
+    target._onSync()
 
 class TimeslotEvent(sqla.BaseModel):
 
@@ -352,17 +362,6 @@ class TimeslotPlaylist(sqla.BaseModel):
             playlist.put()
             return playlist
 
-    def onSync(self):
-        fbdb = firebase.getShard()
-        key = '%s:%s:%s' % (
-            self.timeslot.stream_key,
-            self.type,
-            self.quality,
-        )
-        fbdb.child("playlists")\
-            .child(key)\
-            .set(self.getJson())
-
     def getJson(self):
         return {
             'stream': self.timeslot.stream_key,
@@ -371,7 +370,22 @@ class TimeslotPlaylist(sqla.BaseModel):
             'payload': self.payload,
         }
 
+    def _onSync(self, remove=False):
+        fbdb = firebase.getShard()
+        key = '%s:%s:%s' % (
+            self.timeslot.stream_key,
+            self.type,
+            self.quality,
+        )
+        target = fbdb.child("playlists")\
+            .child(key)
+
+        if remove:
+            target.remove()
+        else:
+            target.set(self.getJson())
+
 @sa.event.listens_for(TimeslotPlaylist, 'before_insert')
 @sa.event.listens_for(TimeslotPlaylist, 'before_update')
 def onTimeslotPlaylistSync(mapper, connection, target):
-    target.onSync()
+    target._onSync()

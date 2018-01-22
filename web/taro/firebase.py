@@ -14,6 +14,13 @@ def connect():
     db = firebase.database()
     return db
 
+def deleteFromShard(path):
+    fbdb = get()
+    fbdb.delete('/%s/%s' % (
+        CONFIG['firebase']['shard'],
+        path,
+    ))
+
 def get():
     if not hasattr(get, '_conn'):
         get._conn = connect()

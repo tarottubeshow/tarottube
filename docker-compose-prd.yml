@@ -33,6 +33,14 @@ services:
     depends_on:
     - 'web'
     restart: always
+  cron:
+    build:
+      context: .
+      dockerfile: ./cron/Dockerfile
+    links:
+    - postgres:taro-db
+    depends_on:
+    - 'web'
   srs:
     build:
       context: .

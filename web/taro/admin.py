@@ -147,3 +147,24 @@ DEFAULT_SCHEDULE_SPEC = """
 type: daily
 time: "09:00"
 """.strip()
+
+def syncActiveRecord(key):
+    print("Examining key: %s" % key)
+    timeslot = Timeslot.forStreamKey(key)
+    if not timeslot:
+        return
+
+    print("Syncing")
+    timeslot.syncToFirebase()
+
+@APP.route('/admin/test')
+def test():
+    fbdb = firebase.getShard()
+    data = fbdb.child('timeslots').get().val()
+    if not data:
+        return
+
+    for key in data.keys():
+        syncActiveRecord(key)
+
+    return "OK"
