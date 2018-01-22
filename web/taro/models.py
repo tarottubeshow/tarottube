@@ -208,6 +208,7 @@ class Timeslot(sqla.BaseModel):
     @classmethod
     def latestWithRecording(cls):
         query = Timeslot.query()\
+            .filter(Timeslot.deprecated == False)\
             .filter(Timeslot.time < datetime.datetime.now())\
             .order_by(Timeslot.time.desc())
         for timeslot in query:
