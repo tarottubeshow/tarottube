@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
-import { Platform, View, StyleSheet } from 'react-native'
+import { View, StyleSheet } from 'react-native'
 
 import SvgGradient from 'taro/components/SvgGradient'
 import * as proputil from 'taro/util/proputil'
@@ -15,14 +15,6 @@ class GradientBackground extends Component {
   }
 
   render = () => {
-    if(Platform.OS === 'ios') {
-      return this.renderIos()
-    } else {
-      return this.renderAndroid()
-    }
-  }
-
-  renderIos = () => {
     const {
       children,
       style,
@@ -31,6 +23,7 @@ class GradientBackground extends Component {
     return (
       <View
         style={ [
+          styles.parent,
           style,
         ] }
         ref={ this._initRoot }
@@ -40,25 +33,6 @@ class GradientBackground extends Component {
           stops={ stops }
           style={ styles.gradient }
         />
-      </View>
-    )
-  }
-
-  renderAndroid = () => {
-    const {
-      children,
-      style,
-      stops,
-    } = this.props
-    return (
-      <View
-        style={ [
-          style,
-          { backgroundColor: stops[0] }
-        ] }
-        ref={ this._initRoot }
-      >
-        { children }
       </View>
     )
   }
@@ -81,6 +55,9 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     zIndex: -1,
+  },
+  content: {
+    zIndex: 100,
   },
 })
 
