@@ -169,9 +169,7 @@ const TimeslotViewer = metautil.applyHocs(
 const styles = StyleSheet.create({
   stack: {
     position: 'absolute',
-    bottom: 0,
     left: 0,
-    right: 0,
     top: 0,
     height: '100%',
     width: '100%',
