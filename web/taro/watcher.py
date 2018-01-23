@@ -69,8 +69,10 @@ class FileHandler(FileSystemEventHandler):
             relPath = "%s/%s.%s.flv" % (quality, key, timestamp)
 
             timeslot.putPlaylist('flv', quality, {
+                'version': 1,
                 'timestamp': timestamp,
-                'path': relPath,
+                'flv': relPath,
+                'mp4': relPath.replace('.flv', '.mp4'),
             })
 
             subprocess.check_call([

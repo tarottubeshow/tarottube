@@ -9,6 +9,7 @@ import sqlalchemy.orm as sao
 
 from taro import firebase
 from taro import sqla
+from taro.config import CONFIG
 from taro.util import timeutil
 
 ADMIN_BREADCRUMBS = [
@@ -248,7 +249,6 @@ class Timeslot(sqla.BaseModel):
             .filter(Timeslot.end_time > datetime.datetime.now())\
             .order_by(Timeslot.end_time)
 
-
     def breadcrumbs(self):
         bc = []
         if self.schedule:
@@ -303,7 +303,7 @@ class Timeslot(sqla.BaseModel):
 
     def _onSync(self):
         self.end_time = self.time + datetime.timedelta(minutes=self.duration)
-        return self.syncToFirebase()
+        self.syncToFirebase()
 
 @sa.event.listens_for(Timeslot, 'before_insert')
 @sa.event.listens_for(Timeslot, 'before_update')
@@ -345,12 +345,18 @@ class TimeslotPlaylist(sqla.BaseModel):
     timeslot = sao.relationship('Timeslot')
 
     @classmethod
+    def forTimeslot(cls, timeslot):
+        return TimeslotPlaylist.query()\
+            .filter(TimeslotPlaylist.timeslot == timeslot)
+
+    @classmethod
     def get(cls, timeslot, quality, type, create=True):
         existing = TimeslotPlaylist.query()\
             .filter(TimeslotPlaylist.timeslot == timeslot)\
             .filter(TimeslotPlaylist.quality == quality)\
             .filter(TimeslotPlaylist.type == type)\
             .first()
+
         if existing:
             return existing
 
@@ -371,20 +377,37 @@ class TimeslotPlaylist(sqla.BaseModel):
             'payload': self.payload,
         }
 
-    def _onSync(self, remove=False):
-        fbdb = firebase.getShard()
-        key = '%s:%s:%s' % (
+    def getPublicUri(self):
+        if self.type != 'flv':
+            raise NotImplemented("getPublicUri is only implemented for flv playlists")
+
+        version = self.payload.get('version')
+
+        if version == 1:
+            path = self.payload['mp4']
+        else: # v0
+            path = self.payload['path'].replace('.flv', '.mp4')
+
+        return '%s/flv/%s' % (
+            CONFIG['url']['frags'],
+            path
+        )
+
+    def _getFirebaseKey(self):
+        return '%s:%s:%s' % (
             self.timeslot.stream_key,
             self.type,
             self.quality,
         )
-        target = fbdb.child("playlists")\
+
+    def _onSync(self, remove=False):
+        fbdb = firebase.getShard()
+        key = sef._getFirebaseKey()
+        target = fbdb\
+            .child("playlists")\
             .child(key)
 
-        if remove:
-            target.remove()
-        else:
-            target.set(self.getJson())
+        target.set(self.getJson())
 
 @sa.event.listens_for(TimeslotPlaylist, 'before_insert')
 @sa.event.listens_for(TimeslotPlaylist, 'before_update')

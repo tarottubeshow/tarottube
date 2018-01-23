@@ -4,7 +4,7 @@ import { connect as reduxConnect } from 'react-redux'
 import { View } from 'react-native'
 
 import ActiveTimeslotSelector from 'taro/components/ActiveTimeslotSelector'
-import VideoReplayer from 'taro/components/VideoReplayer'
+import ReplayLatestScreen from 'taro/components/ReplayLatestScreen'
 
 import { applyHocs } from 'taro/util/metautil'
 
@@ -23,7 +23,7 @@ class RouterView extends Component {
         route={ route }
       />
     } else {
-      return <VideoReplayer
+      return <ReplayLatestScreen
         route={ route }
       />
     }

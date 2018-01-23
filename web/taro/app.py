@@ -21,6 +21,8 @@ def init():
     import taro.admin
     import taro.hook
     import taro.public
+    import taro.video
+    import taro.api
 
     import taro.sqla
     taro.sqla.augmentApp(APP)
@@ -28,7 +30,6 @@ def init():
     from taro.util import metautil
     if not metautil.isDev():
         forceSsl(APP)
-
 
 def forceSsl(app):
     @app.before_request

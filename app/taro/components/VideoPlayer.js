@@ -94,11 +94,15 @@ class ProgressIndicator extends Component {
 
 }
 
-class VideoReplayerView extends Component {
+class VideoPlayerView extends Component {
 
   static propTypes = {
-    onStop: PropTypes.func,
+    backRoute: PropTypes.object,
+    context: PropTypes.string,
+    uri: PropTypes.string,
     style: proputil.STYLE_TYPE,
+
+    goBack: PropTypes.func,
   }
 
   state = {
@@ -110,7 +114,14 @@ class VideoReplayerView extends Component {
   }
 
   componentDidMount = () => {
-    TRACKER.track('Mounted VideoReplayerView')
+    const {
+      uri,
+      context,
+    } = this.props
+    TRACKER.track('Mounted VideoPlayerView', {
+      uri: uri,
+      context: context,
+    })
   }
 
   isEnded = () => {
@@ -195,14 +206,14 @@ class VideoReplayerView extends Component {
   renderEndActions = () => {
     if(this.isEnded()) {
       const {
-        onStop,
+        goBack,
       } = this.props
       return (
         <View style={ styles.endActions }>
           <Button
             color="yellow"
             text="Done"
-            onPress={ onStop }
+            onPress={ goBack }
             style={ styles.endActionButton }
           />
           <Button
@@ -229,15 +240,17 @@ class VideoReplayerView extends Component {
   }
 
   renderPlayer = () => {
+    const {
+      uri,
+    } = this.props
     const videoStyle = [ styles.video ]
     if(this.isEnded()) {
       videoStyle.push(styles.videoEnded)
     }
-    const url = `${ global.CONFIG['URL']['API'] }/video/latest.mp4`
     return (
       <Video
         ref={ (videoRef) => { this._videoRef = videoRef } }
-        source={ { uri: url } }
+        source={ { uri: uri } }
         shouldPlay={ true }
         rate={ 1.0 }
         volume={ 1.0 }
@@ -269,12 +282,12 @@ class VideoReplayerView extends Component {
   renderStopButton = () => {
     if(!this.isEnded()) {
       const {
-        onStop,
+        goBack,
       } = this.props
       return (
         <TouchableOpacity
           style={ styles.close }
-          onPress={ onStop }
+          onPress={ goBack }
         >
           <Image
             style={ styles.close }
@@ -343,20 +356,17 @@ const styles = StyleSheet.create({
   },
 })
 
-const VideoReplayer = metautil.applyHocs(
-  VideoReplayerView,
+const VideoPlayer = metautil.applyHocs(
+  VideoPlayerView,
   reduxConnect(
     (state, props) => ({
     }),
     (dispatch, props) => ({
-      onStop: () => {
-        dispatch(RouterActions.requestRouteChange({
-          context: 'home',
-          assumeSeen: true,
-        }))
+      goBack: () => {
+        dispatch(RouterActions.requestRouteChange(props.backRoute))
       }
     }),
   ),
 )
 
-export default VideoReplayer
+export default VideoPlayer

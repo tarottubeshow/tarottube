@@ -5,6 +5,7 @@ import time
 from jinja2 import Template
 
 from taro import sqla
+from taro import starting
 from taro.config import CONFIG
 
 NGINX_CONF = CONFIG['nginx']
@@ -79,19 +80,7 @@ def startUwsgi():
     print(uwsgiArgs)
     subprocess.check_call(uwsgiArgs)
 
-def waitForPsql():
-    while True:
-        print("ATTEMPTING A SQL QUERY")
-        with sqla.BaseModel.sessionContext():
-            try:
-                result = sqla.BaseModel.execute("""SELECT 1""")
-                print(list(result))
-                return
-            except:
-                print("Exception encountered querying... sleeping")
-                time.sleep(1)
-
 if __name__ == '__main__':
-    waitForPsql()
+    starting.waitForPsql()
     runMigrations()
     startAll()
