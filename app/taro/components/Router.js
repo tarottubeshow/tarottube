@@ -6,6 +6,7 @@ import { View } from 'react-native'
 import ActiveTimeslotSelector from 'taro/components/ActiveTimeslotSelector'
 import IntroScreen from 'taro/components/IntroScreen'
 import FaqScreen from 'taro/components/FaqScreen'
+import HamburgerScreen from 'taro/components/HamburgerScreen'
 import ReplayLatestScreen from 'taro/components/ReplayLatestScreen'
 
 import { applyHocs } from 'taro/util/metautil'
@@ -30,6 +31,10 @@ class RouterView extends Component {
       />
     } else if(route.context == 'faq') {
       return <FaqScreen
+        route={ route }
+      />
+    } else if(route.context == 'hamburger') {
+      return <HamburgerScreen
         route={ route }
       />
     } else {

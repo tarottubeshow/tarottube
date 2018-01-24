@@ -82,9 +82,15 @@ class WaitingScreen extends Component {
   }
 
   renderHamburger = () => {
-    // TODO: display menu
+    const {
+      goto,
+    } = this.props
+    const route = {
+      context: 'hamburger',
+    }
     return (
       <TouchableOpacity
+        onPress={ () => goto(route) }
         style={ styles.hamburger }
       >
         <Image
