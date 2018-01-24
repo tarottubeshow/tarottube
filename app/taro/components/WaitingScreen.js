@@ -2,21 +2,27 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect as reduxConnect } from 'react-redux'
 
-import { Image, StyleSheet, Text, View } from 'react-native'
+import {
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native'
 
 import COLORS from 'taro/colors'
 import TRACKER from 'taro/tracking'
 import AmbientGradientBackground from 'taro/components/AmbientGradientBackground'
 import Button from 'taro/components/Button'
 import Timer from 'taro/components/Timer'
-import { LOGO_LONG_WHITE } from 'taro/Images'
+import * as Images from 'taro/Images'
 
 class WaitingScreen extends Component {
 
   static propTypes = {
-    onReplay: PropTypes.func,
+    goto: PropTypes.func,
     timeslot: PropTypes.object,
-    isFuture: PropTypes.bool,
+    mode: PropTypes.string,
   }
 
   componentDidMount = () => {
@@ -30,22 +36,112 @@ class WaitingScreen extends Component {
   render = () => {
     return (
       <AmbientGradientBackground style={ styles.parent }>
+        { this.renderHamburger() }
+        { this.renderHelpButton() }
         <View style={ styles.top }/>
         <Image
           style={ styles.logo }
-          source={ LOGO_LONG_WHITE }
+          source={ Images.LOGO_LONG_WHITE }
         />
-        { this.renderTimer() }
+        { this.renderMain() }
         <View style={ styles.bottom }>
-          <Button
-            text="Replay Latest"
-            onPress={ this.onReplayLatest }
-            style={ styles.bottomButton }
-            color="yellow"
-          />
+          { this.renderReplayButton() }
         </View>
       </AmbientGradientBackground>
     )
+  }
+
+  renderReplayButton = () => {
+    const {
+      goto,
+      mode,
+    } = this.props
+    if(mode == 'soon') {
+      return null
+    }
+
+    let text
+    if(mode == 'countdown') {
+      text = "Play Latest"
+    } else {
+      text = "Replay"
+    }
+
+    const route = {
+      context: 'replay',
+    }
+
+    return (
+      <Button
+        text={ text }
+        onPress={ () => goto(route) }
+        style={ styles.bottomButton }
+        color="yellow"
+      />
+    )
+  }
+
+  renderHamburger = () => {
+    // TODO: display menu
+    return (
+      <TouchableOpacity
+        style={ styles.hamburger }
+      >
+        <Image
+          style={ styles.hamburger }
+          source={ Images.HAMBURGER_BUTTON }
+        />
+      </TouchableOpacity>
+    )
+  }
+
+  renderHelpButton = () => {
+    const {
+      goto,
+    } = this.props
+    const route = {
+      context: 'faq',
+    }
+    return (
+      <TouchableOpacity
+        onPress={ () => goto(route) }
+        style={ styles.help }
+      >
+        <Image
+          style={ styles.help }
+          source={ Images.HELP_BUTTON }
+        />
+      </TouchableOpacity>
+    )
+  }
+
+  renderMain = () => {
+    const {
+      mode,
+      timeslot,
+    } = this.props
+    if(mode == 'countdown') {
+      return (
+        <Timer
+          style={ styles.timer }
+          time={ timeslot.getStartTime() }
+        />
+      )
+    } else {
+      let note
+      if(mode == 'soon') {
+        note = "will begin shortly!"
+      } else if(mode == 'missed') {
+        note = "You missed the stream!"
+      } else if(mode == 'over') {
+        note = "Thanks for tuning in!"
+      }
+      return (
+        <Text style={ styles.note }>
+          { note }
+        </Text>
+      )
+    }
   }
 
   renderTimer = () => {
@@ -54,12 +150,7 @@ class WaitingScreen extends Component {
       timeslot,
     } = this.props
     if(isFuture) {
-      return (
-        <Timer
-          style={ styles.timer }
-          time={ timeslot.getStartTime() }
-        />
-      )
+
     } else {
       return (
         <Text style={ styles.soon }>
@@ -82,11 +173,11 @@ const styles = StyleSheet.create({
     width: 260,
     height: 43,
   },
-  soon: {
+  note: {
     backgroundColor: 'transparent',
     color: COLORS.white,
-    fontSize: 32,
-    marginTop: 0,
+    fontSize: 24,
+    marginTop: 20,
     backgroundColor: 'transparent',
     textShadowColor: 'rgba(0, 0, 0, 0.2)',
     textShadowOffset: {width: 1, height: 1},
@@ -107,6 +198,22 @@ const styles = StyleSheet.create({
   bottomButton: {
     width: 300,
     marginTop: 10,
+  },
+  hamburger: {
+    position: 'absolute',
+    top: 21,
+    left: 12,
+    width: 28,
+    height: 28,
+    zIndex: 500,
+  },
+  help: {
+    position: 'absolute',
+    top: 20,
+    right: 10,
+    width: 32,
+    height: 32,
+    zIndex: 500,
   },
 })
 

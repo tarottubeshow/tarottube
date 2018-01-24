@@ -1,0 +1,19 @@
+{% import 'admin/faqTable.jinja2' as faqTable %}
+
+{% extends 'admin/base.jinja2' %}
+
+{% block content %}
+
+<div class="card">
+    <div class="actions">
+        <a href="/admin/faq/new/" class="actions__item zmdi zmdi-plus"></a>
+    </div>
+
+    <div class="card-body">
+        <h4 class="card-title">FAQs</h4>
+
+        {{ faqTable.render(faqs) }}
+    </div>
+</div>
+
+{% endblock %}

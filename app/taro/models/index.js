@@ -1,5 +1,9 @@
+import Faq from 'taro/models/Faq'
+import FaqList from 'taro/models/FaqList'
 import Schedule from 'taro/models/Schedule'
 import Timeslot from 'taro/models/Timeslot'
+
+import FAQ_API from 'taro/api/FaqApi'
 
 const MODEL_SPECS = [
   {
@@ -7,6 +11,13 @@ const MODEL_SPECS = [
   },
   {
     cls: Timeslot,
+  },
+  {
+    cls: Faq,
+  },
+  {
+    cls: FaqList,
+    api: FAQ_API.get,
   },
 ]
 

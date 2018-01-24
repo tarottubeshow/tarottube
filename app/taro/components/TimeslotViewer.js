@@ -81,37 +81,42 @@ class TimeslotViewerView extends Component {
       assumeSeen,
       time,
       timeslot,
-      onReplay
+      goto,
     } = this.props
 
     const isFuture = timeslot.getStartTime() > time
     const hasStream = this.isStreamReady()
     const isStreamOver = this.isStreamOver()
     const isComplete = this.isPlayerComplete()
+    const isMissed = (
+      !isComplete
+      &&
+      !assumeSeen
+    )
 
+    let mode
     if(isStreamOver || isComplete) {
-      const isMissed = (
-        !isComplete
-        &&
-        !assumeSeen
-      )
-      return (
-        <StreamEndedScreen
-          missed={ isMissed }
-          style={ [styles.stack, styles.lower] }
-          onReplay={ onReplay }
-        />
-      )
+      if(isMissed) {
+        mode = 'missed'
+      } else {
+        mode = 'over'
+      }
     } else {
-      return (
-        <WaitingScreen
-          timeslot={ timeslot }
-          isFuture={ isFuture }
-          style={ [styles.stack, styles.lower] }
-          onReplay={ onReplay }
-        />
-      )
+      if(isFuture) {
+        mode = 'countdown'
+      } else {
+        mode = 'soon'
+      }
     }
+
+    return (
+      <WaitingScreen
+        timeslot={ timeslot }
+        mode={ mode }
+        style={ [styles.stack, styles.lower] }
+        goto={ goto }
+      />
+    )
   }
 
   renderVideo = () => {
@@ -157,10 +162,8 @@ const TimeslotViewer = metautil.applyHocs(
       }
     },
     (dispatch, props) => ({
-      onReplay: () => {
-        dispatch(RouterActions.requestRouteChange({
-          context: 'replay',
-        }))
+      goto: (route) => {
+        dispatch(RouterActions.requestRouteChange(route))
       }
     }),
   ),

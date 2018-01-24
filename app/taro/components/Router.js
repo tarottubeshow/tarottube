@@ -4,6 +4,8 @@ import { connect as reduxConnect } from 'react-redux'
 import { View } from 'react-native'
 
 import ActiveTimeslotSelector from 'taro/components/ActiveTimeslotSelector'
+import IntroScreen from 'taro/components/IntroScreen'
+import FaqScreen from 'taro/components/FaqScreen'
 import ReplayLatestScreen from 'taro/components/ReplayLatestScreen'
 
 import { applyHocs } from 'taro/util/metautil'
@@ -18,12 +20,20 @@ class RouterView extends Component {
     const {
       route,
     } = this.props
-    if(route.context == 'home') {
-      return <ActiveTimeslotSelector
+    if(route.context == 'replay') {
+      return <ReplayLatestScreen
+        route={ route }
+      />
+    } else if(route.context == 'intro') {
+      return <IntroScreen
+        route={ route }
+      />
+    } else if(route.context == 'faq') {
+      return <FaqScreen
         route={ route }
       />
     } else {
-      return <ReplayLatestScreen
+      return <ActiveTimeslotSelector
         route={ route }
       />
     }

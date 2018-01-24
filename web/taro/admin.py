@@ -3,6 +3,7 @@ import flask
 
 import taro.validate as val
 import taro.requestValidate as rval
+from taro import upload
 from taro import sqla
 from taro.app import APP
 from taro.models import *
@@ -18,6 +19,8 @@ def adminRoot():
         timeslots=timeslots,
         breadcrumbs=ADMIN_BREADCRUMBS,
     )
+
+# schedules
 
 @APP.route('/admin/schedules/')
 def listSchedules():
@@ -60,6 +63,8 @@ def _getSchedule(id):
         )
     else:
         return Schedule.forId(int(id))
+
+# timeslots
 
 @APP.route('/admin/timeslots/<id>/')
 def getTimeslot(id):
@@ -142,6 +147,55 @@ def _getTimeslot(id):
         return Timeslot.new()
     else:
         return Timeslot.forId(int(id))
+
+# faq
+
+# schedules
+
+@APP.route('/admin/faq/')
+def listFaqs():
+    faqs = Faq.getAll()
+    return flask.render_template(
+        'admin/faqs.jinja2',
+        title="FAQs",
+        faqs=faqs,
+        breadcrumbs=FAQ_BREADCRUMBS,
+    )
+
+@APP.route('/admin/faq/<id>/')
+def getFaq(id):
+    faq = _getFaq(id)
+    return flask.render_template(
+        'admin/faq.jinja2',
+        title="Edit FAQ",
+        faq=faq,
+        breadcrumbs=faq.breadcrumbs(),
+    )
+
+@APP.route('/admin/faq/<id>/', methods=['POST'])
+def saveFaq(id):
+    faq = _getFaq(id)
+    faq.deprecated = rval.get('deprecated', val.ParseBool(), val.DefaultValue(False))
+    faq.title = rval.get('title', val.Required())
+    faq.order = rval.get('order', val.Required())
+
+    if upload.fileExists():
+        print("upload")
+        uploaded = upload.uploadFromRequest()
+        print(uploaded)
+        faq.url = uploaded['url']
+
+    faq.put(True)
+    return flask.redirect(faq.urlAdmin())
+
+def _getFaq(id):
+    if id == 'new':
+        return Faq(
+            deprecated=False,
+        )
+    else:
+        return Faq.forId(int(id))
+
 
 DEFAULT_SCHEDULE_SPEC = """
 type: daily

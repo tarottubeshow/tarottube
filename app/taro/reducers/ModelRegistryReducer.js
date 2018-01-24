@@ -124,29 +124,6 @@ const registryReducer = combineReducersFuncs(
   updateRegistryReducer,
 )
 
-// Actions
-
-const loadModel = (cls, target) => {
-  target = _forceTargetToParams(target)
-  const enhance = target.enhance
-  const cache = (
-    (enhance == null)
-    &&
-    coalesce(target.cache, true)
-  ) // never cache enhancements
-  const id = cls.extractId(target)
-  return {
-    type: `__MODEL_REGISTRY__:loadModel(${ cls.key })`,
-    __MODEL_REGISTRY__: {
-      cls,
-      target: target,
-      id: id,
-      cache: cache,
-      enhance: enhance,
-    },
-  }
-}
-
 const _forceTargetToParams = (target) => {
   if(isObject(target)) {
     return target
@@ -218,5 +195,5 @@ export {
   getModelEntryByRawId,
   getRelatedModel,
   getRelatedModels,
-  loadModel,
+  _forceTargetToParams,
 }

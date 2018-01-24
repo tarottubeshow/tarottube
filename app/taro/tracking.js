@@ -16,6 +16,7 @@ class Tracker {
         ...properties,
       }
     }
+    console.log(payload)
     const encoded = base64.encode(JSON.stringify(payload))
     const uri = `http://api.mixpanel.com/track/?data=${ encoded }`
     response = await fetch(uri, {

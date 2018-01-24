@@ -3,6 +3,7 @@ const COLORS = {
   orangeLight: '#FFCB52',
   purple: '#5C27FE',
   purpleLight: '#C165DD',
+  brightPurple: '#e909ff',
   // green: '#08C792',
   // greenLight: '2AFEB7',
   green: '#04F5ED',

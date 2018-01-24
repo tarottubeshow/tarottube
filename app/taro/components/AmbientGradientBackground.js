@@ -20,7 +20,7 @@ const BOTTOM_COLORMAP = interpolate([
   COLORS.peachLight,
   COLORS.blueLight,
 ])
-const PERIOD = 60000
+const PERIOD = 20000
 
 class AmbientGradientBackground extends Component {
 

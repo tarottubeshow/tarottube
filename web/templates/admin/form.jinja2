@@ -21,3 +21,19 @@
         <i class="form-group__bar"></i>
     </div>
 {% endmacro %}
+
+{% macro file(
+    name,
+    label
+) %}
+    <div class="form-group">
+        <label for="{{ name }}">{{ label }}</label>
+        <input
+            class="form-control"
+            type="file"
+            name="{{ name }}"
+            id="{{ name }}"
+        />
+        <i class="form-group__bar"></i>
+    </div>
+{% endmacro %}

@@ -14,8 +14,9 @@ import {
 } from 'taro/util/promiseutil'
 
 import * as AppLifecycle from 'taro/actions/AppLifecycle'
-import * as AudioController from 'taro/components/AudioController'
-import * as NotificationsController from 'taro/components/NotificationsController'
+import * as AudioController from 'taro/controllers/AudioController'
+import * as FontManager from 'taro/controllers/FontManager'
+import * as NotificationsController from 'taro/controllers/NotificationsController'
 
 const buildMain = ({
   reducers,
@@ -108,6 +109,7 @@ const buildMain = ({
       }
       NotificationsController.maybeRequest()
       AudioController.enable()
+      FontManager.init()
     }
 
     onResume = () => {

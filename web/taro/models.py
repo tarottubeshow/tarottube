@@ -29,6 +29,45 @@ DEPRECATED_TIMESLOTS_BREADCRUMBS = ADMIN_BREADCRUMBS + [
     ('/admin/deprecated-timeslots/', "Deprecated Timeslots"),
 ]
 
+FAQ_BREADCRUMBS = ADMIN_BREADCRUMBS + [
+    ('/admin/faq/', "FAQs"),
+]
+
+class Faq(sqla.BaseModel):
+
+    __tablename__ = 'faq'
+
+    id = sa.Column('id', sa.Integer, primary_key=True)
+    deprecated = sa.Column('deprecated', sa.Boolean)
+    title = sa.Column('title', sa.String)
+    url = sa.Column('url', sa.String)
+    order = sa.Column('order', sa.String)
+
+    @classmethod
+    def getAll(cls, includeDeprecated=True):
+        query = Faq.query()
+        if not includeDeprecated:
+            query = query.filter(Faq.deprecated == False)
+        query = query.order_by(Faq.order)
+        return query.all()
+
+    def breadcrumbs(self):
+        return FAQ_BREADCRUMBS + [(
+            self.urlAdmin(),
+            self.title or "New FAQ",
+        )]
+
+    def getJson(self):
+        return {
+            'id': self.id,
+            'order': self.order,
+            'title': self.title,
+            'url': self.url,
+        }
+
+    def urlAdmin(self):
+        return '/admin/faq/%s/' % (self.id or 'new')
+
 class PushToken(sqla.BaseModel):
 
     __tablename__ = 'push_token'

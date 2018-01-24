@@ -1,0 +1,45 @@
+{% import 'admin/form.jinja2' as form %}
+
+{% extends 'admin/base.jinja2' %}
+
+{% block content %}
+<form method="POST" class="schedule-editor" enctype="multipart/form-data">
+    <div class="card">
+        <div class="actions">
+            {% if not faq.deprecated %}
+                <button
+                    class="btn btn-link btn-clear"
+                    type="submit"
+                    name="deprecated"
+                    value="true"
+                >
+                    <i class="actions__item zmdi zmdi-delete"></i>
+                </button>
+            {% endif %}
+
+            <button class="btn btn-link btn-clear" type="submit">
+                <i class="actions__item zmdi zmdi-floppy"></i>
+            </button>
+        </div>
+
+        <div class="card-body">
+            <h4 class="card-title">FAQ</h4>
+
+            {{ form.text('order', faq.order, "Order",
+                type="number", step=1) }}
+            {{ form.text('title', faq.title, "Title") }}
+
+            {{ form.file('file', "Upload .mp4") }}
+
+            {% if faq.url %}
+                <div>
+                    <a href="{{ faq.url }}">
+                        {{ faq.url }}
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</form>
+
+{% endblock %}

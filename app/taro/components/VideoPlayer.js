@@ -19,7 +19,7 @@ import * as proputil from 'taro/util/proputil'
 import COLORS from 'taro/colors'
 import TRACKER from 'taro/tracking'
 import Button from 'taro/components/Button'
-import GradientBackground from 'taro/components/GradientBackground'
+import LoadingBlock from 'taro/components/LoadingBlock'
 
 const PLAYABLE_COLORMAP = interpolate([
   COLORS.blueLight,
@@ -97,9 +97,16 @@ class ProgressIndicator extends Component {
 class VideoPlayerView extends Component {
 
   static propTypes = {
-    backRoute: PropTypes.object,
     context: PropTypes.string,
     uri: PropTypes.string,
+
+    autoBack: PropTypes.bool,
+    backRoute: PropTypes.object,
+    hideClose: PropTypes.bool,
+
+    onBack: PropTypes.func,
+    onEnd: PropTypes.func,
+
     style: proputil.STYLE_TYPE,
 
     goBack: PropTypes.func,
@@ -108,32 +115,45 @@ class VideoPlayerView extends Component {
   state = {
     fade: new Animated.Value(0),
     started: false,
+    ended: false,
     position: 0,
     duration: 1,
     playable: 0,
   }
 
   componentDidMount = () => {
+    this.track('Mounted VideoPlayerView')
+  }
+
+  track = (name, params) => {
     const {
       uri,
       context,
     } = this.props
-    TRACKER.track('Mounted VideoPlayerView', {
+    TRACKER.track(name, {
       uri: uri,
       context: context,
+      ...params,
     })
   }
 
-  isEnded = () => {
+  goBack = () => {
     const {
-      position,
-      duration,
-    } = this.state
-    return position != 0 && position >= duration
+      backRoute,
+      goBack,
+      onBack,
+    } = this.props
+    if(onBack != null) {
+      onBack()
+    }
+    if(backRoute != null) {
+      goBack(backRoute)
+    }
   }
 
   onPlaybackStatusUpdate = (event) => {
     const {
+      ended,
       started,
     } = this.state
     const position = event.positionMillis
@@ -145,13 +165,39 @@ class VideoPlayerView extends Component {
     if(position == 0) {
       playable = 0 // for some reason it jumps around at 0
     }
+
+    const newStarted = (position > 0)
+    const newEnded = (position != 0 && position >= duration)
+
     this.setState({
       position,
       duration,
       playable,
+      started: newStarted,
+      ended: newEnded,
     })
-    if(!started && position > 0) {
+    if(!started && newStarted) {
       this.onStart()
+    }
+    if(!ended && newEnded) {
+      this.onEnd()
+    }
+  }
+
+  onEnd = () => {
+    const {
+      onEnd,
+      autoBack,
+    } = this.props
+
+    this.track('VideoPlayerView Ended')
+
+    if(onEnd != null) {
+      onEnd()
+    }
+
+    if(autoBack) {
+      this.goBack()
     }
   }
 
@@ -160,19 +206,14 @@ class VideoPlayerView extends Component {
       this.state.fade,
       {
         toValue: 1,
-        duration: 5000,
+        duration: 1000,
       },
     ).start()
-    this.setState({
-      started: true,
-    })
   }
 
   onRestart = () => {
+    this.track('Restarted VideoPlayerView')
     this._videoRef.setPositionAsync(0)
-    componentDidMount = () => {
-      TRACKER.track('Restarted Video')
-    }
   }
 
   render = () => {
@@ -183,37 +224,33 @@ class VideoPlayerView extends Component {
       fade,
     } = this.state
     return (
-      <GradientBackground
-        stops={ [COLORS.purpleLight, COLORS.purple] }
-      >
-        <View style={ style }>
-          { this.renderLoading() }
-          <Animated.View style={{
-            opacity: fade,
-            zIndex: 100,
-          }}>
-            { this.renderPlayer() }
-            { this.renderProgressIndicator() }
-          </Animated.View>
-          { this.renderStopButton() }
-          { this.renderEndActions() }
-        </View>
-      </GradientBackground>
+      <View style={ style }>
+        { this.renderLoading() }
+        <Animated.View style={{
+          opacity: fade,
+          zIndex: 100,
+        }}>
+          { this.renderPlayer() }
+          { this.renderProgressIndicator() }
+        </Animated.View>
+        { this.renderStopButton() }
+        { this.renderEndActions() }
+      </View>
     )
 
   }
 
   renderEndActions = () => {
-    if(this.isEnded()) {
-      const {
-        goBack,
-      } = this.props
+    const {
+      ended,
+    } = this.state
+    if(ended) {
       return (
         <View style={ styles.endActions }>
           <Button
             color="yellow"
             text="Done"
-            onPress={ goBack }
+            onPress={ this.goBack }
             style={ styles.endActionButton }
           />
           <Button
@@ -228,12 +265,13 @@ class VideoPlayerView extends Component {
   }
 
   renderLoading = () => {
-    if(!this.isEnded()) {
+    const {
+      ended,
+    } = this.state
+    if(!ended) {
       return (
         <View style={ styles.loading }>
-          <Image
-            source={ Images.LOADING_GIF }
-          />
+          <LoadingBlock />
         </View>
       )
     }
@@ -243,8 +281,11 @@ class VideoPlayerView extends Component {
     const {
       uri,
     } = this.props
+    const {
+      ended,
+    } = this.state
     const videoStyle = [ styles.video ]
-    if(this.isEnded()) {
+    if(ended) {
       videoStyle.push(styles.videoEnded)
     }
     return (
@@ -280,22 +321,32 @@ class VideoPlayerView extends Component {
   }
 
   renderStopButton = () => {
-    if(!this.isEnded()) {
-      const {
-        goBack,
-      } = this.props
-      return (
-        <TouchableOpacity
-          style={ styles.close }
-          onPress={ goBack }
-        >
-          <Image
-            style={ styles.close }
-            source={ Images.CLOSE_BUTTON }
-          />
-        </TouchableOpacity>
-      )
+    const {
+      hideClose,
+    } = this.props
+    const {
+      ended,
+    } = this.state
+
+    if(ended) {
+      return
     }
+
+    if(hideClose) {
+      return
+    }
+
+    return (
+      <TouchableOpacity
+        style={ styles.close }
+        onPress={ this.goBack }
+      >
+        <Image
+          style={ styles.close }
+          source={ Images.CLOSE_BUTTON }
+        />
+      </TouchableOpacity>
+    )
   }
 
 }
@@ -348,10 +399,6 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    flex: 1,
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
     zIndex: 50,
   },
 })
@@ -362,8 +409,8 @@ const VideoPlayer = metautil.applyHocs(
     (state, props) => ({
     }),
     (dispatch, props) => ({
-      goBack: () => {
-        dispatch(RouterActions.requestRouteChange(props.backRoute))
+      goBack: (route) => {
+        dispatch(RouterActions.requestRouteChange(route))
       }
     }),
   ),

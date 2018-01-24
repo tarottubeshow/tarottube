@@ -1,6 +1,6 @@
 import * as Api from 'taro/api/Api'
 
-const NOTIFICATIONS_API = Api.makeApiWrapper('ff2-core.Lead', {
+const NOTIFICATIONS_API = Api.makeApiWrapper('taro.Notifications', {
 
   subscribe: ({ token }) => Api.post({
     path: `notifications/subscribe`,

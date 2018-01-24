@@ -5,9 +5,10 @@ from taro import sqla
 from taro import starting
 from taro.models import *
 
-POLL_FREQ = 600
+POLL_FREQ = 3600
 
-def runCron():
+def syncToFirebase():
+    print("Syncing to firebase!")
     with sqla.BaseModel.sessionContext():
         timeslots = {}
         playlists = {}
@@ -17,7 +18,6 @@ def runCron():
             for playlist in TimeslotPlaylist.forTimeslot(timeslot):
                 playlists[playlist._getFirebaseKey()] = playlist.getJson()
 
-        print("Syncing to firebase:")
         print(timeslots)
         print(playlists)
         fbdb = firebase.getShard()
@@ -25,7 +25,7 @@ def runCron():
         fbdb.child('playlists').set(playlists)
 
 if __name__ == '__main__':
+    starting.waitForPsql()
     while True:
-        starting.waitForPsql()
-        runCron()
+        syncToFirebase()
         time.sleep(POLL_FREQ)

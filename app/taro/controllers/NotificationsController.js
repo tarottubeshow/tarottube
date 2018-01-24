@@ -13,7 +13,6 @@ async function maybeRequest() {
   )
   let finalStatus = existingStatus
 
-  console.log(existingStatus)
   if (existingStatus !== 'granted') {
     TRACKER.track("Asked for notifications permission")
     const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS)
@@ -33,7 +32,6 @@ async function maybeRequest() {
   const response = await NOTIFICATIONS_API.subscribe.exec({
     token: token,
   })
-  console.log(response)
 }
 
 export {
