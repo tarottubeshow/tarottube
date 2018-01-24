@@ -1,95 +1,70 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { connect as reduxConnect } from 'react-redux'
 
-import {
-  Content,
-  Container,
-  Header,
-  Title,
-  Footer,
-  FooterTab,
-  Button,
-  Left,
-  Right,
-  Body,
-  Icon,
-  Text,
-  List,
-  ListItem,
-} from 'native-base'
+import * as NB from 'native-base'
 
 import * as metautil from 'taro/util/metautil'
-import * as RouterActions from 'taro/actions/RouterActions'
+import TitledScreen from 'taro/components/TitledScreen'
+import RoutableComponent from 'taro/hoc/RoutableComponent'
+
+const ACTIONS = [
+  {
+    name: "Past Broadcasts",
+    route: {
+      context: 'archives',
+    }
+  },
+  {
+    name: "Request a Reading",
+    route: {
+      context: 'request',
+    }
+  },
+  {
+    name: "FAQs",
+    route: {
+      context: 'faq',
+    }
+  },
+]
 
 class HamburgerScreenView extends Component {
 
-  static propTypes = {
-    goto: PropTypes.func,
-  }
-
-  onBack = () => {
-    const {
-      goto,
-    } = this.props
-    goto({
-      context: 'home',
-    })
-  }
-
   render = () => {
+    const homeRoute = {
+      context: 'home',
+    }
     return (
-      <Container>
-        { this.renderHeader() }
+      <TitledScreen
+        title="Tarot Tube Menu"
+        backRoute={ homeRoute }
+      >
         { this.renderMain() }
-      </Container>
-    )
-  }
-
-  renderHeader = () => {
-    return (
-      <Header>
-        <Left>
-          <Button
-            transparent
-            onPress={ this.onBack }
-          >
-            <Icon name='ios-arrow-back' />
-          </Button>
-        </Left>
-        <Body>
-          <Title>Tarot Tube Menu</Title>
-        </Body>
-        <Right />
-      </Header>
+      </TitledScreen>
     )
   }
 
   renderMain = () => {
+    return (
+      <NB.Content>
+        <NB.List>
+          { ACTIONS.map(this.renderListItem) }
+        </NB.List>
+      </NB.Content>
+    )
+  }
+
+  renderListItem = (action, i) => {
     const {
       goto,
     } = this.props
-    const faqRoute = {
-      context: 'faq',
-    }
-    const archiveRoute = {
-      context: 'archives',
-    }
     return (
-      <Content>
-        <List>
-          <ListItem
-            onPress={ () => goto(faqRoute) }
-          >
-            <Text>FAQs</Text>
-          </ListItem>
-          <ListItem
-            onPress={ () => goto(archiveRoute) }
-          >
-            <Text>Past Broadcasts</Text>
-          </ListItem>
-        </List>
-      </Content>
+      <NB.ListItem
+        key={ `nav_${ i }` }
+        onPress={ () => goto(action.route) }
+      >
+        <NB.Text>{ action.name }</NB.Text>
+      </NB.ListItem>
     )
   }
 
@@ -97,15 +72,7 @@ class HamburgerScreenView extends Component {
 
 const HamburgerScreen = metautil.applyHocs(
   HamburgerScreenView,
-  reduxConnect(
-    (state, props) => ({
-    }),
-    (dispatch, props) => ({
-      goto: (route) => {
-        dispatch(RouterActions.requestRouteChange(route))
-      }
-    }),
-  ),
+  RoutableComponent,
 )
 
 export default HamburgerScreen

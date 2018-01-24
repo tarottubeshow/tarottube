@@ -18,7 +18,6 @@ class TimeslotScreen extends Component {
     }
     const timeslot = route.timeslot
     const uri = timeslot.video_url
-    console.log(uri)
     return (
       <VideoPlayer
         backRoute={ backRoute }

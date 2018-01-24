@@ -2,49 +2,28 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect as reduxConnect } from 'react-redux'
 
-import {
-  Content,
-  Container,
-  Header,
-  Title,
-  Footer,
-  FooterTab,
-  Button,
-  Left,
-  Right,
-  Body,
-  Icon,
-  Text,
-  List,
-  ListItem,
-} from 'native-base'
+import * as NB from 'native-base'
 
 import * as metautil from 'taro/util/metautil'
 import * as proputil from 'taro/util/proputil'
-import * as RouterActions from 'taro/actions/RouterActions'
 import * as MRA from 'taro/actions/ModelRegistryActions'
 import * as MRR from 'taro/reducers/ModelRegistryReducer'
 import Promised from 'taro/components/Promised'
 import TimeslotList from 'taro/models/TimeslotList'
+import TitledScreen from 'taro/components/TitledScreen'
+import RoutableComponent from 'taro/hoc/RoutableComponent'
 
 class ArchivesScreenView extends Component {
 
   static propTypes = {
     timeslots: PropTypes.array,
     promise: proputil.PROMISE_STATE_TYPE,
+
+    goto: PropTypes.func,
   }
 
   componentDidMount = () => {
     this.props.__init__()
-  }
-
-  onBack = () => {
-    const {
-      goto,
-    } = this.props
-    goto({
-      context: 'hamburger',
-    })
   }
 
   onSelect = (timeslot) => {
@@ -58,30 +37,16 @@ class ArchivesScreenView extends Component {
   }
 
   render = () => {
+    const hamburgerRoute = {
+      context: 'hamburger',
+    }
     return (
-      <Container>
-        { this.renderHeader() }
+      <TitledScreen
+        backRoute={ hamburgerRoute }
+        title="Past Broadcasts"
+      >
         { this.renderMain() }
-      </Container>
-    )
-  }
-
-  renderHeader = () => {
-    return (
-      <Header>
-        <Left>
-          <Button
-            transparent
-            onPress={ this.onBack }
-          >
-            <Icon name='ios-arrow-back' />
-          </Button>
-        </Left>
-        <Body>
-          <Title>Past Broadcasts</Title>
-        </Body>
-        <Right />
-      </Header>
+      </TitledScreen>
     )
   }
 
@@ -102,22 +67,22 @@ class ArchivesScreenView extends Component {
       timeslots,
     } = this.props
     return (
-      <Content>
-        <List>
+      <NB.Content>
+        <NB.List>
           { timeslots.map(this.renderListItem) }
-        </List>
-      </Content>
+        </NB.List>
+      </NB.Content>
     )
   }
 
   renderListItem = (timeslot) => {
     return (
-      <ListItem
+      <NB.ListItem
         key={ `timeslot_${ timeslot.stream_key }` }
         onPress={ () => this.onSelect(timeslot) }
       >
-        <Text>{ timeslot.name }</Text>
-      </ListItem>
+        <NB.Text>{ timeslot.name }</NB.Text>
+      </NB.ListItem>
     )
   }
 
@@ -125,6 +90,7 @@ class ArchivesScreenView extends Component {
 
 const ArchivesScreen = metautil.applyHocs(
   ArchivesScreenView,
+  RoutableComponent,
   reduxConnect(
     (state, props) => ({
       promise: MRR.getModelPromise(state, TimeslotList),
@@ -134,9 +100,6 @@ const ArchivesScreen = metautil.applyHocs(
       __init__: () => {
         dispatch(MRA.loadModel(TimeslotList, {cache: false}))
       },
-      goto: (route) => {
-        dispatch(RouterActions.requestRouteChange(route))
-      }
     }),
   ),
 )

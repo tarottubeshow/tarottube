@@ -13,7 +13,6 @@ const routeChanged = (route) => ({
   route: route,
 })
 
-
 export {
   REQUEST_ROUTE_CHANGE,
   ROUTE_CHANGED,

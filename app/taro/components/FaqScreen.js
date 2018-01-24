@@ -2,22 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect as reduxConnect } from 'react-redux'
 
-import {
-  Content,
-  Container,
-  Header,
-  Title,
-  Footer,
-  FooterTab,
-  Button,
-  Left,
-  Right,
-  Body,
-  Icon,
-  Text,
-  List,
-  ListItem,
-} from 'native-base'
+import * as NB from 'native-base'
 import {
   View,
   StyleSheet,
@@ -25,12 +10,13 @@ import {
 
 import * as metautil from 'taro/util/metautil'
 import * as proputil from 'taro/util/proputil'
-import * as RouterActions from 'taro/actions/RouterActions'
 import * as MRA from 'taro/actions/ModelRegistryActions'
 import * as MRR from 'taro/reducers/ModelRegistryReducer'
 import Promised from 'taro/components/Promised'
 import VideoPlayer from 'taro/components/VideoPlayer'
 import FaqList from 'taro/models/FaqList'
+import TitledScreen from 'taro/components/TitledScreen'
+import RoutableComponent from 'taro/hoc/RoutableComponent'
 
 class FaqLinkList extends Component {
 
@@ -57,11 +43,11 @@ class FaqLinkList extends Component {
       faqs,
     } = this.props
     return (
-      <Content>
-        <List>
+      <NB.Content>
+        <NB.List>
           { faqs.map(this.renderListItem) }
-        </List>
-      </Content>
+        </NB.List>
+      </NB.Content>
     )
   }
 
@@ -70,12 +56,12 @@ class FaqLinkList extends Component {
       onSelect,
     } = this.props
     return (
-      <ListItem
+      <NB.ListItem
         key={ `faq_${ faq.id }` }
         onPress={ () => onSelect(faq) }
       >
-        <Text>{ faq.title }</Text>
-      </ListItem>
+        <NB.Text>{ faq.title }</NB.Text>
+      </NB.ListItem>
     )
   }
 
@@ -113,6 +99,8 @@ class FaqScreenView extends Component {
     __init__: PropTypes.func,
     faqs: PropTypes.array,
     faqPromise: proputil.PROMISE_STATE_TYPE,
+
+    goto: PropTypes.func,
   }
 
   state = {
@@ -121,6 +109,18 @@ class FaqScreenView extends Component {
 
   componentDidMount = () => {
     this.props.__init__()
+  }
+
+  getTitle = () => {
+    const {
+      faq,
+    } = this.state
+    let title
+    if(faq == null) {
+      return "FAQs"
+    } else {
+      return faq.title
+    }
   }
 
   onBack = () => {
@@ -151,40 +151,12 @@ class FaqScreenView extends Component {
 
   render = () => {
     return (
-      <Container>
-        { this.renderHeader() }
+      <TitledScreen
+        onBack={ this.onBack }
+        title={ this.getTitle() }
+      >
         { this.renderMain() }
-      </Container>
-    )
-  }
-
-  renderHeader = () => {
-    const {
-      faq,
-    } = this.state
-
-    let title
-    if(faq == null) {
-      title = "FAQs"
-    } else {
-      title = faq.title
-    }
-
-    return (
-      <Header>
-        <Left>
-          <Button
-            transparent
-            onPress={ this.onBack }
-          >
-            <Icon name='ios-arrow-back' />
-          </Button>
-        </Left>
-        <Body>
-          <Title>{ title }</Title>
-        </Body>
-        <Right />
-      </Header>
+      </TitledScreen>
     )
   }
 
@@ -218,6 +190,7 @@ class FaqScreenView extends Component {
 
 const FaqScreen = metautil.applyHocs(
   FaqScreenView,
+  RoutableComponent,
   reduxConnect(
     (state, props) => ({
       faqPromise: MRR.getModelPromise(state, FaqList),
@@ -227,9 +200,6 @@ const FaqScreen = metautil.applyHocs(
       __init__: () => {
         dispatch(MRA.loadModel(FaqList, {cache: false}))
       },
-      goto: (route) => {
-        dispatch(RouterActions.requestRouteChange(route))
-      }
     }),
   ),
 )

@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { connect as reduxConnect } from 'react-redux'
 
 import {
   Image,
@@ -16,13 +15,16 @@ import AmbientGradientBackground from 'taro/components/AmbientGradientBackground
 import Button from 'taro/components/Button'
 import Timer from 'taro/components/Timer'
 import * as Images from 'taro/Images'
+import * as metautil from 'taro/util/metautil'
+import RoutableComponent from 'taro/hoc/RoutableComponent'
 
-class WaitingScreen extends Component {
+class WaitingScreenView extends Component {
 
   static propTypes = {
-    goto: PropTypes.func,
     timeslot: PropTypes.object,
     mode: PropTypes.string,
+
+    goto: PropTypes.func,
   }
 
   componentDidMount = () => {
@@ -222,5 +224,10 @@ const styles = StyleSheet.create({
     zIndex: 500,
   },
 })
+
+const WaitingScreen = metautil.applyHocs(
+  WaitingScreenView,
+  RoutableComponent,
+)
 
 export default WaitingScreen

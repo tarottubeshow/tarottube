@@ -9,7 +9,6 @@ import { getPlaylist } from 'taro/reducers/FirebaseReducer'
 import LiveVideoPlayer from 'taro/components/LiveVideoPlayer'
 import StreamEndedScreen from 'taro/components/StreamEndedScreen'
 import WaitingScreen from 'taro/components/WaitingScreen'
-import * as RouterActions from 'taro/actions/RouterActions'
 
 const QUALITY = 'high' // TODO: how to choose appropriate quality
 
@@ -81,7 +80,6 @@ class TimeslotViewerView extends Component {
       assumeSeen,
       time,
       timeslot,
-      goto,
     } = this.props
 
     const isFuture = timeslot.getStartTime() > time
@@ -114,7 +112,6 @@ class TimeslotViewerView extends Component {
         timeslot={ timeslot }
         mode={ mode }
         style={ [styles.stack, styles.lower] }
-        goto={ goto }
       />
     )
   }
@@ -162,9 +159,6 @@ const TimeslotViewer = metautil.applyHocs(
       }
     },
     (dispatch, props) => ({
-      goto: (route) => {
-        dispatch(RouterActions.requestRouteChange(route))
-      }
     }),
   ),
 )

@@ -25,8 +25,7 @@
         <div class="card-body">
             <h4 class="card-title">FAQ</h4>
 
-            {{ form.text('order', faq.order, "Order",
-                type="number", step=1) }}
+            {{ form.text('order', faq.order, "Order") }}
             {{ form.text('title', faq.title, "Title") }}
 
             {{ form.file('file', "Upload .mp4") }}

@@ -13,13 +13,13 @@ import {
 import { Svg, Video } from 'expo'
 
 import * as Images from 'taro/Images'
-import * as RouterActions from 'taro/actions/RouterActions'
 import * as metautil from 'taro/util/metautil'
 import * as proputil from 'taro/util/proputil'
 import COLORS from 'taro/colors'
 import TRACKER from 'taro/tracking'
 import Button from 'taro/components/Button'
 import LoadingBlock from 'taro/components/LoadingBlock'
+import RoutableComponent from 'taro/hoc/RoutableComponent'
 
 const PLAYABLE_COLORMAP = interpolate([
   COLORS.blueLight,
@@ -109,7 +109,7 @@ class VideoPlayerView extends Component {
 
     style: proputil.STYLE_TYPE,
 
-    goBack: PropTypes.func,
+    goto: PropTypes.func,
   }
 
   state = {
@@ -140,14 +140,14 @@ class VideoPlayerView extends Component {
   goBack = () => {
     const {
       backRoute,
-      goBack,
+      goto,
       onBack,
     } = this.props
     if(onBack != null) {
       onBack()
     }
     if(backRoute != null) {
-      goBack(backRoute)
+      goto(backRoute)
     }
   }
 
@@ -405,15 +405,7 @@ const styles = StyleSheet.create({
 
 const VideoPlayer = metautil.applyHocs(
   VideoPlayerView,
-  reduxConnect(
-    (state, props) => ({
-    }),
-    (dispatch, props) => ({
-      goBack: (route) => {
-        dispatch(RouterActions.requestRouteChange(route))
-      }
-    }),
-  ),
+  RoutableComponent,
 )
 
 export default VideoPlayer
