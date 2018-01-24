@@ -39,3 +39,15 @@ def subscribeToNotifications():
     return flask.jsonify({
         'status': "OK",
     })
+
+@APP.route('/api/2/reading-request.json', methods=['POST'])
+def submitQuery():
+    payload = flask.request.get_json()
+    ReadingRequest(
+        created=datetime.datetime.now(),
+        name=payload.get('name'),
+        question=payload.get('question'),
+    ).put()
+    return flask.jsonify({
+        'status': "OK",
+    })

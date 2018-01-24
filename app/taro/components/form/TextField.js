@@ -2,13 +2,8 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import * as lodashObject from 'lodash/object'
 
+import { StyleSheet } from 'react-native'
 import * as NB from 'native-base'
-
-const styles = {
-  parent: {
-    marginBottom: 10,
-  },
-}
 
 const PRESETS = {
   email: {
@@ -73,7 +68,7 @@ class TextField extends Component {
       value,
     } = this.props
 
-    var options = lodashObject(this.props, [
+    var options = lodashObject.pick(this.props, [
       'autoCapitalize',
       'autoCorrect',
       'autoFocus',
@@ -86,7 +81,7 @@ class TextField extends Component {
       'selectTextOnFocus',
     ])
 
-    var events = lodashObject(this.props, [
+    var events = lodashObject.pick(this.props, [
       'onBlur',
       'onEndEditing',
       'onFocus',
@@ -104,10 +99,10 @@ class TextField extends Component {
       <NB.Item
         floatingLabel
         disabled={ disabled }
-        style={{
-          ...style,
-          ...styles.parent,
-        }}
+        style={[
+          style,
+          styles.parent,
+        ]}
       >
         <NB.Label>{ label }</NB.Label>
         <NB.Input
@@ -122,5 +117,15 @@ class TextField extends Component {
   }
 
 }
+
+const styles = StyleSheet.create({
+
+  parent: {
+    marginTop: 20,
+    marginLeft: 5,
+    marginRight: 5,
+  },
+
+})
 
 export default TextField

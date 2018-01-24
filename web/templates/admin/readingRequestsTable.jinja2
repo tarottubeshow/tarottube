@@ -1,0 +1,30 @@
+{% macro render(requests) %}
+
+<table class="table mb-0">
+    <thead>
+        <tr>
+            <th>Submitted</th>
+            <th>Name</th>
+            <th>Question</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for request in requests %}
+            <tr>
+                <td>
+                    <a href="{{ request.urlAdmin() }}">
+                        {{ humanDateTime(request.created) }}
+                    </a>
+                </td>
+                <td>
+                    {{ request.name }}
+                </td>
+                <td>
+                    {{ request.question|truncate(80) }}
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endmacro %}

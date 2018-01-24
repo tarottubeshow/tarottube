@@ -16,6 +16,9 @@ class TitledScreenView extends Component {
     title: PropTypes.string,
     children: proputil.CHILDREN_TYPE,
 
+    rightIcon: PropTypes.string,
+    onRightIconClick: PropTypes.func,
+
     goto: PropTypes.func,
   }
 
@@ -59,7 +62,9 @@ class TitledScreenView extends Component {
             { title }
           </NB.Title>
         </NB.Body>
-        <NB.Right />
+        <NB.Right>
+          { this.renderRight() }
+        </NB.Right>
       </NB.Header>
     )
   }
@@ -71,6 +76,25 @@ class TitledScreenView extends Component {
         onPress={ this.onBack }
       >
         <NB.Icon name='ios-arrow-back' />
+      </NB.Button>
+    )
+  }
+
+  renderRight = () => {
+    const {
+      rightIcon,
+      onRightIconClick,
+    } = this.props
+    if(rightIcon == null) {
+      return
+    }
+
+    return (
+      <NB.Button
+        transparent
+        onPress={ onRightIconClick }
+      >
+        <NB.Icon name={ rightIcon } />
       </NB.Button>
     )
   }

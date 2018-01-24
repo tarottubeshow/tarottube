@@ -33,6 +33,10 @@ FAQ_BREADCRUMBS = ADMIN_BREADCRUMBS + [
     ('/admin/faq/', "FAQs"),
 ]
 
+READING_REQUESTS_BREADCRUMBS = ADMIN_BREADCRUMBS + [
+    ('/admin/reading-requests/', "Reading Requests"),
+]
+
 class Faq(sqla.BaseModel):
 
     __tablename__ = 'faq'
@@ -143,6 +147,23 @@ class PushToken(sqla.BaseModel):
             return False
 
         return True
+
+class ReadingRequest(sqla.BaseModel):
+
+    __tablename__ = 'reading_request'
+
+    id = sa.Column('id', sa.Integer, primary_key=True)
+    created = sa.Column('created', sa.DateTime)
+    name = sa.Column('name', sa.String)
+    question = sa.Column('question', sa.Text)
+
+    def breadcrumbs(self):
+        return READING_REQUESTS_BREADCRUMBS + [
+            (self.urlAdmin(), self.name),
+        ]
+
+    def urlAdmin(self):
+        return "/admin/reading-requests/%s/" % self.id
 
 class Schedule(sqla.BaseModel):
 

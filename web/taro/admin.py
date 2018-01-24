@@ -150,8 +150,6 @@ def _getTimeslot(id):
 
 # faq
 
-# schedules
-
 @APP.route('/admin/faq/')
 def listFaqs():
     faqs = Faq.getAll()
@@ -196,6 +194,29 @@ def _getFaq(id):
     else:
         return Faq.forId(int(id))
 
+# reading requests
+
+@APP.route('/admin/reading-requests/')
+def listReadingRequests():
+    requests = ReadingRequest.query()\
+        .order_by(ReadingRequest.created.desc())
+    page = sqla.paginate(requests)
+    return flask.render_template(
+        'admin/readingRequests.jinja2',
+        title="Reading Requests",
+        requests=page,
+        breadcrumbs=READING_REQUESTS_BREADCRUMBS,
+    )
+
+@APP.route('/admin/reading-requests/<int:id>/')
+def getReadingRequest(id):
+    request = ReadingRequest.forId(id)
+    return flask.render_template(
+        'admin/readingRequest.jinja2',
+        title="Reading Request: %s" % request.name,
+        request=request,
+        breadcrumbs=request.breadcrumbs(),
+    )
 
 DEFAULT_SCHEDULE_SPEC = """
 type: daily

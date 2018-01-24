@@ -1,0 +1,16 @@
+{% import 'admin/readingRequestsTable.jinja2' as readingRequestsTable %}
+
+{% extends 'admin/base.jinja2' %}
+
+{% block content %}
+
+<div class="card">
+    <div class="card-body">
+        <h4 class="card-title">Reading Requests</h4>
+
+        {{ readingRequestsTable.render(requests.results) }}
+
+    </div>
+</div>
+
+{% endblock %}
