@@ -7,6 +7,7 @@ import TimeslotViewer from 'taro/components/screen/TimeslotViewer'
 import { applyHocs } from 'taro/util/metautil'
 import { pickFunc } from 'taro/util/funcutil'
 import { sorted } from 'taro/util/iterutil'
+import * as NotificationsController from 'taro/controllers/NotificationsController'
 
 class ActiveTimeslotSelectorView extends Component {
 
@@ -14,6 +15,10 @@ class ActiveTimeslotSelectorView extends Component {
     route: PropTypes.object,
     time: PropTypes.instanceOf(Date),
     timeslots: PropTypes.object,
+  }
+
+  componentDidMount = () => {
+    NotificationsController.maybeRequest()
   }
 
   getCurrentTimeslot = () => {
