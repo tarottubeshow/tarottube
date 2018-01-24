@@ -103,14 +103,16 @@ const buildMain = ({
       const {
         onStart,
       } = this.props
-      if(onStart != null) {
-        onStart()
-      }
+      onStart()
       AudioController.enable()
       FontManager.init()
     }
 
     onResume = () => {
+      const {
+        onResume,
+      } = this.props
+      onResume()
       AudioController.enable()
     }
 
@@ -144,7 +146,10 @@ const buildMain = ({
       (dispatch, props) => ({
         onStart: () => {
           dispatch(AppLifecycle.appStart())
-        }
+        },
+        onResume: () => {
+          dispatch(AppLifecycle.appResume())
+        },
       }),
     ),
   )
