@@ -5,7 +5,7 @@ import { connect as reduxConnect } from 'react-redux'
 import { AppState } from 'react-native'
 
 import Router from 'taro/components/Router'
-import Promised from 'taro/components/Promised'
+import Promised from 'taro/components/control/Promised'
 import { buildStore } from 'taro/store/Store'
 import { applyHocs } from 'taro/util/metautil'
 import {

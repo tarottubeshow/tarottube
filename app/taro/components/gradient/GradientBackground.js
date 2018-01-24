@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 
 import { View, StyleSheet } from 'react-native'
 
-import SvgGradient from 'taro/components/SvgGradient'
+import SvgGradient from 'taro/components/gradient/SvgGradient'
 import * as proputil from 'taro/util/proputil'
 
 class GradientBackground extends Component {

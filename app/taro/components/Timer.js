@@ -6,7 +6,7 @@ import { connect as reduxConnect } from 'react-redux'
 import { Image, StyleSheet, Text, View } from 'react-native'
 
 import COLORS from 'taro/colors'
-import GradientBackground from 'taro/components/GradientBackground'
+import GradientBackground from 'taro/components/gradient/GradientBackground'
 import * as proputil from 'taro/util/proputil'
 import * as scheduleutil from 'taro/util/scheduleutil'
 

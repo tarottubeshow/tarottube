@@ -37,7 +37,7 @@ class HamburgerScreenView extends Component {
     }
     return (
       <TitledScreen
-        title="Tarot Tube Menu"
+        title="Menu"
         backRoute={ homeRoute }
       >
         { this.renderMain() }

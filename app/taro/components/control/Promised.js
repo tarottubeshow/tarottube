@@ -5,8 +5,8 @@ import { View } from 'react-native'
 
 import { CHILDREN_TYPE } from 'taro/util/proputil'
 import { combinePromiseStates } from 'taro/util/promiseutil'
-import ErrorBlock from 'taro/components/ErrorBlock'
-import LoadingBlock from 'taro/components/LoadingBlock'
+import ErrorBlock from 'taro/components/control/ErrorBlock'
+import LoadingBlock from 'taro/components/control/LoadingBlock'
 
 class Promised extends Component {
 

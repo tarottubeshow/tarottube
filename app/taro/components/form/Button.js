@@ -4,7 +4,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
 import COLORS from 'taro/colors'
 import * as proputil from 'taro/util/proputil'
-import GradientBackground from 'taro/components/GradientBackground'
+import GradientBackground from 'taro/components/gradient/GradientBackground'
 
 const COLOR_SETS = {
   yellow: [COLORS.yellowLight, COLORS.yellow],

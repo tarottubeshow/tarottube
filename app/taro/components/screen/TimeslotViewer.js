@@ -6,9 +6,9 @@ import { View, StyleSheet, Text } from 'react-native'
 
 import * as metautil from 'taro/util/metautil'
 import { getPlaylist } from 'taro/reducers/FirebaseReducer'
-import LiveVideoPlayer from 'taro/components/LiveVideoPlayer'
-import StreamEndedScreen from 'taro/components/StreamEndedScreen'
-import WaitingScreen from 'taro/components/WaitingScreen'
+import LiveVideoPlayer from 'taro/components/screen/LiveVideoPlayer'
+import StreamEndedScreen from 'taro/components/screen/StreamEndedScreen'
+import WaitingScreen from 'taro/components/screen/WaitingScreen'
 
 const QUALITY = 'high' // TODO: how to choose appropriate quality
 

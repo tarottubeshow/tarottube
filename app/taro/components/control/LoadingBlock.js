@@ -8,7 +8,7 @@ import {
 
 import * as Images from 'taro/Images'
 import COLORS from 'taro/colors'
-import AmbientGradientBackground from 'taro/components/AmbientGradientBackground'
+import AmbientGradientBackground from 'taro/components/gradient/AmbientGradientBackground'
 
 class LoadingBlock extends Component {
 

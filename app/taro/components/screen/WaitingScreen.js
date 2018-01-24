@@ -11,8 +11,8 @@ import {
 
 import COLORS from 'taro/colors'
 import TRACKER from 'taro/tracking'
-import AmbientGradientBackground from 'taro/components/AmbientGradientBackground'
-import Button from 'taro/components/Button'
+import AmbientGradientBackground from 'taro/components/gradient/AmbientGradientBackground'
+import Button from 'taro/components/form/Button'
 import Timer from 'taro/components/Timer'
 import * as Images from 'taro/Images'
 import * as metautil from 'taro/util/metautil'

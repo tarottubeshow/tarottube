@@ -8,7 +8,7 @@ import * as metautil from 'taro/util/metautil'
 import * as proputil from 'taro/util/proputil'
 import * as MRA from 'taro/actions/ModelRegistryActions'
 import * as MRR from 'taro/reducers/ModelRegistryReducer'
-import Promised from 'taro/components/Promised'
+import Promised from 'taro/components/control/Promised'
 import TimeslotList from 'taro/models/TimeslotList'
 import TitledScreen from 'taro/components/TitledScreen'
 import RoutableComponent from 'taro/hoc/RoutableComponent'
@@ -44,7 +44,7 @@ class ArchivesScreenView extends Component {
     return (
       <TitledScreen
         backRoute={ hamburgerRoute }
-        title="Past Broadcasts"
+        title="Archives"
       >
         { this.renderMain() }
       </TitledScreen>

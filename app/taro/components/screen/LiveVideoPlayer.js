@@ -11,14 +11,20 @@ import {
 import { Video } from 'expo'
 
 import COLORS from 'taro/colors'
-import GradientBackground from 'taro/components/GradientBackground'
+import GradientBackground from 'taro/components/gradient/GradientBackground'
 import * as FirebaseReducer from 'taro/reducers/FirebaseReducer'
 import * as metautil from 'taro/util/metautil'
 import * as scheduleutil from 'taro/util/scheduleutil'
 import * as proputil from 'taro/util/proputil'
 import TrackedComponent from 'taro/hoc/TrackedComponent'
 
-const END_STREAM_DELTA = 10000
+const END_STREAM_DELTA = 10000 // 10 seconds
+
+const DELTA_HEALTH_OK = 20000 // 20 seconds
+const DELTA_HEALTH_BAD = 120000 // 2 minutes
+
+const COMPUTE_HEALTH_POLL_FREQ = 1000 // 1 second
+const HEALTH_TRACK_POLL_FREQ = 60000 // 1 minute
 
 const TOP_COLORMAP = interpolate([
   COLORS.greenLight,
@@ -30,12 +36,6 @@ const BOTTOM_COLORMAP = interpolate([
   COLORS.yellow,
   COLORS.peach,
 ])
-
-const DELTA_HEALTH_OK = 20000 // 20 seconds
-const DELTA_HEALTH_BAD = 120000 // 2 minutes
-
-const COMPUTE_HEALTH_POLL_FREQ = 1000
-const HEALTH_TRACK_POLL_FREQ = 10000
 
 class HealthStatusIndicator extends Component {
 

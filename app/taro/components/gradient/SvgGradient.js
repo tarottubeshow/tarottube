@@ -5,7 +5,7 @@ import { View, StyleSheet } from 'react-native'
 import { Svg } from 'expo'
 
 import * as proputil from 'taro/util/proputil'
-import GradientStops from 'taro/components/GradientStops'
+import GradientStops from 'taro/components/gradient/GradientStops'
 
 class SvgGradient extends Component {
 

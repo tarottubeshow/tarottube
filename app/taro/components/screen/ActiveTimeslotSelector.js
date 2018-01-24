@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { connect as reduxConnect } from 'react-redux'
 import { values } from 'lodash/object'
 
-import TimeslotViewer from 'taro/components/TimeslotViewer'
+import TimeslotViewer from 'taro/components/screen/TimeslotViewer'
 import { applyHocs } from 'taro/util/metautil'
 import { pickFunc } from 'taro/util/funcutil'
 import { sorted } from 'taro/util/iterutil'

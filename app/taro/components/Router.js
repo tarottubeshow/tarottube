@@ -3,13 +3,14 @@ import PropTypes from 'prop-types'
 import { connect as reduxConnect } from 'react-redux'
 import { View } from 'react-native'
 
-import ActiveTimeslotSelector from 'taro/components/ActiveTimeslotSelector'
-import IntroScreen from 'taro/components/IntroScreen'
-import FaqScreen from 'taro/components/FaqScreen'
-import HamburgerScreen from 'taro/components/HamburgerScreen'
-import ReplayLatestScreen from 'taro/components/ReplayLatestScreen'
-import ArchivesScreen from 'taro/components/ArchivesScreen'
-import TimeslotScreen from 'taro/components/TimeslotScreen'
+import ActiveTimeslotSelector from 'taro/components/screen/ActiveTimeslotSelector'
+import IntroScreen from 'taro/components/screen/IntroScreen'
+import FaqScreen from 'taro/components/screen/FaqScreen'
+import HamburgerScreen from 'taro/components/screen/HamburgerScreen'
+import ReplayLatestScreen from 'taro/components/screen/ReplayLatestScreen'
+import ArchivesScreen from 'taro/components/screen/ArchivesScreen'
+import TimeslotScreen from 'taro/components/screen/TimeslotScreen'
+import RequestScreen from 'taro/components/screen/RequestScreen'
 
 import { applyHocs } from 'taro/util/metautil'
 
@@ -20,6 +21,7 @@ const ROUTE_MAP = {
   hamburger: HamburgerScreen,
   archives: ArchivesScreen,
   timeslot: TimeslotScreen,
+  request: RequestScreen,
 }
 
 class RouterView extends Component {
