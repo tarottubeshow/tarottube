@@ -19,6 +19,18 @@ def getFaqs():
         'faqs': faqs,
     })
 
+@APP.route('/api/2/timeslots.json')
+def getTimeslots():
+    # TODO: more sophistication!!
+    timeslots = []
+    for timeslot, playlist in Timeslot.pastWithRecording():
+        payload = timeslot.getJson()
+        payload['video_url'] = playlist.getPublicUri()
+        timeslots.append(payload)
+    return flask.jsonify({
+        'status': "OK",
+        'timeslots': timeslots,
+    })
 
 @APP.route('/api/2/notifications/subscribe.json', methods=['POST'])
 def subscribeToNotifications():

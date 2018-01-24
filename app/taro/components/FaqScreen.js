@@ -225,7 +225,7 @@ const FaqScreen = metautil.applyHocs(
     }),
     (dispatch, props) => ({
       __init__: () => {
-        dispatch(MRA.loadModel(FaqList))
+        dispatch(MRA.loadModel(FaqList, {cache: false}))
       },
       goto: (route) => {
         dispatch(RouterActions.requestRouteChange(route))

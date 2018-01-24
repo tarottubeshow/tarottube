@@ -247,15 +247,8 @@ class Timeslot(sqla.BaseModel):
 
     @classmethod
     def latestWithRecording(cls):
-        query = Timeslot.query()\
-            .filter(Timeslot.deprecated == False)\
-            .filter(Timeslot.time < datetime.datetime.now())\
-            .order_by(Timeslot.time.desc())
-        for timeslot in query:
-            playlist = TimeslotPlaylist.get(timeslot, 'high', 'flv', create=False)
-            if playlist:
-                return timeslot, playlist
-
+        for item in cls.pastWithRecording():
+            return item
         return None, None
 
     @classmethod
@@ -277,9 +270,9 @@ class Timeslot(sqla.BaseModel):
     @classmethod
     def queryPast(cls):
         return Timeslot.query()\
-        .filter(Timeslot.deprecated == False)\
-        .filter(Timeslot.end_time < datetime.datetime.now())\
-        .order_by(Timeslot.end_time.desc())
+            .filter(Timeslot.deprecated == False)\
+            .filter(Timeslot.end_time < datetime.datetime.now())\
+            .order_by(Timeslot.end_time.desc())
 
     @classmethod
     def queryUpcoming(cls):
@@ -287,6 +280,23 @@ class Timeslot(sqla.BaseModel):
             .filter(Timeslot.deprecated == False)\
             .filter(Timeslot.end_time > datetime.datetime.now())\
             .order_by(Timeslot.end_time)
+
+    @classmethod
+    def pastWithRecording(cls, limit=10):
+        query = Timeslot.query()\
+            .filter(Timeslot.deprecated == False)\
+            .filter(Timeslot.time < datetime.datetime.now())\
+            .order_by(Timeslot.time.desc())
+
+        count = 0
+        for timeslot in query:
+            playlist = TimeslotPlaylist.get(timeslot, 'high', 'flv', create=False)
+            if playlist:
+                yield timeslot, playlist
+
+                count += 1
+                if count >= limit:
+                    return
 
     def breadcrumbs(self):
         bc = []
@@ -441,7 +451,7 @@ class TimeslotPlaylist(sqla.BaseModel):
 
     def _onSync(self, remove=False):
         fbdb = firebase.getShard()
-        key = sef._getFirebaseKey()
+        key = self._getFirebaseKey()
         target = fbdb\
             .child("playlists")\
             .child(key)

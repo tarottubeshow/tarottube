@@ -8,8 +8,19 @@ import IntroScreen from 'taro/components/IntroScreen'
 import FaqScreen from 'taro/components/FaqScreen'
 import HamburgerScreen from 'taro/components/HamburgerScreen'
 import ReplayLatestScreen from 'taro/components/ReplayLatestScreen'
+import ArchivesScreen from 'taro/components/ArchivesScreen'
+import TimeslotScreen from 'taro/components/TimeslotScreen'
 
 import { applyHocs } from 'taro/util/metautil'
+
+const ROUTE_MAP = {
+  replay: ReplayLatestScreen,
+  intro: IntroScreen,
+  faq: FaqScreen,
+  hamburger: HamburgerScreen,
+  archives: ArchivesScreen,
+  timeslot: TimeslotScreen,
+}
 
 class RouterView extends Component {
 
@@ -21,22 +32,11 @@ class RouterView extends Component {
     const {
       route,
     } = this.props
-    if(route.context == 'replay') {
-      return <ReplayLatestScreen
-        route={ route }
-      />
-    } else if(route.context == 'intro') {
-      return <IntroScreen
-        route={ route }
-      />
-    } else if(route.context == 'faq') {
-      return <FaqScreen
-        route={ route }
-      />
-    } else if(route.context == 'hamburger') {
-      return <HamburgerScreen
-        route={ route }
-      />
+    const cls = ROUTE_MAP[route.context]
+    if(cls != null) {
+      return React.createElement(cls, {
+        route: route,
+      })
     } else {
       return <ActiveTimeslotSelector
         route={ route }

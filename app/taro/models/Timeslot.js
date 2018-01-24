@@ -21,6 +21,7 @@ class Timeslot extends BaseModel {
     stream_key,
     unique_key,
     schedule,
+    video_url,
   }) {
     super()
     this.id = id
@@ -31,6 +32,7 @@ class Timeslot extends BaseModel {
     this.stream_key = stream_key
     this.unique_key = unique_key
     this.schedule = schedule
+    this.video_url = video_url
   }
 
   getStartTime = () => {
@@ -42,7 +44,7 @@ class Timeslot extends BaseModel {
   }
 
   getUri = (quality) => {
-    return `${ global.CONFIG.URL.HLS }/${ quality }/${ this.stream_key }.m3u8`
+    return `${ global.CONFIG.URL.FRAGS }/hls/${ quality }/${ this.stream_key }.m3u8`
   }
 
 }
