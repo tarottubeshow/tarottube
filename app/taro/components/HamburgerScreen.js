@@ -6,6 +6,7 @@ import * as NB from 'native-base'
 import * as metautil from 'taro/util/metautil'
 import TitledScreen from 'taro/components/TitledScreen'
 import RoutableComponent from 'taro/hoc/RoutableComponent'
+import TrackedComponent from 'taro/hoc/TrackedComponent'
 
 const ACTIONS = [
   {
@@ -73,6 +74,7 @@ class HamburgerScreenView extends Component {
 const HamburgerScreen = metautil.applyHocs(
   HamburgerScreenView,
   RoutableComponent,
+  TrackedComponent("Hamburger Screen"),
 )
 
 export default HamburgerScreen

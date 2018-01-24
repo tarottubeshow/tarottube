@@ -17,6 +17,7 @@ import VideoPlayer from 'taro/components/VideoPlayer'
 import FaqList from 'taro/models/FaqList'
 import TitledScreen from 'taro/components/TitledScreen'
 import RoutableComponent from 'taro/hoc/RoutableComponent'
+import TrackedComponent from 'taro/hoc/TrackedComponent'
 
 class FaqLinkList extends Component {
 
@@ -101,6 +102,7 @@ class FaqScreenView extends Component {
     faqPromise: proputil.PROMISE_STATE_TYPE,
 
     goto: PropTypes.func,
+    track: PropTypes.func,
   }
 
   state = {
@@ -144,6 +146,13 @@ class FaqScreenView extends Component {
   }
 
   onSelectFaq = (faq) => {
+    const {
+      track,
+    } = this.props
+    track("Selected FAQ", {
+      id: faq.id,
+      title: faq.title,
+    })
     this.setState({
       faq: faq,
     })
@@ -191,6 +200,7 @@ class FaqScreenView extends Component {
 const FaqScreen = metautil.applyHocs(
   FaqScreenView,
   RoutableComponent,
+  TrackedComponent('FAQ Screen'),
   reduxConnect(
     (state, props) => ({
       faqPromise: MRR.getModelPromise(state, FaqList),

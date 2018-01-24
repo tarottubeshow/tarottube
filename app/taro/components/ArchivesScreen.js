@@ -12,6 +12,7 @@ import Promised from 'taro/components/Promised'
 import TimeslotList from 'taro/models/TimeslotList'
 import TitledScreen from 'taro/components/TitledScreen'
 import RoutableComponent from 'taro/hoc/RoutableComponent'
+import TrackedComponent from 'taro/hoc/TrackedComponent'
 
 class ArchivesScreenView extends Component {
 
@@ -91,6 +92,7 @@ class ArchivesScreenView extends Component {
 const ArchivesScreen = metautil.applyHocs(
   ArchivesScreenView,
   RoutableComponent,
+  TrackedComponent('Archives'),
   reduxConnect(
     (state, props) => ({
       promise: MRR.getModelPromise(state, TimeslotList),

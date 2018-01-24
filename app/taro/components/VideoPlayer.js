@@ -16,10 +16,10 @@ import * as Images from 'taro/Images'
 import * as metautil from 'taro/util/metautil'
 import * as proputil from 'taro/util/proputil'
 import COLORS from 'taro/colors'
-import TRACKER from 'taro/tracking'
 import Button from 'taro/components/Button'
 import LoadingBlock from 'taro/components/LoadingBlock'
 import RoutableComponent from 'taro/hoc/RoutableComponent'
+import TrackedComponent from 'taro/hoc/TrackedComponent'
 
 const PLAYABLE_COLORMAP = interpolate([
   COLORS.blueLight,
@@ -121,30 +121,20 @@ class VideoPlayerView extends Component {
     playable: 0,
   }
 
-  componentDidMount = () => {
-    this.track('Mounted VideoPlayerView')
-  }
-
-  track = (name, params) => {
-    const {
-      uri,
-      context,
-    } = this.props
-    TRACKER.track(name, {
-      uri: uri,
-      context: context,
-      ...params,
-    })
-  }
-
-  goBack = () => {
+  goBack = (reason) => {
     const {
       backRoute,
       goto,
       onBack,
+      track,
     } = this.props
+    track('VideoPlayer exit', {
+      reason: reason,
+    })
     if(onBack != null) {
-      onBack()
+      onBack({
+        reason: reason,
+      })
     }
     if(backRoute != null) {
       goto(backRoute)
@@ -188,16 +178,17 @@ class VideoPlayerView extends Component {
     const {
       onEnd,
       autoBack,
+      track,
     } = this.props
 
-    this.track('VideoPlayerView Ended')
+    track('VideoPlayerView Ended')
 
     if(onEnd != null) {
       onEnd()
     }
 
     if(autoBack) {
-      this.goBack()
+      this.goBack('auto')
     }
   }
 
@@ -250,7 +241,7 @@ class VideoPlayerView extends Component {
           <Button
             color="yellow"
             text="Done"
-            onPress={ this.goBack }
+            onPress={ () => this.goBack('done') }
             style={ styles.endActionButton }
           />
           <Button
@@ -339,7 +330,7 @@ class VideoPlayerView extends Component {
     return (
       <TouchableOpacity
         style={ styles.close }
-        onPress={ this.goBack }
+        onPress={ () => this.goBack('stop') }
       >
         <Image
           style={ styles.close }
@@ -406,6 +397,12 @@ const styles = StyleSheet.create({
 const VideoPlayer = metautil.applyHocs(
   VideoPlayerView,
   RoutableComponent,
+  TrackedComponent("VideoPlayer", {
+    propMaker: (props) => ({
+      uri: props.uri,
+      context: props.context,
+    }),
+  }),
 )
 
 export default VideoPlayer

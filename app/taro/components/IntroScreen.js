@@ -3,8 +3,10 @@ import PropTypes from 'prop-types'
 
 import * as NagManager from 'taro/controllers/NagManager'
 import VideoPlayer from 'taro/components/VideoPlayer'
+import * as metautil from 'taro/util/metautil'
+import TrackedComponent from 'taro/hoc/TrackedComponent'
 
-class IntroScreen extends Component {
+class IntroScreenView extends Component {
 
   onEnd = () => {
     NagManager.setSeen(NagManager.SEEN_INTRO_VIDEO)
@@ -27,5 +29,10 @@ class IntroScreen extends Component {
   }
 
 }
+
+const IntroScreen = metautil.applyHocs(
+    IntroScreenView,
+    TrackedComponent("Intro Screen"),
+)
 
 export default IntroScreen

@@ -11,12 +11,12 @@ import {
 import { Video } from 'expo'
 
 import COLORS from 'taro/colors'
-import TRACKER from 'taro/tracking'
 import GradientBackground from 'taro/components/GradientBackground'
 import * as FirebaseReducer from 'taro/reducers/FirebaseReducer'
 import * as metautil from 'taro/util/metautil'
 import * as scheduleutil from 'taro/util/scheduleutil'
 import * as proputil from 'taro/util/proputil'
+import TrackedComponent from 'taro/hoc/TrackedComponent'
 
 const END_STREAM_DELTA = 10000
 
@@ -34,7 +34,15 @@ const BOTTOM_COLORMAP = interpolate([
 const DELTA_HEALTH_OK = 20000 // 20 seconds
 const DELTA_HEALTH_BAD = 120000 // 2 minutes
 
+const COMPUTE_HEALTH_POLL_FREQ = 1000
+const HEALTH_TRACK_POLL_FREQ = 10000
+
 class HealthStatusIndicator extends Component {
+
+  static propTypes = {
+    realTimestamp: PropTypes.any,
+    onHealthUpdate: PropTypes.func,
+  }
 
   state = {
     delta: 0,
@@ -42,18 +50,20 @@ class HealthStatusIndicator extends Component {
   }
 
   componentDidMount = () => {
-    this._computeTicker = new scheduleutil.Ticker(1000, this.recomputeHealth)
-    this._postTicker = new scheduleutil.Ticker(60000, this.postHealth, false)
+    this._ticker = new scheduleutil.Ticker(
+      COMPUTE_HEALTH_POLL_FREQ,
+      this.onTick,
+    )
   }
 
   componentWillUnmount = () => {
-    this._computeTicker.stop()
-    this._postTicker.stop()
+    this._ticker.stop()
   }
 
-  recomputeHealth = () => {
+  onTick = () => {
     const {
       realTimestamp,
+      onHealthUpdate,
     } = this.props
     const now = new Date()
 
@@ -68,21 +78,12 @@ class HealthStatusIndicator extends Component {
     health = Math.max(health, 0)
     health = Math.min(health, 1)
 
-    this.setState({
+    const healthState = {
       delta,
       health,
-    })
-  }
-
-  postHealth = () => {
-    const {
-      delta,
-      health,
-    } = this.state
-    TRACKER.track('LiveVideoPlay Health', {
-      delta: delta,
-      health: health,
-    })
+    }
+    this.setState(healthState)
+    onHealthUpdate(healthState)
   }
 
   render = () => {
@@ -118,15 +119,42 @@ class LiveVideoPlayerView extends Component {
     fade: new Animated.Value(0),
     realTimestamp: null,
     started: false,
+    health: null,
   }
 
-  componentDidMount() {
-    TRACKER.track('Mounted LiveVideoPlayer')
+  componentDidMount = () => {
+    this._ticker = new scheduleutil.Ticker(
+      HEALTH_TRACK_POLL_FREQ,
+      this.onHealthPostTick,
+      false,
+    )
+  }
+
+  componentWillUnmount = () => {
+    this._ticker.stop()
   }
 
   onError = (event) => {
     console.log("onError")
     console.log(event)
+  }
+
+  onHealthUpdate = (health) => {
+    this.setState({
+      health: health,
+    })
+  }
+
+  onHealthPostTick = () => {
+    const {
+      track,
+    } = this.props
+    const {
+      health,
+    } = this.state
+    if(health != null) {
+      track('LiveVideoPlayer Health', health)
+    }
   }
 
   onPlaybackStatusUpdate = (event) => {
@@ -186,6 +214,7 @@ class LiveVideoPlayerView extends Component {
       style,
       quality,
       timeslot,
+      track,
     } = this.props
     const {
       fade,
@@ -209,6 +238,7 @@ class LiveVideoPlayerView extends Component {
           />
           <HealthStatusIndicator
             realTimestamp={ realTimestamp }
+            onHealthUpdate={ this.onHealthUpdate }
           />
         </Animated.View>
       </View>
@@ -232,6 +262,7 @@ const styles = StyleSheet.create({
 
 const LiveVideoPlayer = metautil.applyHocs(
   LiveVideoPlayerView,
+  TrackedComponent("LiveVideoPlayer"),
   reduxConnect(
     (state, props) => ({
       rtmpStream: FirebaseReducer.getPlaylist(
