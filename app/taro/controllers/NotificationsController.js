@@ -24,13 +24,13 @@ async function maybeRequest() {
     }
 
     await NagManager.setSeen(NagManager.ASKED_FOR_NOTIFICATIONS)
-    
-    TRACKER.track("Asked for notifications permission")
+
+    await TRACKER.track("Asked for notifications permission")
     const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS)
     if(status == 'granted') {
-      TRACKER.track("Notifications permission granted")
+      await TRACKER.track("Notifications permission granted")
     } else {
-      TRACKER.track("Notifications permission declined")
+      await TRACKER.track("Notifications permission declined")
     }
     finalStatus = status
   }

@@ -3,21 +3,26 @@
 import * as firebase from 'firebase'
 
 import * as AppLifecycle from 'taro/actions/AppLifecycle'
-import { gotFirebaseValue } from 'taro/actions/FirebaseActions'
+import * as FirebaseActions from 'taro/actions/FirebaseActions'
 import { wrapClass } from 'taro/util/metautil'
 import Timeslot from 'taro/models/Timeslot'
 import TimeslotPlaylist from 'taro/models/TimeslotPlaylist'
+
+const TIMESLOTS_KEY = 'STANDARD_WATCH_SPECS.TIMESLOTS_KEY'
+const PLAYLISTS_KEY = 'STANDARD_WATCH_SPECS.PLAYLISTS_KEY'
 
 const STANDARD_WATCH_SPECS = [
   {
     firebaseKey: 'timeslots',
     cls: Timeslot,
     keyed: true,
+    refKey: TIMESLOTS_KEY,
   },
   {
     firebaseKey: 'playlists',
     cls: TimeslotPlaylist,
     keyed: true,
+    refKey: PLAYLISTS_KEY,
   },
 ]
 
@@ -29,52 +34,87 @@ class FirebaseRefManager {
   }
 
   refreshAllRefs = () => {
-    for(const key in this.refs) {
-      this.unsubscribe(key)
-      this.subscribe(key)
+    for(const refKey in this.refs) {
+      this.unsubscribe(refKey)
+      this.subscribe(refKey)
     }
   }
 
   observe = (watchSpec) => {
+    const {
+      refKey,
+      firebaseKey,
+    } = watchSpec
     const shardKey = global.CONFIG.FIREBASE.shard
-    const firebaseKey = watchSpec.firebaseKey
     const ref = firebase.database().ref(`${ shardKey }/${ firebaseKey }`)
-    this.refs[firebaseKey] = {
-      firebaseKey: firebaseKey,
+    this.refs[refKey] = {
       ref: ref,
       watchSpec: watchSpec,
     }
-    this.subscribe(firebaseKey)
+    this.subscribe(refKey)
   }
 
-  subscribe = (firebaseKey) => {
+  onValueReceived = (entry, watchSpec) => {
+    const {
+      keyed,
+      cls,
+      refKey,
+    } = watchSpec
+
+    const value = this._wrap(
+      entry.val(),
+      watchSpec,
+    )
+    const action = FirebaseActions.gotFirebaseValue(
+      refKey,
+      value,
+    )
+    this.store.dispatch(action)
+  }
+
+  subscribe = (refKey) => {
     const {
       ref,
       watchSpec,
-    } = this.refs[firebaseKey]
-    ref.on('value', (entry) => {
-      var firebaseValue = entry.val()
-
-      if(watchSpec.keyed) {
-        const wrappedValue = {}
-        for(const modelKey in firebaseValue) {
-          const modelValue = firebaseValue[modelKey]
-          wrappedValue[modelKey] = wrapClass(modelValue, watchSpec.cls, true)
-        }
-        firebaseValue = wrappedValue
-      } else {
-        firebaseValue = wrapClass(firebaseValue, watchSpec.cls, true)
-      }
-
-      this.store.dispatch(gotFirebaseValue(firebaseKey, firebaseValue))
-    })
+    } = this.refs[refKey]
+    ref.on('value', (entry) => this.onValueReceived(entry, watchSpec))
   }
 
-  unsubscribe = (firebaseKey) => {
+  unobserve = (watchSpec) => {
+    this.unsubscribe(watchSpec.refKey)
+    delete this.refs[watchSpec.refKey]
+  }
+
+  unsubscribe = (refKey) => {
     const {
       ref,
-    } = this.refs[firebaseKey]
+    } = this.refs[refKey]
     ref.off()
+  }
+
+  _wrap = (rawValue, watchSpec) => {
+    const {
+      keyed,
+      cls,
+      map,
+    } = watchSpec
+
+    if(map != null) {
+      rawValue = map(rawValue)
+    }
+
+    if(keyed && (cls != null)) {
+      const wrappedValue = {}
+      for(const modelKey in rawValue) {
+        const modelValue = rawValue[modelKey]
+        wrappedValue[modelKey] = wrapClass(modelValue, cls, true)
+      }
+      return wrappedValue
+    } else if(cls != null) {
+      return wrapClass(rawValue, cls, true)
+    } else {
+      return rawValue
+    }
   }
 
 }
@@ -92,12 +132,19 @@ const firebaseMiddleware = (store) => {
     const result = next(action)
     if (action.type === AppLifecycle.APP_START) {
       startStandardObservers(MANAGER)
-    }
-    if (action.type === AppLifecycle.APP_RESUME) {
+    } else if (action.type === AppLifecycle.APP_RESUME) {
       MANAGER.refreshAllRefs()
+    } else if (action.type === FirebaseActions.OBSERVE_FIREBASE_VALUE) {
+      MANAGER.observe(action.watchSpec)
+    } else if (action.type === FirebaseActions.UNOBSERVE_FIREBASE_VALUE) {
+      MANAGER.unobserve(action.watchSpec)
     }
     return result
   }
 }
 
 export default firebaseMiddleware
+export {
+  TIMESLOTS_KEY,
+  PLAYLISTS_KEY,
+}

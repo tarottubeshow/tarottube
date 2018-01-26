@@ -5,7 +5,7 @@ import { connect as reduxConnect } from 'react-redux'
 import { View, StyleSheet, Text } from 'react-native'
 
 import * as metautil from 'taro/util/metautil'
-import { getPlaylist } from 'taro/reducers/FirebaseReducer'
+import * as FirebaseReducer from 'taro/reducers/FirebaseReducer'
 import LiveVideoPlayer from 'taro/components/screen/LiveVideoPlayer'
 import StreamEndedScreen from 'taro/components/screen/StreamEndedScreen'
 import WaitingScreen from 'taro/components/screen/WaitingScreen'
@@ -154,8 +154,18 @@ const TimeslotViewer = metautil.applyHocs(
   reduxConnect(
     (state, props) => {
       return {
-        hlsStream: getPlaylist(state, props.timeslot, 'm3u8', QUALITY),
-        rtmpStream: getPlaylist(state, props.timeslot, 'rtmp', QUALITY),
+        hlsStream: FirebaseReducer.getPlaylist(
+          state,
+          props.timeslot,
+          'm3u8',
+          QUALITY,
+        ),
+        rtmpStream: FirebaseReducer.getPlaylist(
+          state,
+          props.timeslot,
+          'rtmp',
+          QUALITY,
+        ),
       }
     },
     (dispatch, props) => ({

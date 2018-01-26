@@ -20,9 +20,9 @@
         "color": "#5C27FE"
     },
     "splash": {
-        "backgroundColor": "#C165DD",
+        "image": "./collateral/splash/default2.png",
         "resizeMode": "cover",
-        "image": "./collateral/splash/default.png"
+        "backgroundColor": "#C165DD"
     },
   }
 }

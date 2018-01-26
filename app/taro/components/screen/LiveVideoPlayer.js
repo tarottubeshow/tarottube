@@ -6,6 +6,7 @@ import { connect as reduxConnect } from 'react-redux'
 import {
   Animated,
   StyleSheet,
+  Text,
   View,
 } from 'react-native'
 import { Video } from 'expo'
@@ -16,7 +17,10 @@ import * as FirebaseReducer from 'taro/reducers/FirebaseReducer'
 import * as metautil from 'taro/util/metautil'
 import * as scheduleutil from 'taro/util/scheduleutil'
 import * as proputil from 'taro/util/proputil'
+import * as randomutil from 'taro/util/randomutil'
 import TrackedComponent from 'taro/hoc/TrackedComponent'
+import VIEW_COUNTER from 'taro/controllers/ViewCounter'
+import FirebaseWatcher from 'taro/hoc/FirebaseWatcher'
 
 const END_STREAM_DELTA = 10000 // 10 seconds
 
@@ -123,11 +127,15 @@ class LiveVideoPlayerView extends Component {
   }
 
   componentDidMount = () => {
+    const {
+      timeslot,
+    } = this.props
     this._ticker = new scheduleutil.Ticker(
       HEALTH_TRACK_POLL_FREQ,
       this.onHealthPostTick,
       false,
     )
+    VIEW_COUNTER.onView(timeslot.stream_key, true)
   }
 
   componentWillUnmount = () => {
@@ -240,10 +248,25 @@ class LiveVideoPlayerView extends Component {
             realTimestamp={ realTimestamp }
             onHealthUpdate={ this.onHealthUpdate }
           />
+          { this.renderCount() }
         </Animated.View>
       </View>
     )
   }
+
+  renderCount = () => {
+    const {
+      viewing,
+    } = this.props
+    if(viewing != null && viewing > 0) {
+      return (
+        <Text style={ styles.viewingCount }>
+          { viewing }
+        </Text>
+      )
+    }
+  }
+
 }
 
 const styles = StyleSheet.create({
@@ -257,12 +280,31 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     height: 5,
-  }
+  },
+  viewingCount: {
+    position: 'absolute',
+    top: 30,
+    left: 10,
+    paddingLeft: 10,
+    paddingRight: 10,
+    paddingTop: 3,
+    paddingBottom: 3,
+    color: '#fff',
+    backgroundColor: COLORS.purple,
+    borderRadius: 10,
+    overflow: 'hidden',
+  },
 })
 
 const LiveVideoPlayer = metautil.applyHocs(
   LiveVideoPlayerView,
   TrackedComponent("LiveVideoPlayer"),
+  FirebaseWatcher((props) => ({
+    viewing: {
+      firebaseKey: `viewCounts/${ props.timeslot.stream_key }/viewing_count`,
+      refKey: 'LiveVideoPlayer.viewing',
+    },
+  })),
   reduxConnect(
     (state, props) => ({
       rtmpStream: FirebaseReducer.getPlaylist(

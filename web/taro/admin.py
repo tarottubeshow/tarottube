@@ -3,8 +3,9 @@ import flask
 
 import taro.validate as val
 import taro.requestValidate as rval
-from taro import upload
+from taro import firebase
 from taro import sqla
+from taro import upload
 from taro.app import APP
 from taro.models import *
 

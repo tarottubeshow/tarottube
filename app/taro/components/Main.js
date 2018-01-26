@@ -16,6 +16,7 @@ import {
 import * as AppLifecycle from 'taro/actions/AppLifecycle'
 import * as AudioController from 'taro/controllers/AudioController'
 import * as FontManager from 'taro/controllers/FontManager'
+import * as FirebaseReducer from 'taro/reducers/FirebaseReducer'
 
 const buildMain = ({
   reducers,
@@ -73,7 +74,7 @@ const buildMain = ({
       (state, props) => ({
         routerReady: state.Router.ready,
         deviceReady: state.Device.ready,
-        timeslots: state.Firebase.timeslots,
+        timeslots: FirebaseReducer.getTimeslots(state),
       }),
       (dispatch, props) => ({
       }),

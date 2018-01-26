@@ -146,6 +146,8 @@ class PushToken(sqla.BaseModel):
             print(exc.push_response._asdict())
             return False
 
+        print("Token send succeeeded!")
+
         return True
 
 class ReadingRequest(sqla.BaseModel):

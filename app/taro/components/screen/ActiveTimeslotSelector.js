@@ -8,6 +8,7 @@ import { applyHocs } from 'taro/util/metautil'
 import { pickFunc } from 'taro/util/funcutil'
 import { sorted } from 'taro/util/iterutil'
 import * as NotificationsController from 'taro/controllers/NotificationsController'
+import * as FirebaseReducer from 'taro/reducers/FirebaseReducer'
 
 class ActiveTimeslotSelectorView extends Component {
 
@@ -60,7 +61,7 @@ const ActiveTimeslotSelector = applyHocs(
   reduxConnect(
     (state, props) => ({
       time: state.Time,
-      timeslots: state.Firebase.timeslots,
+      timeslots: FirebaseReducer.getTimeslots(state),
     }),
     (dispatch, props) => ({
     }),
