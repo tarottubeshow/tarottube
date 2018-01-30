@@ -108,10 +108,13 @@ class PushToken(sqla.BaseModel):
         existing = PushToken.query()\
             .filter(PushToken.token == token)\
             .first()
+        print("Subscribing token: %s" % token)
         if existing:
+            print("Existing status: %s" % existing.active)
             existing.active = True
             return existing
         else:
+            print("Creating new one!")
             created = PushToken(
                 active=True,
                 created=datetime.datetime.now(),
