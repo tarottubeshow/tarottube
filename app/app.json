@@ -3,12 +3,17 @@
     "sdkVersion": "23.0.0",
     "name": "Tarot Tube Live",
     "icon": "./collateral/icons/1024-square.png",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "slug": "tarot-tube-live",
     "ios": {
         "bundleIdentifier": "com.tarottube.live",
         "isRemoteJSEnabled": true,
         "supportsTablet": false,
+        "splash": {
+            "image": "./collateral/splash/default2.png",
+            "resizeMode": "cover",
+            "backgroundColor": "#C165DD"
+        }
     },
     "android": {
         "package": "com.tarottube.live"
@@ -18,6 +23,12 @@
     "notification": {
         "icon": "./collateral/icons/48-square-black.png",
         "color": "#5C27FE"
+    },
+    "loading": {
+        "icon": "./collateral/icons/1024-square.png",
+        "backgroundImage": "./collateral/splash/default2.png",
+        "backgroundColor": "#C165DD",
+        "hideExponentText": true
     },
     "splash": {
         "image": "./collateral/splash/default2.png",
