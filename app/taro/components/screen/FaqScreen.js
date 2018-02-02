@@ -3,10 +3,7 @@ import PropTypes from 'prop-types'
 import { connect as reduxConnect } from 'react-redux'
 
 import * as NB from 'native-base'
-import {
-  View,
-  StyleSheet,
-} from 'react-native'
+import { View } from 'react-native'
 
 import * as metautil from 'taro/util/metautil'
 import * as proputil from 'taro/util/proputil'
@@ -86,7 +83,6 @@ class FaqViewer extends Component {
         uri={ faq.url }
         hideClose={ true }
         onBack={ onBack }
-        style={ styles.video }
       />
     )
   }
@@ -212,11 +208,5 @@ const FaqScreen = metautil.applyHocs(
     }),
   ),
 )
-
-const styles = StyleSheet.create({
-  video: {
-    flex: 1,
-  },
-})
 
 export default FaqScreen

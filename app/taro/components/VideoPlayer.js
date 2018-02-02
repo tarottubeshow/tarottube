@@ -110,8 +110,6 @@ class VideoPlayerView extends Component {
     onBack: PropTypes.func,
     onEnd: PropTypes.func,
 
-    style: proputil.STYLE_TYPE,
-
     goto: PropTypes.func,
   }
 
@@ -244,16 +242,13 @@ class VideoPlayerView extends Component {
 
   renderAndroidBody = () => {
     const {
-      style,
-    } = this.props
-    const {
       started,
       ended,
     } = this.state
     const loadingComponent = (!started) ? this.renderLoading() : null
     const endActionsComponent = (ended) ? this.renderEndActions() : null
     return (
-      <View style={ style }>
+      <View style={ styles.videoContainer }>
         <View style={{
           display: (started && !ended) ? 'flex' : 'none',
           flex: 1,
@@ -267,11 +262,8 @@ class VideoPlayerView extends Component {
   }
 
   renderIos = () => {
-    const {
-      style,
-    } = this.props
     return (
-      <View style={ style }>
+      <View style={ styles.videoContainer }>
         { this.renderLoading() }
         { this.renderAnimatedPlayer() }
         { this.renderStopButton() }
@@ -371,7 +363,6 @@ class VideoPlayerView extends Component {
         style={ videoStyle }
         onPlaybackStatusUpdate={ this.onPlaybackStatusUpdate }
         onError={ this.onError }
-        progressUpdateIntervalMillis={ 1000 }
       />
     )
   }
@@ -423,6 +414,9 @@ class VideoPlayerView extends Component {
 }
 
 const styles = StyleSheet.create({
+  videoContainer: {
+    flex: 1,
+  },
   video: {
     flex: 1,
     ...deviceutil.ifIos({
