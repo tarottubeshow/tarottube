@@ -124,6 +124,8 @@ class TimeslotViewerView extends Component {
       playState,
     } = this.state
 
+    console.log(this.isStreamReady())
+
     if(!this.isStreamReady()) {
       return null
     }

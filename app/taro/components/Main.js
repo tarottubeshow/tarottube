@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { Provider as ReduxProvider } from 'react-redux'
 import { connect as reduxConnect } from 'react-redux'
-import { AppState } from 'react-native'
+import { AppState, View, StatusBar } from 'react-native'
 
 import Router from 'taro/components/Router'
 import Promised from 'taro/components/control/Promised'
@@ -17,6 +17,7 @@ import * as AppLifecycle from 'taro/actions/AppLifecycle'
 import * as AudioController from 'taro/controllers/AudioController'
 import * as FontManager from 'taro/controllers/FontManager'
 import * as FirebaseReducer from 'taro/reducers/FirebaseReducer'
+import * as LogManager from 'taro/controllers/LogManager'
 
 const buildMain = ({
   reducers,
@@ -107,6 +108,7 @@ const buildMain = ({
       onStart()
       AudioController.enable()
       FontManager.init()
+      LogManager.init()
     }
 
     onResume = () => {
@@ -162,9 +164,12 @@ const buildMain = ({
 
     render = () => {
       return (
-        <ReduxProvider store={ store }>
-          <AppStateManager />
-        </ReduxProvider>
+        <View style={{ flex: 1 }}>
+          <StatusBar hidden={ true } />
+          <ReduxProvider store={ store }>
+            <AppStateManager />
+          </ReduxProvider>
+        </View>
       )
     }
 

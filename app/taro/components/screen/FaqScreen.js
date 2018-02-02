@@ -81,14 +81,13 @@ class FaqViewer extends Component {
       onBack,
     } = this.props
     return (
-      <View style={ styles.video }>
-        <VideoPlayer
-          context={ `faq:${ faq.id }` }
-          uri={ faq.url }
-          hideClose={ true }
-          onBack={ onBack }
-        />
-      </View>
+      <VideoPlayer
+        context={ `faq:${ faq.id }` }
+        uri={ faq.url }
+        hideClose={ true }
+        onBack={ onBack }
+        style={ styles.video }
+      />
     )
   }
 

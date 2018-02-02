@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
+import { StyleSheet } from 'react-native'
+
 import * as NagManager from 'taro/controllers/NagManager'
 import VideoPlayer from 'taro/components/VideoPlayer'
 import * as metautil from 'taro/util/metautil'
@@ -24,11 +26,18 @@ class IntroScreenView extends Component {
         backRoute={ backRoute }
         context="IntroVideo"
         uri={ uri }
+        style={ styles.video }
       />
     )
   }
 
 }
+
+const styles = StyleSheet.create({
+  video: {
+    flex: 1,
+  }
+})
 
 const IntroScreen = metautil.applyHocs(
     IntroScreenView,

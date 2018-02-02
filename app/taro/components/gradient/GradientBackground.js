@@ -5,6 +5,7 @@ import { View, StyleSheet } from 'react-native'
 
 import SvgGradient from 'taro/components/gradient/SvgGradient'
 import * as proputil from 'taro/util/proputil'
+import * as deviceutil from 'taro/util/deviceutil'
 
 class GradientBackground extends Component {
 
@@ -15,6 +16,35 @@ class GradientBackground extends Component {
   }
 
   render = () => {
+    if(deviceutil.isIos()) {
+      return this.renderIos()
+    } else {
+      return this.renderAndroid()
+    }
+  }
+
+  renderAndroid = () => {
+    const {
+      children,
+      style,
+      stops,
+    } = this.props
+    return (
+      <View
+        style={ [
+          {
+            backgroundColor: stops[0],
+          },
+          style,
+        ] }
+        ref={ this._initRoot }
+      >
+        { children }
+      </View>
+    )
+  }
+
+  renderIos = () => {
     const {
       children,
       style,

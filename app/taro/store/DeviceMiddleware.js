@@ -1,4 +1,4 @@
-import { Dimensions } from 'react-native'
+import { Platform, Dimensions } from 'react-native'
 
 import { APP_START } from 'taro/actions/AppLifecycle'
 import { deviceChanged } from 'taro/reducers/DeviceReducer'
