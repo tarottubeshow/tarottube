@@ -6,34 +6,42 @@
     "version": "1.0.2",
     "slug": "tarot-tube-live",
     "ios": {
-        "bundleIdentifier": "com.tarottube.live",
-        "isRemoteJSEnabled": true,
-        "supportsTablet": false,
-        "splash": {
-            "image": "./collateral/splash/default2.png",
-            "resizeMode": "cover",
-            "backgroundColor": "#C165DD"
-        }
+      "bundleIdentifier": "com.tarottube.live",
+      "isRemoteJSEnabled": true,
+      "supportsTablet": false,
+      "splash": {
+        "image": "./collateral/splash/default2.png",
+        "resizeMode": "cover",
+        "backgroundColor": "#C165DD"
+      },
+      "publishBundlePath": "ios/tarot-tube-live/Supporting/shell-app.bundle",
+      "publishManifestPath": "ios/tarot-tube-live/Supporting/shell-app-manifest.json"
     },
     "android": {
-        "package": "com.tarottube.live"
+      "package": "com.tarottube.live"
     },
     "privacy": "unlisted",
     "orientation": "portrait",
     "notification": {
-        "icon": "./collateral/icons/48-square-black.png",
-        "color": "#5C27FE"
+      "icon": "./collateral/icons/48-square-black.png",
+      "color": "#5C27FE"
     },
     "loading": {
-        "icon": "./collateral/icons/1024-square.png",
-        "backgroundImage": "./collateral/splash/default2.png",
-        "backgroundColor": "#C165DD",
-        "hideExponentText": true
+      "icon": "./collateral/icons/1024-square.png",
+      "backgroundImage": "./collateral/splash/default2.png",
+      "backgroundColor": "#C165DD",
+      "hideExponentText": true
     },
     "splash": {
-        "image": "./collateral/splash/default2.png",
-        "resizeMode": "cover",
-        "backgroundColor": "#C165DD"
+      "image": "./collateral/splash/default2.png",
+      "resizeMode": "cover",
+      "backgroundColor": "#C165DD"
     },
+    "isDetached": true,
+    "detach": {
+      "scheme": "exp908a9e01a6724b8f8aa3702cf9ff83b3",
+      "iosExpoViewUrl": "https://s3.amazonaws.com/exp-exponent-view-code/ios-v2.2.1-sdk24.0.0-36ff2264-629d-44df-a819-8c982454e5e8.tar.gz",
+      "androidExpoViewUrl": "https://s3.amazonaws.com/exp-exponent-view-code/android-v2.2.0-sdk24.0.0-16620828-4df4-4e2d-b0af-5dc1352b82cb.tar.gz"
+    }
   }
 }

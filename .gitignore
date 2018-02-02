@@ -102,3 +102,7 @@ config.yaml
 mount/
 .htpasswd
 gsa.json
+app/ios/Pods
+app/android/build
+app/android/app/build
+app/android/maven
