@@ -20,7 +20,9 @@
                     {{ request.name }}
                 </td>
                 <td>
-                    {{ request.question|truncate(80) }}
+                    {% if request.question %}
+                        {{ request.question|truncate(80) }}
+                    {% endif %}
                 </td>
             </tr>
         {% endfor %}
