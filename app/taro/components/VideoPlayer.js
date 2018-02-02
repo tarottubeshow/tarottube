@@ -24,15 +24,6 @@ import RoutableComponent from 'taro/hoc/RoutableComponent'
 import TitledScreen from 'taro/components/TitledScreen'
 import TrackedComponent from 'taro/hoc/TrackedComponent'
 
-const PLAYABLE_COLORMAP = interpolate([
-  COLORS.blueLight,
-  COLORS.blue,
-])
-const POSITION_COLORMAP = interpolate([
-  COLORS.greenLight,
-  COLORS.green,
-])
-
 class ProgressIndicatorBar extends Component {
 
   static propTypes = {
@@ -85,11 +76,11 @@ class ProgressIndicator extends Component {
         />
         <ProgressIndicatorBar
           percentage={ playablePercent }
-          color={ PLAYABLE_COLORMAP(playablePercent) }
+          color={ COLORS.blue }
         />
         <ProgressIndicatorBar
           percentage={ positionPercent }
-          color={ POSITION_COLORMAP(positionPercent) }
+          color={ COLORS.green }
         />
       </View>
     )
