@@ -277,10 +277,13 @@ class VideoPlayerView extends Component {
       fade,
     } = this.state
     return (
-      <Animated.View style={{
-        opacity: fade,
-        zIndex: 100,
-      }}>
+      <Animated.View style={[
+        styles.videoContainer,
+        {
+          opacity: fade,
+          zIndex: 100,
+        }
+      ]}>
         { this.renderPlayer() }
         { this.renderProgressIndicator() }
       </Animated.View>
@@ -419,9 +422,6 @@ const styles = StyleSheet.create({
   },
   video: {
     flex: 1,
-    ...deviceutil.ifIos({
-      zIndex: 100,
-    }),
   },
   videoEnded: {
     ...deviceutil.ifIos({

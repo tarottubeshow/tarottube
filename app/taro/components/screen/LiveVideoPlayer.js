@@ -167,8 +167,6 @@ class LiveVideoPlayerView extends Component {
   }
 
   onPlaybackStatusUpdate = (event) => {
-    console.log(event)
-
     const {
       onFinish,
       hlsStream,
@@ -253,6 +251,7 @@ class LiveVideoPlayerView extends Component {
     return (
       <View style={ style }>
         <Animated.View style={{
+          flex: 1,
           opacity: fade,
         }}>
           { this.renderVideo() }
@@ -322,7 +321,7 @@ const styles = StyleSheet.create({
   },
   viewingCount: {
     position: 'absolute',
-    top: 30,
+    top: 10,
     left: 10,
     paddingLeft: 10,
     paddingRight: 10,
