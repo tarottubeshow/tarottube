@@ -1,7 +1,3 @@
-# /rtmp-hook/publish/
-# /rtmp-hook/done/
-# /rtmp-hook/update/
-
 import datetime
 import flask
 from urllib.parse import urlparse, parse_qs
@@ -48,6 +44,8 @@ def handleStart(timeslot, body, quality):
         secretKey = params['key'][0]
         if secretKey != timeslot.secret_key:
             flask.abort(401)
+        if timeslot.end_time < datetime.datetime.now():
+            flask.abort(403)
     else:
         ip = body['ip']
         if ip != '127.0.0.1':
