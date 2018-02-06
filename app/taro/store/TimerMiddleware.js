@@ -6,7 +6,7 @@ const startTimer = (store) => {
   const tick = () => {
     store.dispatch(tickEvent(new Date()))
   }
-  // new scheduleutil.Ticker(1000, tick)
+  new scheduleutil.Ticker(1000, tick)
 }
 
 const timerMiddleware = (store) => {

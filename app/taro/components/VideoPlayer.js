@@ -148,21 +148,23 @@ class VideoPlayerView extends Component {
       playable = 0 // for some reason it jumps around at 0
     }
 
-    const newStarted = (position > 0)
-    const newEnded = (position != 0 && position >= duration)
+    if(!ended) {
+      const newStarted = (position > 0)
+      const newEnded = (position != 0 && position >= duration)
 
-    this.setState({
-      position,
-      duration,
-      playable,
-      started: newStarted,
-      ended: newEnded,
-    })
-    if(!started && newStarted) {
-      this.onStart()
-    }
-    if(!ended && newEnded) {
-      this.onEnd()
+      this.setState({
+        position,
+        duration,
+        playable,
+        started: newStarted,
+        ended: newEnded,
+      })
+      if(!started && newStarted) {
+        this.onStart()
+      }
+      if(!ended && newEnded) {
+        this.onEnd()
+      }
     }
   }
 
@@ -202,6 +204,9 @@ class VideoPlayerView extends Component {
     } = this.props
     track('Restarted VideoPlayerView')
     this._videoRef.setPositionAsync(0)
+    this.setState({
+      ended: false,
+    })
   }
 
   render = () => {
@@ -268,13 +273,16 @@ class VideoPlayerView extends Component {
       fade,
     } = this.state
     return (
-      <Animated.View style={[
-        styles.videoContainer,
-        {
-          opacity: fade,
-          zIndex: 100,
-        }
-      ]}>
+      <Animated.View
+        style={[
+          styles.videoContainer,
+          {
+            opacity: fade,
+            zIndex: 100,
+          }
+        ]}
+        key="ANIMATED"
+      >
         { this.renderPlayer() }
         { this.renderProgressIndicator() }
       </Animated.View>
@@ -304,7 +312,10 @@ class VideoPlayerView extends Component {
     } = this.state
     if(ended) {
       return (
-        <View style={ styles.endActions }>
+        <View
+          style={ styles.endActions }
+          key='ENDACTIONS'
+        >
           <Button
             color="yellow"
             text="Done"
@@ -357,6 +368,7 @@ class VideoPlayerView extends Component {
         style={ videoStyle }
         onPlaybackStatusUpdate={ this.onPlaybackStatusUpdate }
         onError={ this.onError }
+        key='VIDEO'
       />
     )
   }
@@ -372,6 +384,7 @@ class VideoPlayerView extends Component {
         position={ position }
         duration={ duration }
         playable={ playable }
+        key='PROGRESS'
       />
     )
   }
@@ -410,6 +423,14 @@ class VideoPlayerView extends Component {
 const styles = StyleSheet.create({
   videoContainer: {
     flex: 1,
+    ...deviceutil.ifIos({
+      position: 'absolute',
+      bottom: 0,
+      left: 0,
+      right: 0,
+      top: 0,
+      zIndex: 100,
+    }),
   },
   video: {
     flex: 1,
