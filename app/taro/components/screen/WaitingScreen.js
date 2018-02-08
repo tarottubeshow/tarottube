@@ -112,7 +112,7 @@ class WaitingScreenView extends Component {
       goto,
     } = this.props
     const route = {
-      context: 'faq',
+      context: 'faqList',
     }
     return (
       <TouchableOpacity

@@ -6,6 +6,7 @@ import { View } from 'react-native'
 import ActiveTimeslotSelector from 'taro/components/screen/ActiveTimeslotSelector'
 import IntroScreen from 'taro/components/screen/IntroScreen'
 import FaqScreen from 'taro/components/screen/FaqScreen'
+import FaqListScreen from 'taro/components/screen/FaqListScreen'
 import HamburgerScreen from 'taro/components/screen/HamburgerScreen'
 import ReplayLatestScreen from 'taro/components/screen/ReplayLatestScreen'
 import ArchivesScreen from 'taro/components/screen/ArchivesScreen'
@@ -17,6 +18,7 @@ import { applyHocs } from 'taro/util/metautil'
 const ROUTE_MAP = {
   replay: ReplayLatestScreen,
   intro: IntroScreen,
+  faqList: FaqListScreen,
   faq: FaqScreen,
   hamburger: HamburgerScreen,
   archives: ArchivesScreen,

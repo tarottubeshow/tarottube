@@ -24,7 +24,7 @@ const ACTIONS = [
   {
     name: "FAQs",
     route: {
-      context: 'faq',
+      context: 'faqList',
     }
   },
 ]
