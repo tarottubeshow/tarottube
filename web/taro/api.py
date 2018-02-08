@@ -32,6 +32,22 @@ def getTimeslots():
         'timeslots': timeslots,
     })
 
+@APP.route('/api/2/timeslot/latest.json')
+def getLatestTimeslot():
+    timeslot, playlist = Timeslot.latestWithRecording()
+    if playlist:
+        payload = timeslot.getJson()
+        payload['video_url'] = playlist.getPublicUri()
+        return flask.jsonify({
+            'status': "OK",
+            'timeslot': payload,
+        })
+
+    return flask.jsonify({
+        'status': "BAD",
+    })
+
+
 @APP.route('/api/2/notifications/subscribe.json', methods=['POST'])
 def subscribeToNotifications():
     payload = flask.request.get_json()
@@ -61,7 +77,9 @@ def logView():
         type=payload['type'],
         uuid=payload['uuid'],
     )
-    view.countViews()
+    if view.created == view.last:
+        view.countViews()
+
     return flask.jsonify({
         'status': "OK",
     })

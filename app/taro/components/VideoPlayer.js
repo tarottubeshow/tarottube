@@ -313,7 +313,6 @@ class VideoPlayerView extends Component {
       views,
     } = this.props
     if(views != null && views > 0) {
-      console.log(views)
       return (
         <Text style={ styles.viewCount }>
           { views }
@@ -511,8 +510,8 @@ const styles = StyleSheet.create({
   viewCount: {
     zIndex: 200,
     position: 'absolute',
-    top: 30,
-    right: 10,
+    top: 12,
+    right: 20,
     paddingLeft: 10,
     paddingRight: 10,
     paddingTop: 3,

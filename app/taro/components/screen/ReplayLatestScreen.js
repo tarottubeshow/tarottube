@@ -1,25 +1,48 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
-import VideoPlayer from 'taro/components/VideoPlayer'
+import * as metautil from 'taro/util/metautil'
+import ApiInvoker from 'taro/hoc/ApiInvoker'
+import Promised from 'taro/components/control/Promised'
+import TimeslotScreen from 'taro/components/screen/TimeslotScreen'
+import TIMESLOT_API from 'taro/api/TimeslotApi'
 
-class ReplayLatestScreen extends Component {
+class ReplayLatestScreenView extends Component {
 
   render = () => {
-    const uri = `${ global.CONFIG['URL']['API'] }/video/latest.mp4`
-    const backRoute = {
-      context: 'home',
-      assumeSeen: true,
-    }
+    const {
+      timeslot,
+    } = this.props
     return (
-      <VideoPlayer
-        backRoute={ backRoute }
-        context="ReplayLatestScreen"
-        uri={ uri }
+      <Promised
+        promises={ [ timeslot ] }
+        render={ this.renderReady }
+      />
+    )
+  }
+
+  renderReady = ([ timeslot ]) => {
+    console.log(timeslot)
+    return (
+      <TimeslotScreen
+        timeslot={ timeslot }
       />
     )
   }
 
 }
+
+const ReplayLatestScreen = metautil.applyHocs(
+    ReplayLatestScreenView,
+    ApiInvoker(
+      (props) => ({
+        timeslot: {
+          api: TIMESLOT_API.getLatest,
+          params: {},
+          key: 'ReplayLatestScreen.timeslot',
+        },
+      }),
+    )
+)
 
 export default ReplayLatestScreen

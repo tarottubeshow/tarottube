@@ -9,28 +9,38 @@ import VIEW_COUNTER from 'taro/controllers/ViewCounter'
 class TimeslotScreenView extends Component {
 
   static propTypes = {
+    timeslot: PropTypes.object,
     route: PropTypes.object,
 
     views: PropTypes.number,
   }
 
   componentDidMount = () => {
+    const timeslot = this.getTimeslot()
+    VIEW_COUNTER.onView(timeslot.stream_key, 'archive')
+  }
+
+  getTimeslot = () => {
     const {
       route,
+      timeslot,
     } = this.props
-    const timeslot = route.timeslot
-    VIEW_COUNTER.onView(timeslot.stream_key, 'archive')
+    if(timeslot != null) {
+      return timeslot
+    } else {
+      return route.timeslot
+    }
   }
 
   render = () => {
     const {
-      route,
       views,
     } = this.props
+
+    const timeslot = this.getTimeslot()
     const backRoute = {
       context: 'archives',
     }
-    const timeslot = route.timeslot
     const uri = timeslot.video_url
     return (
       <VideoPlayer
@@ -46,12 +56,15 @@ class TimeslotScreenView extends Component {
 
 const TimeslotScreen = metautil.applyHocs(
   TimeslotScreenView,
-  FirebaseWatcher((props) => ({
-    views: {
-      firebaseKey: `viewCounts/${ props.route.timeslot.stream_key }/views`,
-      refKey: 'TimeslotScreen.views',
-    },
-  })),
+  FirebaseWatcher((props) => {
+    const timeslot = props.timeslot || props.route.timeslot
+    return {
+      views: {
+        firebaseKey: `viewCounts/${ timeslot.stream_key }/views`,
+        refKey: 'TimeslotScreen.views',
+      },
+    }
+  }),
 )
 
 export default TimeslotScreen

@@ -32,7 +32,10 @@ async function doAsk() {
 }
 
 async function negotiateStatus() {
-  // TODO: might want to first check existing status
+  const original = await Permissions.getAsync(Permissions.NOTIFICATIONS)
+  if (original.status === 'granted') {
+    return true
+  }
 
   const status = await doAsk()
 

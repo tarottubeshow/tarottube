@@ -321,8 +321,8 @@ const styles = StyleSheet.create({
   },
   viewingCount: {
     position: 'absolute',
-    top: 10,
-    left: 10,
+    top: 12,
+    right: 20,
     paddingLeft: 10,
     paddingRight: 10,
     paddingTop: 3,
