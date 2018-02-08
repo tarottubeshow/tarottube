@@ -50,9 +50,6 @@ class RequestScreenView extends Component {
     const {
       sent,
     } = this.state
-    const homeRoute = {
-      context: 'hamburger',
-    }
 
     let rightIcon
     if(!sent) {
@@ -61,7 +58,6 @@ class RequestScreenView extends Component {
     return (
       <TitledScreen
         title="Request"
-        backRoute={ homeRoute }
         rightIcon={ rightIcon }
         onRightIconClick={ this.onSubmit }
       >

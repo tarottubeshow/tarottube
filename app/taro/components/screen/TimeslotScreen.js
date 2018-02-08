@@ -38,13 +38,9 @@ class TimeslotScreenView extends Component {
     } = this.props
 
     const timeslot = this.getTimeslot()
-    const backRoute = {
-      context: 'archives',
-    }
     const uri = timeslot.video_url
     return (
       <VideoPlayer
-        backRoute={ backRoute }
         context={ `timeslot:${ timeslot.stream_key }` }
         uri={ uri }
         views={ views }

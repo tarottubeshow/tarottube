@@ -12,7 +12,6 @@ import RoutableComponent from 'taro/hoc/RoutableComponent'
 class TitledScreenView extends Component {
 
   static propTypes = {
-    backRoute: PropTypes.object,
     onBack: PropTypes.func,
 
     title: PropTypes.string,
@@ -22,7 +21,7 @@ class TitledScreenView extends Component {
     rightIcon: PropTypes.string,
     onRightIconClick: PropTypes.func,
 
-    goto: PropTypes.func,
+    goBack: PropTypes.func,
     safeTop: PropTypes.number,
   }
 
@@ -40,16 +39,13 @@ class TitledScreenView extends Component {
 
   onBack = () => {
     const {
-      backRoute,
       onBack,
-      goto,
+      goBack,
     } = this.props
     if(onBack != null) {
       onBack()
     }
-    if(backRoute != null) {
-      goto(backRoute)
-    }
+    goBack()
   }
 
   render = () => {

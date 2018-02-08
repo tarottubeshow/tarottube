@@ -96,13 +96,12 @@ class VideoPlayerView extends Component {
     views: PropTypes.number,
 
     autoBack: PropTypes.bool,
-    backRoute: PropTypes.object,
     hideClose: PropTypes.bool,
 
     onBack: PropTypes.func,
     onEnd: PropTypes.func,
 
-    goto: PropTypes.func,
+    goBack: PropTypes.func,
   }
 
   state = {
@@ -116,9 +115,8 @@ class VideoPlayerView extends Component {
 
   goBack = (reason) => {
     const {
-      backRoute,
-      goto,
       onBack,
+      goBack,
       track,
     } = this.props
     track('VideoPlayer exit', {
@@ -129,9 +127,7 @@ class VideoPlayerView extends Component {
         reason: reason,
       })
     }
-    if(backRoute != null) {
-      goto(backRoute)
-    }
+    goBack()
   }
 
   onPlaybackStatusUpdate = (event) => {

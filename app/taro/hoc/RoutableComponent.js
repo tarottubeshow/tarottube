@@ -12,6 +12,9 @@ const RoutableComponent = (cls) => {
       (state, props) => ({
       }),
       (dispatch, props) => ({
+        goBack: () => {
+          dispatch(RouterActions.requestBack())
+        },
         goto: (route) => {
           dispatch(RouterActions.requestRouteChange(route))
         }

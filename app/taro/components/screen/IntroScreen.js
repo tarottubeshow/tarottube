@@ -16,14 +16,10 @@ class IntroScreenView extends Component {
 
   render = () => {
     const uri = `${ global.CONFIG['URL']['API'] }/video/intro.mp4`
-    const backRoute = {
-      context: 'home',
-    }
     return (
       <VideoPlayer
         autoBack={ true }
         onBack={ this.onEnd }
-        backRoute={ backRoute }
         context="IntroVideo"
         uri={ uri }
         style={ styles.video }

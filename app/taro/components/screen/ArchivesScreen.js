@@ -38,12 +38,8 @@ class ArchivesScreenView extends Component {
   }
 
   render = () => {
-    const hamburgerRoute = {
-      context: 'hamburger',
-    }
     return (
       <TitledScreen
-        backRoute={ hamburgerRoute }
         title="Archives"
       >
         { this.renderMain() }
