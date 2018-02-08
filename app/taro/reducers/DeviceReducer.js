@@ -4,11 +4,13 @@ const deviceChanged = ({
   implementation,
   width,
   height,
+  safeArea,
 }) => ({
   type: DEVICE_CHANGED,
   implementation,
   width,
   height,
+  safeArea,
 })
 
 // Reducers
@@ -21,6 +23,7 @@ function deviceReducer(state = {ready: false}, action = {}) {
         implementation: action.implementation,
         width: action.width,
         height: action.height,
+        safeArea: action.safeArea,
       }
     }
     default:

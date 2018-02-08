@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
+import { connect as reduxConnect } from 'react-redux'
 
+import { Platform } from 'react-native'
 import * as NB from 'native-base'
 
 import * as metautil from 'taro/util/metautil'
@@ -16,10 +18,24 @@ class TitledScreenView extends Component {
     title: PropTypes.string,
     children: proputil.CHILDREN_TYPE,
 
+    leftIcon: PropTypes.string,
     rightIcon: PropTypes.string,
     onRightIconClick: PropTypes.func,
 
     goto: PropTypes.func,
+    safeTop: PropTypes.number,
+  }
+
+  getToolbarPadding = () => {
+    if(Platform.OS == 'ios') {
+      return {}
+    } else {
+      const safeTop = this.props.safeTop
+      return {
+        paddingTop: safeTop,
+        height: 40 + safeTop,
+      }
+    }
   }
 
   onBack = () => {
@@ -53,7 +69,9 @@ class TitledScreenView extends Component {
       title,
     } = this.props
     return (
-      <NB.Header>
+      <NB.Header
+        style={ this.getToolbarPadding() }
+      >
         <NB.Left>
           { this.renderBack() }
         </NB.Left>
@@ -70,12 +88,17 @@ class TitledScreenView extends Component {
   }
 
   renderBack = () => {
+    const {
+      leftIcon,
+    } = this.props
     return (
       <NB.Button
         transparent
         onPress={ this.onBack }
       >
-        <NB.Icon name='ios-arrow-back' />
+        <NB.Icon
+          name={(leftIcon || 'ios-arrow-back')}
+        />
       </NB.Button>
     )
   }
@@ -104,6 +127,13 @@ class TitledScreenView extends Component {
 const TitledScreen = metautil.applyHocs(
   TitledScreenView,
   RoutableComponent,
+  reduxConnect(
+    (state, props) => ({
+      safeTop: state.Device.safeTop,
+    }),
+    (dispatch, props) => ({
+    }),
+  ),
 )
 
 export default TitledScreen

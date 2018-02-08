@@ -5,6 +5,7 @@ import { connect as reduxConnect } from 'react-redux'
 import { View, StyleSheet, Text } from 'react-native'
 
 import * as metautil from 'taro/util/metautil'
+import * as deviceutil from 'taro/util/deviceutil'
 import * as FirebaseReducer from 'taro/reducers/FirebaseReducer'
 import LiveVideoPlayer from 'taro/components/screen/LiveVideoPlayer'
 import StreamEndedScreen from 'taro/components/screen/StreamEndedScreen'
@@ -67,12 +68,29 @@ class TimeslotViewerView extends Component {
   }
 
   render = () => {
+    if(deviceutil.isIos()) {
+      return this.renderIos()
+    } else {
+      return this.renderAndroid()
+    }
+  }
+
+  renderIos = () => {
     return (
       <View style={ styles.stack }>
         { this.renderBase() }
         { this.renderVideo() }
       </View>
     )
+  }
+
+  renderAndroid = () => {
+    const video = this.renderVideo()
+    if(video != null) {
+      return video
+    } else {
+      return this.renderBase()
+    }
   }
 
   renderBase = () => {
@@ -175,19 +193,28 @@ const TimeslotViewer = metautil.applyHocs(
 
 const styles = StyleSheet.create({
   stack: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    top: 0,
-    height: '100%',
-    width: '100%',
+    ...deviceutil.ifAndroid({
+      flex: 1,
+    }),
+    ...deviceutil.ifIos({
+      position: 'absolute',
+      bottom: 0,
+      left: 0,
+      right: 0,
+      top: 0,
+      height: '100%',
+      width: '100%',
+    })
   },
   upper: {
-    zIndex: 100,
+    ...deviceutil.ifIos({
+      zIndex: 100,
+    }),
   },
   lower: {
-    zIndex: 50,
+    ...deviceutil.ifIos({
+      zIndex: 50,
+    }),
   }
 })
 

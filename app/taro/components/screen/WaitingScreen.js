@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native'
+import * as ixh from 'react-native-iphone-x-helper'
 
 import COLORS from 'taro/colors'
 import TRACKER from 'taro/tracking'
@@ -25,6 +26,7 @@ class WaitingScreenView extends Component {
     mode: PropTypes.string,
 
     goto: PropTypes.func,
+    safeTop: PropTypes.number,
   }
 
   componentDidMount = () => {
@@ -38,9 +40,11 @@ class WaitingScreenView extends Component {
   render = () => {
     return (
       <AmbientGradientBackground style={ styles.parent }>
-        { this.renderHamburger() }
-        { this.renderHelpButton() }
-        <View style={ styles.top }/>
+        <View style={ styles.top }>
+          { this.renderHamburger() }
+          <View style={ styles.topSpacer } />
+          { this.renderHelpButton() }
+        </View>
         <Image
           style={ styles.logo }
           source={ Images.LOGO_LONG_WHITE }
@@ -196,6 +200,19 @@ const styles = StyleSheet.create({
   },
   top: {
     flexGrow: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    paddingLeft: 12,
+    paddingRight: 10,
+    paddingTop: 10,
+    ...ixh.ifIphoneX({
+      paddingLeft: 22,
+      paddingRight: 20,
+    }),
+  },
+  topSpacer: {
+    flexGrow: 1,
   },
   bottom: {
     flexGrow: 1,
@@ -208,20 +225,12 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   hamburger: {
-    position: 'absolute',
-    top: 21,
-    left: 12,
-    width: 28,
-    height: 28,
-    zIndex: 500,
-  },
-  help: {
-    position: 'absolute',
-    top: 20,
-    right: 10,
     width: 32,
     height: 32,
-    zIndex: 500,
+  },
+  help: {
+    width: 32,
+    height: 32,
   },
 })
 

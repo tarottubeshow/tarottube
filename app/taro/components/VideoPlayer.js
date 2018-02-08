@@ -11,14 +11,17 @@ import {
   View,
 } from 'react-native'
 import { Svg, Video } from 'expo'
+import * as ixh from 'react-native-iphone-x-helper'
 
 import * as Images from 'taro/Images'
 import * as metautil from 'taro/util/metautil'
 import * as proputil from 'taro/util/proputil'
+import * as deviceutil from 'taro/util/deviceutil'
 import COLORS from 'taro/colors'
 import Button from 'taro/components/form/Button'
 import LoadingBlock from 'taro/components/control/LoadingBlock'
 import RoutableComponent from 'taro/hoc/RoutableComponent'
+import TitledScreen from 'taro/components/TitledScreen'
 import TrackedComponent from 'taro/hoc/TrackedComponent'
 
 class ProgressIndicatorBar extends Component {
@@ -99,8 +102,6 @@ class VideoPlayerView extends Component {
     onBack: PropTypes.func,
     onEnd: PropTypes.func,
 
-    style: proputil.STYLE_TYPE,
-
     goto: PropTypes.func,
   }
 
@@ -148,21 +149,23 @@ class VideoPlayerView extends Component {
       playable = 0 // for some reason it jumps around at 0
     }
 
-    const newStarted = (position > 0)
-    const newEnded = (position != 0 && position >= duration)
+    if(!ended) {
+      const newStarted = (position > 0)
+      const newEnded = (position != 0 && position >= duration)
 
-    this.setState({
-      position,
-      duration,
-      playable,
-      started: newStarted,
-      ended: newEnded,
-    })
-    if(!started && newStarted) {
-      this.onStart()
-    }
-    if(!ended && newEnded) {
-      this.onEnd()
+      this.setState({
+        position,
+        duration,
+        playable,
+        started: newStarted,
+        ended: newEnded,
+      })
+      if(!started && newStarted) {
+        this.onStart()
+      }
+      if(!ended && newEnded) {
+        this.onEnd()
+      }
     }
   }
 
@@ -185,40 +188,121 @@ class VideoPlayerView extends Component {
   }
 
   onStart = () => {
-    Animated.timing(
-      this.state.fade,
-      {
-        toValue: 1,
-        duration: 1000,
-      },
-    ).start()
+    if(deviceutil.isIos()) {
+      Animated.timing(
+        this.state.fade,
+        {
+          toValue: 1,
+          duration: 1000,
+        },
+      ).start()
+    }
   }
 
   onRestart = () => {
-    this.track('Restarted VideoPlayerView')
+    const {
+      track,
+    } = this.props
+    track('Restarted VideoPlayerView')
     this._videoRef.setPositionAsync(0)
+    this.setState({
+      ended: false,
+    })
   }
 
   render = () => {
+    if(deviceutil.isIos()) {
+      return this.renderIos()
+    } else {
+      return this.renderAndroid()
+    }
+  }
+
+  renderAndroid = () => {
     const {
-      style,
+      hideClose,
     } = this.props
+    if(hideClose) {
+      return this.renderAndroidBody()
+    } else {
+      return (
+        <TitledScreen
+          onBack={ this.goBack }
+          title=""
+          leftIcon="ios-close"
+        >
+          { this.renderAndroidBody() }
+        </TitledScreen>
+      )
+    }
+  }
+
+  renderAndroidBody = () => {
+    const {
+      started,
+      ended,
+    } = this.state
+    const loadingComponent = (!started) ? this.renderLoading() : null
+    const endActionsComponent = (ended) ? this.renderEndActions() : null
+    return (
+      <View style={ styles.videoContainer }>
+        <View style={{
+          display: (started && !ended) ? 'flex' : 'none',
+          flex: 1,
+        }}>
+          { this.renderUnanimatedPlayer() }
+        </View>
+        { loadingComponent }
+        { endActionsComponent }
+      </View>
+    )
+  }
+
+  renderIos = () => {
+    return (
+      <View style={ styles.videoContainer }>
+        { this.renderLoading() }
+        { this.renderAnimatedPlayer() }
+        { this.renderStopButton() }
+        { this.renderCount() }
+        { this.renderEndActions() }
+      </View>
+    )
+  }
+
+  renderAnimatedPlayer = () => {
     const {
       fade,
     } = this.state
     return (
-      <View style={ style }>
-        { this.renderLoading() }
-        <Animated.View style={{
-          opacity: fade,
-          zIndex: 100,
-        }}>
-          { this.renderPlayer() }
-          { this.renderProgressIndicator() }
-        </Animated.View>
-        { this.renderStopButton() }
-        { this.renderCount() }
-        { this.renderEndActions() }
+      <Animated.View
+        style={[
+          styles.videoContainer,
+          {
+            opacity: fade,
+            zIndex: 100,
+          }
+        ]}
+        key="ANIMATED"
+      >
+        { this.renderPlayer() }
+        { this.renderProgressIndicator() }
+      </Animated.View>
+    )
+  }
+
+  renderUnanimatedPlayer = () => {
+    const {
+      style,
+    } = this.props
+    const {
+      started,
+      ended,
+    } = this.state
+    return (
+      <View style={ styles.video }>
+        { this.renderPlayer() }
+        { this.renderProgressIndicator() }
       </View>
     )
 
@@ -244,7 +328,10 @@ class VideoPlayerView extends Component {
     } = this.state
     if(ended) {
       return (
-        <View style={ styles.endActions }>
+        <View
+          style={ styles.endActions }
+          key='ENDACTIONS'
+        >
           <Button
             color="yellow"
             text="Done"
@@ -296,9 +383,8 @@ class VideoPlayerView extends Component {
         resizeMode="cover"
         style={ videoStyle }
         onPlaybackStatusUpdate={ this.onPlaybackStatusUpdate }
-        onReadyForDisplay={ this.onReadyForDisplay }
         onError={ this.onError }
-        progressUpdateIntervalMillis={ 25 }
+        key='VIDEO'
       />
     )
   }
@@ -314,6 +400,7 @@ class VideoPlayerView extends Component {
         position={ position }
         duration={ duration }
         playable={ playable }
+        key='PROGRESS'
       />
     )
   }
@@ -350,13 +437,24 @@ class VideoPlayerView extends Component {
 }
 
 const styles = StyleSheet.create({
+  videoContainer: {
+    flex: 1,
+    ...deviceutil.ifIos({
+      position: 'absolute',
+      bottom: 0,
+      left: 0,
+      right: 0,
+      top: 0,
+      zIndex: 100,
+    }),
+  },
   video: {
-    width: "100%",
-    height: "100%",
-    zIndex: 100,
+    flex: 1,
   },
   videoEnded: {
-    opacity: 0.5,
+    ...deviceutil.ifIos({
+      opacity: 0.5,
+    }),
   },
   progressIndicator: {
     position: 'absolute',
@@ -368,36 +466,47 @@ const styles = StyleSheet.create({
   },
   close: {
     position: 'absolute',
-    top: 20,
+    top: 5,
     left: 5,
     width: 32,
     height: 32,
     zIndex: 500,
     opacity: 0.5,
+    ...ixh.ifIphoneX({
+      top: 5,
+      left: 10,
+    }),
   },
   endActions: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    zIndex: 300,
     flex: 1,
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
+    ...deviceutil.ifIos({
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      zIndex: 300,
+    }),
   },
   endActionButton: {
     width: 300,
     margin: 2,
   },
   loading: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    zIndex: 50,
+    ...deviceutil.ifAndroid({
+      flex: 1,
+    }),
+    ...deviceutil.ifIos({
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      zIndex: 50,
+    }),
   },
   viewCount: {
     zIndex: 200,

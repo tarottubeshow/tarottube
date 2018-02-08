@@ -1,7 +1,7 @@
 import { AsyncStorage } from 'react-native'
 
 const ASKED_FOR_NOTIFICATIONS = 'askedForNotifications:1'
-const SEEN_INTRO_VIDEO = 'seenIntroVideo:3'
+const SEEN_INTRO_VIDEO = 'seenIntroVideo:5'
 
 const ASKED_FOR_NOTIFICATIONS_CUTOFF = 259200 // 72 hours
 

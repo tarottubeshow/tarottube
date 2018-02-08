@@ -17,6 +17,7 @@ import * as FirebaseReducer from 'taro/reducers/FirebaseReducer'
 import * as metautil from 'taro/util/metautil'
 import * as scheduleutil from 'taro/util/scheduleutil'
 import * as proputil from 'taro/util/proputil'
+import * as deviceutil from 'taro/util/deviceutil'
 import * as randomutil from 'taro/util/randomutil'
 import TrackedComponent from 'taro/hoc/TrackedComponent'
 import VIEW_COUNTER from 'taro/controllers/ViewCounter'
@@ -204,13 +205,15 @@ class LiveVideoPlayerView extends Component {
     const {
       onStart,
     } = this.props
-    Animated.timing(
-      this.state.fade,
-      {
-        toValue: 1,
-        duration: 5000,
-      },
-    ).start()
+    if(deviceutil.isIos()) {
+      Animated.timing(
+        this.state.fade,
+        {
+          toValue: 1,
+          duration: 5000,
+        },
+      ).start()
+    }
     this.setState({
       started: true,
     })
@@ -218,36 +221,41 @@ class LiveVideoPlayerView extends Component {
   }
 
   render = () => {
+    if(deviceutil.isIos()) {
+      return this.renderIos()
+    } else {
+      return this.renderAndroid()
+    }
+  }
+
+  renderAndroid = () => {
     const {
       style,
-      quality,
-      timeslot,
-      track,
+    } = this.props
+    return (
+      <View style={ style }>
+        { this.renderVideo() }
+        { this.renderHealth() }
+        { this.renderCount() }
+      </View>
+    )
+  }
+
+  renderIos = () => {
+    const {
+      style,
     } = this.props
     const {
       fade,
-      realTimestamp,
     } = this.state
     return (
       <View style={ style }>
         <Animated.View style={{
+          flex: 1,
           opacity: fade,
         }}>
-          <Video
-            source={ { uri: timeslot.getUri(quality) } }
-            shouldPlay={ true }
-            rate={ 1.0 }
-            volume={ 1.0 }
-            resizeMode="cover"
-            style={ styles.video }
-            onPlaybackStatusUpdate={ this.onPlaybackStatusUpdate }
-            onReadyForDisplay={ this.onReadyForDisplay }
-            onError={ this.onError }
-          />
-          <HealthStatusIndicator
-            realTimestamp={ realTimestamp }
-            onHealthUpdate={ this.onHealthUpdate }
-          />
+          { this.renderVideo() }
+          { this.renderHealth() }
           { this.renderCount() }
         </Animated.View>
       </View>
@@ -267,12 +275,42 @@ class LiveVideoPlayerView extends Component {
     }
   }
 
+  renderHealth = () => {
+    const {
+      realTimestamp,
+    } = this.state
+    return (
+      <HealthStatusIndicator
+        realTimestamp={ realTimestamp }
+        onHealthUpdate={ this.onHealthUpdate }
+      />
+    )
+  }
+
+  renderVideo = () => {
+    const {
+      quality,
+      timeslot,
+    } = this.props
+    return (
+      <Video
+        source={ { uri: timeslot.getUri(quality) } }
+        shouldPlay={ true }
+        rate={ 1.0 }
+        volume={ 1.0 }
+        resizeMode="cover"
+        style={ styles.video }
+        onPlaybackStatusUpdate={ this.onPlaybackStatusUpdate }
+        onError={ this.onError }
+      />
+    )
+  }
+
 }
 
 const styles = StyleSheet.create({
   video: {
-    width: "100%",
-    height: "100%",
+    flex: 1,
   },
   healthInidicator: {
     position: 'absolute',
@@ -283,7 +321,7 @@ const styles = StyleSheet.create({
   },
   viewingCount: {
     position: 'absolute',
-    top: 30,
+    top: 10,
     left: 10,
     paddingLeft: 10,
     paddingRight: 10,
