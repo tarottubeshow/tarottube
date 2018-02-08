@@ -11,6 +11,19 @@ const TIMESLOT_API = Api.makeApiWrapper('taro.Timeslots', {
     cls: TimeslotList,
   }),
 
+  logView: ({
+    timeslot, // stream key
+    type,
+    uuid,
+  }) => Api.post({
+    path: `timeslot/log-view`,
+    data: {
+      timeslot,
+      type,
+      uuid,
+    },
+  }),
+
 })
 
 export default TIMESLOT_API

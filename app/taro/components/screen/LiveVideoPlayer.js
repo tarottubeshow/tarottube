@@ -135,7 +135,7 @@ class LiveVideoPlayerView extends Component {
       this.onHealthPostTick,
       false,
     )
-    VIEW_COUNTER.onView(timeslot.stream_key, true)
+    VIEW_COUNTER.onView(timeslot.stream_key, 'live')
   }
 
   componentWillUnmount = () => {
@@ -301,7 +301,7 @@ const LiveVideoPlayer = metautil.applyHocs(
   TrackedComponent("LiveVideoPlayer"),
   FirebaseWatcher((props) => ({
     viewing: {
-      firebaseKey: `viewCounts/${ props.timeslot.stream_key }/viewing_count`,
+      firebaseKey: `viewCounts/${ props.timeslot.stream_key }/live`,
       refKey: 'LiveVideoPlayer.viewing',
     },
   })),

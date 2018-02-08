@@ -2,6 +2,7 @@ import datetime
 import traceback
 import uuid
 import yaml
+import random
 import exponent_server_sdk as expo
 
 import sqlalchemy as sa
@@ -36,6 +37,8 @@ FAQ_BREADCRUMBS = ADMIN_BREADCRUMBS + [
 READING_REQUESTS_BREADCRUMBS = ADMIN_BREADCRUMBS + [
     ('/admin/reading-requests/', "Reading Requests"),
 ]
+
+VIEW_BOOST = 5
 
 class Faq(sqla.BaseModel):
 
@@ -488,3 +491,55 @@ class TimeslotPlaylist(sqla.BaseModel):
 @sa.event.listens_for(TimeslotPlaylist, 'before_update')
 def onTimeslotPlaylistSync(mapper, connection, target):
     target._onSync()
+
+class TimeslotView(sqla.BaseModel):
+
+    __tablename__ = 'timeslot_view'
+
+    id = sa.Column('id', sa.Integer, primary_key=True)
+    created = sa.Column('created', sa.DateTime)
+    last = sa.Column('last', sa.DateTime)
+    type = sa.Column('type', sa.String)
+    uuid = sa.Column('uuid', sa.String)
+
+    timeslot_id = sa.Column('timeslot_id', sa.Integer,
+        sa.ForeignKey('timeslot.id'))
+    timeslot = sao.relationship('Timeslot')
+
+    @classmethod
+    def putView(cls, timeslot, type, uuid):
+        now = datetime.datetime.now()
+
+        existing = cls.query()\
+            .filter(cls.timeslot == timeslot)\
+            .filter(cls.type == type)\
+            .filter(cls.uuid == uuid)\
+            .first()
+
+        if existing:
+            existing.last = now
+            return existing
+
+        view = TimeslotView(
+            timeslot=timeslot,
+            type=type,
+            uuid=uuid,
+            created=now,
+            last=now,
+        )
+        view.put()
+        return view
+
+    def countViews(self):
+        query = TimeslotView.query()\
+            .filter(TimeslotView.timeslot == self.timeslot)
+        archive = VIEW_BOOST * query.filter(TimeslotView.type == 'archive').count()
+        live = VIEW_BOOST * query.filter(TimeslotView.type == 'live').count()
+        live += random.randint(0, VIEW_BOOST)
+        views = archive + live
+        fbdb = firebase.getShard()
+        target = fbdb.child("viewCounts").child(self.timeslot.stream_key)
+        target.set({
+            'views': views,
+            'live': live,
+        })

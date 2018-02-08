@@ -51,3 +51,17 @@ def submitQuery():
     return flask.jsonify({
         'status': "OK",
     })
+
+@APP.route('/api/2/timeslot/log-view.json', methods=['POST'])
+def logView():
+    payload = flask.request.get_json()
+    timeslot = Timeslot.forStreamKey(payload['timeslot'])
+    view = TimeslotView.putView(
+        timeslot=timeslot,
+        type=payload['type'],
+        uuid=payload['uuid'],
+    )
+    view.countViews()
+    return flask.jsonify({
+        'status': "OK",
+    })

@@ -1,12 +1,12 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import interpolate from 'color-interpolate'
 import { connect as reduxConnect } from 'react-redux'
 
 import {
   Animated,
   Image,
   StyleSheet,
+  Text,
   TouchableOpacity,
   View,
 } from 'react-native'
@@ -20,15 +20,6 @@ import Button from 'taro/components/form/Button'
 import LoadingBlock from 'taro/components/control/LoadingBlock'
 import RoutableComponent from 'taro/hoc/RoutableComponent'
 import TrackedComponent from 'taro/hoc/TrackedComponent'
-
-const PLAYABLE_COLORMAP = interpolate([
-  COLORS.blueLight,
-  COLORS.blue,
-])
-const POSITION_COLORMAP = interpolate([
-  COLORS.greenLight,
-  COLORS.green,
-])
 
 class ProgressIndicatorBar extends Component {
 
@@ -82,11 +73,11 @@ class ProgressIndicator extends Component {
         />
         <ProgressIndicatorBar
           percentage={ playablePercent }
-          color={ PLAYABLE_COLORMAP(playablePercent) }
+          color={ COLORS.blue }
         />
         <ProgressIndicatorBar
           percentage={ positionPercent }
-          color={ POSITION_COLORMAP(positionPercent) }
+          color={ COLORS.green }
         />
       </View>
     )
@@ -99,6 +90,7 @@ class VideoPlayerView extends Component {
   static propTypes = {
     context: PropTypes.string,
     uri: PropTypes.string,
+    views: PropTypes.number,
 
     autoBack: PropTypes.bool,
     backRoute: PropTypes.object,
@@ -225,10 +217,25 @@ class VideoPlayerView extends Component {
           { this.renderProgressIndicator() }
         </Animated.View>
         { this.renderStopButton() }
+        { this.renderCount() }
         { this.renderEndActions() }
       </View>
     )
 
+  }
+
+  renderCount = () => {
+    const {
+      views,
+    } = this.props
+    if(views != null && views > 0) {
+      console.log(views)
+      return (
+        <Text style={ styles.viewCount }>
+          { views }
+        </Text>
+      )
+    }
   }
 
   renderEndActions = () => {
@@ -391,6 +398,20 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     zIndex: 50,
+  },
+  viewCount: {
+    zIndex: 200,
+    position: 'absolute',
+    top: 30,
+    right: 10,
+    paddingLeft: 10,
+    paddingRight: 10,
+    paddingTop: 3,
+    paddingBottom: 3,
+    color: '#fff',
+    backgroundColor: COLORS.blueLight,
+    borderRadius: 10,
+    overflow: 'hidden',
   },
 })
 

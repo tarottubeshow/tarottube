@@ -1,44 +1,16 @@
-import * as firebase from 'firebase'
 import uniqueId from 'react-native-unique-id'
+
+import TIMESLOT_API from 'taro/api/TimeslotApi'
 
 class ViewCounter {
 
-  getViewKey(streamKey) {
-    return `viewCounts/${ streamKey }/views`
-  }
-
-  getViewingKey(streamKey) {
-    return `viewCounts/${ streamKey }/viewing`
-  }
-
-  async onView(streamKey, live=true) {
-    await this.write(
-      this.getViewKey(streamKey)
-    )
-    if(live) {
-      await this.write(
-        this.getViewingKey(streamKey)
-      )
-    }
-  }
-
-  async getGuid() {
-    return `${ await uniqueId() }`
-  }
-
-  async getRef(key) {
-    const shardKey = global.CONFIG.FIREBASE.shard
-    const guid = await this.getGuid()
-    const ref = firebase.database().ref(`${ shardKey }/${ key }/${ guid }`)
-    return ref
-  }
-
-  async write(key, value) {
-    if(value == null) {
-      value = await this.getGuid()
-    }
-    const ref = await this.getRef(key)
-    ref.set(value)
+  async onView(streamKey, type) {
+    const uuid = await uniqueId()
+    await TIMESLOT_API.logView.exec({
+      timeslot: streamKey,
+      type: type,
+      uuid: uuid,
+    })
   }
 
 }
