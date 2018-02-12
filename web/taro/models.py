@@ -535,7 +535,7 @@ class TimeslotView(sqla.BaseModel):
             .filter(TimeslotView.timeslot == self.timeslot)
         archive = VIEW_BOOST * query.filter(TimeslotView.type == 'archive').count()
         live = VIEW_BOOST * query.filter(TimeslotView.type == 'live').count()
-        live += random.randint(0, VIEW_BOOST)
+        live += random.randint(0, (VIEW_BOOST-1))
         views = archive + live
         fbdb = firebase.getShard()
         target = fbdb.child("viewCounts").child(self.timeslot.stream_key)

@@ -1,6 +1,6 @@
 {
   "expo": {
-    "sdkVersion": "24.0.0",
+    "sdkVersion": "25.0.0",
     "name": "Tarot Tube Live",
     "icon": "./collateral/icons/1024-square.png",
     "version": "1.0.2",
