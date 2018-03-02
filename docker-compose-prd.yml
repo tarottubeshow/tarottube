@@ -12,8 +12,8 @@ services:
     - ./mount/getssl-web/.well-known/:/opt/www/.well-known/
     - ./mount/getssl-cert/:/opt/ssl/
     ports:
-    - 35.226.117.172:80:80
-    - 35.226.117.172:443:443
+    - 80:80
+    - 443:443
     environment:
       TARO_ENV: prd
     links:
@@ -50,7 +50,7 @@ services:
     volumes:
     - ./mount/frags:/opt/mount/frags
     ports:
-    - 35.226.117.172:1935:1935
+    - 1935:1935
     restart: always
     links:
     - web:web
