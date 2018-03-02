@@ -15,7 +15,7 @@ services:
     - postgres:taro-db
     depends_on:
     - 'postgres'
-    restart: always
+    restart: unless-stopped
   watcher:
     build:
       context: .
@@ -27,7 +27,7 @@ services:
     - postgres:taro-db
     depends_on:
     - 'web'
-    restart: always
+    restart: unless-stopped
   cron:
     build:
       context: .
@@ -38,7 +38,7 @@ services:
     - postgres:taro-db
     depends_on:
     - 'web'
-    restart: always
+    restart: unless-stopped
   srs:
     build:
       context: .
@@ -48,7 +48,7 @@ services:
     - ./mount/frags:/opt/mount/frags
     ports:
     - 1935:1935
-    restart: always
+    restart: unless-stopped
     links:
     - web:web
   postgres:
