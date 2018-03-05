@@ -34,6 +34,7 @@ services:
     depends_on:
     - 'web'
     restart: always
+    network_mode: bridge
   cron:
     build:
       context: .
@@ -44,6 +45,7 @@ services:
     - postgres:taro-db
     depends_on:
     - 'web'
+    network_mode: bridge
   srs:
     build:
       context: .
@@ -55,11 +57,9 @@ services:
     restart: always
     links:
     - web:web
+    network_mode: bridge
   postgres:
     image: "postgres"
     volumes:
     - ./mount/db:/var/lib/postgresql/data
-networks:
-  default:
-    external:
-      name: bridge
+    network_mode: bridge
