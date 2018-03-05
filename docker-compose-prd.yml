@@ -11,6 +11,9 @@ services:
     - ./mount/frags:/opt/mount/frags
     - ./mount/getssl-web/.well-known/:/opt/www/.well-known/
     - ./mount/getssl-cert/:/opt/ssl/
+    expose:
+    - '80'
+    - '443'
     environment:
       TARO_ENV: prd
     links:
