@@ -11,9 +11,6 @@ services:
     - ./mount/frags:/opt/mount/frags
     - ./mount/getssl-web/.well-known/:/opt/www/.well-known/
     - ./mount/getssl-cert/:/opt/ssl/
-    ports:
-    - 80:80
-    - 443:443
     environment:
       TARO_ENV: prd
     links:
