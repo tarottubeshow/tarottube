@@ -21,6 +21,7 @@ services:
     depends_on:
     - 'postgres'
     restart: always
+    network_mode: bridge
   watcher:
     build:
       context: .
@@ -58,3 +59,7 @@ services:
     image: "postgres"
     volumes:
     - ./mount/db:/var/lib/postgresql/data
+networks:
+  default:
+    external:
+      name: bridge
