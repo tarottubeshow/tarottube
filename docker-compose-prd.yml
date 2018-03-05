@@ -9,8 +9,6 @@ services:
     - ./gsa.json:/opt/repo/gsa.json
     - ./.htpasswd:/opt/repo/.htpasswd
     - ./mount/frags:/opt/mount/frags
-    - ./mount/getssl-web/.well-known/:/opt/www/.well-known/
-    - ./mount/getssl-cert/:/opt/ssl/
     expose:
     - '80'
     - '443'
