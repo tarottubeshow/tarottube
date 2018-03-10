@@ -23,7 +23,7 @@ def getFaqs():
 def getTimeslots():
     # TODO: more sophistication!!
     timeslots = []
-    for timeslot, playlist in Timeslot.pastWithRecording():
+    for timeslot, playlist in Timeslot.pastWithRecording(limit=100):
         payload = timeslot.getJson()
         payload['video_url'] = playlist.getPublicUri()
         timeslots.append(payload)
