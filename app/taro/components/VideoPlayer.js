@@ -380,6 +380,7 @@ class VideoPlayerView extends Component {
         onPlaybackStatusUpdate={ this.onPlaybackStatusUpdate }
         onError={ this.onError }
         key='VIDEO'
+        userNativeControls
       />
     )
   }

@@ -189,7 +189,9 @@ class LiveVideoPlayerView extends Component {
     if(!started && position > 0) {
       this.onStart()
     }
-    if(!isStreaming && ((duration - position) < END_STREAM_DELTA)) {
+
+    const isOver = (duration - position) < END_STREAM_DELTA
+    if(!isStreaming && (isOver || deviceutil.isAndroid())) {
       this.onFinish()
     }
   }

@@ -1,5 +1,5 @@
-import { reach } from 'taro/util/metautil'
-import { UNSETTLED_PROMISE_STATE } from 'taro/util/promiseutil'
+import * as metautil from 'taro/util/metautil'
+import * as promiseutil from 'taro/util/promiseutil'
 
 const DISPOSITION_START = 'start'
 const DISPOSITION_OK = 'ok'
@@ -17,7 +17,7 @@ function makeApiAction({
       type: type,
       disposition: DISPOSITION_START,
       request: request,
-      state: UNSETTLED_PROMISE_STATE,
+      state: promiseutil.UNSETTLED_PROMISE_STATE,
     },
     type: type,
     ...params,
@@ -29,20 +29,20 @@ function getApiState(action) {
 }
 
 function isApiAction(action, api) {
-  const apiType = reach(action, ['__API__', 'type'])
+  const apiType = metautil.reach(action, ['__API__', 'type'])
   return (apiType === api.actionType)
 }
 
 function isApiActionError(action) {
-  return reach(action, ['__API__', 'disposition']) === DISPOSITION_ERROR
+  return metautil.reach(action, ['__API__', 'disposition']) === DISPOSITION_ERROR
 }
 
 function isApiActionOk(action) {
-  return reach(action, ['__API__', 'disposition']) === DISPOSITION_OK
+  return metautil.reach(action, ['__API__', 'disposition']) === DISPOSITION_OK
 }
 
 function isApiActionStart(action) {
-  return reach(action, ['__API__', 'disposition']) === DISPOSITION_START
+  return metautil.reach(action, ['__API__', 'disposition']) === DISPOSITION_START
 }
 
 function hasApiRequest(action) {
