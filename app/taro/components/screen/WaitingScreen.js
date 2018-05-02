@@ -7,6 +7,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Linking,
 } from 'react-native'
 import * as ixh from 'react-native-iphone-x-helper'
 
@@ -33,6 +34,10 @@ class WaitingScreenView extends Component {
     TRACKER.track('Mounted WaitingScreen')
   }
 
+  gotoPrivate = () => {
+    Linking.openURL("https://tarottube.com/private-readings/")
+  }
+
   onReplayLatest = () => {
     this.props.onReplay()
   }
@@ -52,8 +57,20 @@ class WaitingScreenView extends Component {
         { this.renderMain() }
         <View style={ styles.bottom }>
           { this.renderReplayButton() }
+          { this.renderPrivateButton() }
         </View>
       </AmbientGradientBackground>
+    )
+  }
+
+  renderPrivateButton = () => {
+    return (
+      <Button
+        text="Private Reading"
+        onPress={ this.gotoPrivate }
+        style={ styles.bottomButton }
+        color="green"
+      />
     )
   }
 

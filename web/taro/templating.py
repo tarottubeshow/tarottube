@@ -35,4 +35,5 @@ GLOBALS = {
     'versioned': versioned,
     'computerDateTime': computerDateTime,
     'humanDateTime': textutil.humanDateTime,
+    'CONFIG': CONFIG,
 }

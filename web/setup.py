@@ -37,5 +37,6 @@ setup(
         'googleapis-common-protos',
         'google-cloud==0.32.0',
         'urllib3==1.22',
+        'stripe',
     ],
 )
