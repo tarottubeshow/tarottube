@@ -27,8 +27,10 @@
       integrity="sha256-3edrmyuQ0w65f8gfBsqowzjJe2iM6n0nKciPUp8y+7E="
       crossorigin="anonymous"></script>
     <script src="https://js.stripe.com/v3/"></script>
+    <script src="https://checkout.stripe.com/checkout.js"></script>
     <script type="text/javascript">
-        window.STRIPE = Stripe('{{ CONFIG.stripe.public }}')
+        window.STRIPE_KEY = '{{ CONFIG.stripe.public }}'
+        window.STRIPE = Stripe(window.STRIPE_KEY)
     </script>
     <script type="text/javascript" src="/resource/public.js"></script>
 
