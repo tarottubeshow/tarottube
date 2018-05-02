@@ -80,16 +80,20 @@ function setupRequest(name, amount, buttonCls) {
     completePayment(ev, amount)
   })
 
-
-  $(buttonCls).click(function() {
-    paymentRequest.canMakePayment().then(function(result) {
+  var checkoutFunc
+  paymentRequest.canMakePayment().then(
+    function(result) {
       if (result) {
-        paymentRequest.show()
+        checkoutFunc = paymentRequest.show
       } else {
-        checkoutLame(name, amount)
+        checkoutFunc = function() {
+          checkoutLame(name, amount)
+        }
       }
-    })
-  })
+      $(buttonCls).click(checkoutFunc)
+    }
+  )
+
 }
 
 setupRequest(
