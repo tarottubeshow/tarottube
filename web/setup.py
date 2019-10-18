@@ -36,7 +36,7 @@ setup(
         'exponent_server_sdk',
         'googleapis-common-protos',
         'google-cloud==0.32.0',
-        'urllib3==1.22',
+        'urllib3==1.24.2',
         'stripe',
     ],
 )
